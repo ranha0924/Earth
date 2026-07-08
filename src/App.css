@@ -29,4 +29,5 @@ body { font-family: system-ui, -apple-system, "Apple SD Gothic Neo", sans-serif;
 @media (max-width: 767px) {
   .app__main { flex-direction: column; }
   .card { position: fixed; left: 0; right: 0; bottom: 0; width: 100%; max-height: 45vh; border-radius: 16px 16px 0 0; }
+  .app__legend { top: 12px; bottom: auto; }
 }
