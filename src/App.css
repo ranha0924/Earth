@@ -50,8 +50,132 @@ body { font-family: system-ui, -apple-system, "Apple SD Gothic Neo", sans-serif;
 .card__row { display: flex; align-items: center; gap: 8px; }
 .card__note, .card__empty { color: #bcd; line-height: 1.5; }
 
+/* ── 카드 공통 섹션 ─────────────────────────── */
+.card__section { margin: 12px 0; }
+.card__h3 { font-size: 13px; font-weight: 700; color: #7fd3f0; margin: 0 0 4px; letter-spacing: 0.03em; }
+.cross-border {
+  margin: 0 0 12px; padding: 7px 10px; border-radius: 8px; font-size: 12.5px; font-weight: 600;
+  color: #a5d8ff; background: rgba(76,201,240,0.1); border: 1px solid rgba(76,201,240,0.25);
+}
+.badge-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.treaty-badge, .region-badge {
+  display: inline-flex; align-items: center; padding: 5px 10px; border-radius: 999px;
+  font-size: 12.5px; font-weight: 600; border: 1px solid #2a4a6b; background: rgba(42,74,107,0.3); color: #eef;
+}
+.treaty-badge { cursor: pointer; border-color: rgba(167,139,250,0.4); background: rgba(167,139,250,0.14); }
+.treaty-badge:hover { background: rgba(167,139,250,0.28); }
+.no-treaty {
+  margin: 0; padding: 8px 10px; border-radius: 8px; font-size: 13px; line-height: 1.55;
+  color: #bcd; background: rgba(120,130,150,0.1); border: 1px dashed rgba(150,160,185,0.3);
+}
+.confusion {
+  margin: 12px 0; padding: 9px 11px; border-radius: 8px;
+  background: rgba(240,160,76,0.12); border: 1px solid rgba(240,160,76,0.35);
+}
+.confusion b { color: #f0b04c; font-size: 13px; }
+.confusion p { margin: 5px 0 0; font-size: 13px; line-height: 1.55; color: #eed; }
+.lineage-note {
+  margin: 12px 0 0; padding: 9px 11px; border-radius: 8px; font-size: 13px; line-height: 1.55;
+  color: #cfe; background: rgba(76,201,240,0.1); border: 1px solid rgba(76,201,240,0.3);
+}
+.treaty-target { font-size: 13px; color: #9bd; font-weight: 600; }
+
+.issue-link-list { display: flex; flex-direction: column; gap: 8px; }
+.issue-link {
+  display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 10px; text-align: left;
+  color: #eef; background: rgba(42,74,107,0.25); border: 1px solid #2a4a6b; cursor: pointer;
+}
+.issue-link:hover { background: rgba(248,113,113,0.16); }
+.issue-link__icon { font-size: 1.5rem; flex: none; }
+.issue-link small { color: #bcd; font-size: 12px; }
+
+/* ── 환경 모드 하단 컨트롤 ────────────────────── */
+.app__bottom {
+  position: absolute; left: 50%; transform: translateX(-50%); bottom: 12px;
+  max-width: min(720px, calc(100% - 24px)); width: max-content;
+  background: rgba(16,35,58,0.9); border: 1px solid #2a4a6b; border-radius: 14px; padding: 8px;
+  backdrop-filter: blur(10px);
+}
+.env-tabs { display: flex; gap: 4px; margin-bottom: 8px; justify-content: center; }
+.env-tab {
+  padding: 6px 14px; border-radius: 999px; border: 1px solid #2a4a6b; background: transparent;
+  color: #cde; cursor: pointer; font-size: 13px; font-weight: 600;
+}
+.env-tab--active { background: #2f6fb0; color: #fff; border-color: #2f6fb0; }
+.env-chip-row { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; }
+.env-chip {
+  padding: 6px 11px; border-radius: 999px; border: 1px solid transparent; background: rgba(120,160,255,0.08);
+  color: #cde; cursor: pointer; font-size: 13px; font-weight: 600;
+}
+.env-chip:hover { color: #fff; background: rgba(120,160,255,0.16); }
+.env-chip--active { color: #fff; background: rgba(248,113,113,0.22); border-color: rgba(248,113,113,0.55); }
+
+.treaty-timeline { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; max-width: 700px; }
+.treaty-node {
+  display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 6px 10px;
+  border-radius: 10px; border: 1px solid #2a4a6b; background: rgba(42,74,107,0.25); color: #eef; cursor: pointer;
+}
+.treaty-node:hover { background: rgba(120,160,255,0.18); }
+.treaty-node--active { border-color: #fff; background: rgba(255,255,255,0.12); }
+.treaty-node--climate { border-color: #4cc9f0; box-shadow: 0 0 0 1px rgba(76,201,240,0.35); }
+.treaty-node__year { font-size: 11px; color: #8fb8e0; font-weight: 700; }
+.treaty-node__name { font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+.treaty-lineage-hint { margin: 8px 0 0; font-size: 11.5px; color: #9bd; text-align: center; }
+.treaty-lineage-hint b { color: #cfe; }
+
+.matching-launch {
+  position: absolute; right: 14px; top: 14px; padding: 8px 14px; border-radius: 999px;
+  background: rgba(167,139,250,0.9); color: #fff; font-weight: 700; font-size: 13px; cursor: pointer;
+  border: none; box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+}
+.matching-launch:hover { background: #a78bfa; }
+
+/* ── 매칭 게임 ──────────────────────────────── */
+.matching-overlay {
+  position: fixed; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center;
+  background: rgba(6,12,22,0.72); padding: 16px;
+}
+.matching {
+  width: min(560px, 100%); max-height: 88vh; overflow-y: auto;
+  background: #10233a; border: 1px solid #2a4a6b; border-radius: 16px; padding: 18px;
+}
+.matching__head { display: flex; align-items: center; justify-content: space-between; }
+.matching__head h2 { margin: 0; font-size: 18px; }
+.matching__hint { color: #bcd; font-size: 13px; margin: 6px 0 14px; }
+.matching__cols { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.matching__col { display: flex; flex-direction: column; gap: 6px; }
+.match-item {
+  display: flex; flex-direction: column; align-items: flex-start; padding: 9px 11px; border-radius: 9px;
+  border: 1px solid #2a4a6b; background: rgba(42,74,107,0.3); color: #eef; cursor: pointer;
+  font-size: 13px; font-weight: 600; text-align: left; line-height: 1.35;
+}
+.match-item small { color: #8fb8e0; font-size: 11px; font-weight: 400; }
+.match-item--key { justify-content: center; }
+.match-item:hover:not(:disabled) { background: rgba(120,160,255,0.2); }
+.match-item--picked { border-color: #4cc9f0; background: rgba(76,201,240,0.22); }
+.match-item--done { opacity: 0.4; cursor: default; border-style: dashed; }
+.match-item--wrong { border-color: #f87171; background: rgba(248,113,113,0.25); }
+.matching__done { text-align: center; padding: 20px 0; }
+.matching__restart {
+  margin-top: 10px; padding: 9px 18px; border-radius: 999px; border: none;
+  background: #2f6fb0; color: #fff; font-weight: 700; cursor: pointer;
+}
+
+/* ── 축제 핀 ────────────────────────────────── */
+.festival-pin {
+  display: flex; align-items: center; gap: 4px; padding: 3px 9px 3px 5px; border-radius: 999px;
+  font-size: 12px; font-weight: 700; color: #fff; background: rgba(240,120,76,0.92);
+  border: 1px solid rgba(255,220,180,0.6); cursor: pointer; white-space: nowrap;
+  transform: translate(-50%, -50%); box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+}
+.festival-pin:hover { background: #f0784c; }
+.festival-pin__icon { font-size: 14px; }
+
 @media (max-width: 767px) {
   .app__main { flex-direction: column; }
-  .card { position: fixed; left: 0; right: 0; bottom: 0; width: 100%; max-height: 45vh; border-radius: 16px 16px 0 0; }
+  .card { position: fixed; left: 0; right: 0; bottom: 0; width: 100%; max-height: 45vh; border-radius: 16px 16px 0 0; z-index: 10; }
   .app__legend { top: 12px; bottom: auto; }
+  .app__bottom { bottom: auto; top: 8px; max-width: calc(100% - 16px); }
+  .matching-launch { top: auto; bottom: 12px; right: 12px; }
+  .app__soon { max-width: 88%; font-size: 14px; }
 }

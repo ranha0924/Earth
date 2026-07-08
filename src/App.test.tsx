@@ -8,7 +8,13 @@ vi.mock('./globe/GlobeView', () => ({ GlobeView: () => <div data-testid="globe" 
 import App from './App'
 
 beforeEach(() => {
-  useAppStore.setState({ mode: 'climate', selectedIso: null, climateFilter: null })
+  useAppStore.setState({
+    mode: 'climate',
+    selectedIso: null,
+    climateFilter: null,
+    environmentTab: 'issues',
+    activeIssue: null,
+  })
 })
 
 describe('App', () => {
@@ -23,14 +29,20 @@ describe('App', () => {
     render(<App />)
     expect(screen.getByText('대한민국')).toBeInTheDocument()
   })
-  it('환경 모드를 클릭하면 준비 중 안내가 나타난다', async () => {
+  it('환경 모드를 클릭하면 환경문제 탭과 문제 칩이 나타난다', async () => {
     render(<App />)
     await userEvent.click(screen.getByRole('button', { name: '환경' }))
-    expect(screen.getByText(/준비 중/)).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: /환경문제/ })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /사막화/ })).toBeInTheDocument()
   })
-  it('기후 모드가 아니면 선택된 나라가 있어도 기후 카드가 나타나지 않는다', () => {
-    useAppStore.setState({ mode: 'environment', selectedIso: 'KR' })
+  it('환경 모드에서는 기후 범례가 나타나지 않는다', () => {
+    useAppStore.setState({ mode: 'environment' })
     render(<App />)
-    expect(screen.queryByText('대한민국')).not.toBeInTheDocument()
+    expect(screen.queryByRole('group', { name: '기후 범례' })).not.toBeInTheDocument()
+  })
+  it('문화·퀴즈 모드는 아직 준비 중 안내가 나타난다', () => {
+    useAppStore.setState({ mode: 'culture' })
+    render(<App />)
+    expect(screen.getByText(/준비 중/)).toBeInTheDocument()
   })
 })

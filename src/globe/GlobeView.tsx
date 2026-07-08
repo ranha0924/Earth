@@ -52,9 +52,13 @@ export function GlobeView() {
     }
     onResize()
     window.addEventListener('resize', onResize)
+    // 컨테이너 크기 변화(모드 전환으로 카드가 열리고 닫힐 때)에도 반응 — 캔버스가 카드를 덮지 않도록.
+    const ro = new ResizeObserver(onResize)
+    ro.observe(el)
     return () => {
       cancelled = true
       window.removeEventListener('resize', onResize)
+      ro.disconnect()
       globe._destructor?.()
       el.innerHTML = ''
     }
