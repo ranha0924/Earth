@@ -40,8 +40,13 @@ describe('App', () => {
     render(<App />)
     expect(screen.queryByRole('group', { name: '기후 범례' })).not.toBeInTheDocument()
   })
-  it('문화·퀴즈 모드는 아직 준비 중 안내가 나타난다', () => {
+  it('문화 모드에서는 종교 범례가 나타난다', () => {
     useAppStore.setState({ mode: 'culture' })
+    render(<App />)
+    expect(screen.getByRole('group', { name: '종교 범례' })).toBeInTheDocument()
+  })
+  it('퀴즈 모드는 아직 준비 중 안내가 나타난다', () => {
+    useAppStore.setState({ mode: 'quiz' })
     render(<App />)
     expect(screen.getByText(/준비 중/)).toBeInTheDocument()
   })

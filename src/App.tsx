@@ -6,6 +6,8 @@ import { InfoCard } from './components/InfoCard'
 import { EnvironmentControls } from './components/environment/EnvironmentControls'
 import { EnvironmentCard } from './components/environment/EnvironmentCard'
 import { MatchingGame } from './components/environment/MatchingGame'
+import { CultureControls } from './components/culture/CultureControls'
+import { CultureCard } from './components/culture/CultureCard'
 import { useAppStore, type Mode } from './store'
 
 const MODE_NAMES: Record<Mode, string> = {
@@ -53,15 +55,23 @@ export default function App() {
             </>
           )}
 
-          {(mode === 'culture' || mode === 'quiz') && (
+          {mode === 'culture' && (
+            <div className="app__bottom">
+              <CultureControls />
+            </div>
+          )}
+
+          {mode === 'quiz' && (
             <div className="app__soon">
-              🚧 {MODE_NAMES[mode]} 모드는 준비 중이에요. 지금은 기후·환경 모드를 이용해 주세요.
+              🚧 {MODE_NAMES[mode]} 모드는 준비 중이에요. 지금은 기후·환경·문화 모드를 이용해
+              주세요.
             </div>
           )}
         </div>
 
         {mode === 'climate' && <InfoCard />}
         {mode === 'environment' && <EnvironmentCard />}
+        {mode === 'culture' && <CultureCard />}
       </main>
 
       {showMatching && <MatchingGame onClose={() => setShowMatching(false)} />}
