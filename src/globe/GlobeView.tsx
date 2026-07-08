@@ -28,11 +28,14 @@ export function GlobeView() {
       })
     globeRef.current = globe
 
+    let cancelled = false
     fetch(GEOJSON_URL)
       .then((r) => r.json())
-      .then((geo: { features: object[] }) => globe.polygonsData(geo.features))
+      .then((geo: { features: object[] }) => {
+        if (!cancelled) globe.polygonsData(geo.features)
+      })
       .catch(() => {
-        el.setAttribute('data-globe-error', 'true')
+        if (!cancelled) el.setAttribute('data-globe-error', 'true')
       })
 
     const onResize = () => {
@@ -41,6 +44,7 @@ export function GlobeView() {
     onResize()
     window.addEventListener('resize', onResize)
     return () => {
+      cancelled = true
       window.removeEventListener('resize', onResize)
       globe._destructor?.()
       el.innerHTML = ''
