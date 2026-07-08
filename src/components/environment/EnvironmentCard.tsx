@@ -1,0 +1,193 @@
+import { useAppStore } from '../../store'
+import { ISSUE_BY_ID, TREATY_BY_ID, ISSUES } from '../../environment/data'
+import { countryNameKo } from '../../data/countryNames'
+import type { IssueId, TreatyId } from '../../environment/types'
+
+export function EnvironmentCard() {
+  const tab = useAppStore((s) => s.environmentTab)
+  const activeIssue = useAppStore((s) => s.activeIssue)
+  const selectedIso = useAppStore((s) => s.selectedIso)
+  const select = useAppStore((s) => s.selectCountry)
+  const setActiveIssue = useAppStore((s) => s.setActiveIssue)
+
+  // 협약 노드 선택
+  if (selectedIso?.startsWith('treaty:')) {
+    const tid = selectedIso.slice('treaty:'.length) as TreatyId
+    return <TreatyDetail id={tid} onClose={() => select(null)} />
+  }
+
+  // 나라 선택 (환경문제 탭에서) → 관련 환경문제
+  if (tab === 'issues' && selectedIso && !selectedIso.startsWith('treaty:')) {
+    return (
+      <CountryEnvironment
+        iso={selectedIso}
+        onClose={() => select(null)}
+        onIssue={(id) => {
+          setActiveIssue(id)
+          select(null)
+        }}
+      />
+    )
+  }
+
+  if (tab === 'issues' && activeIssue) {
+    return (
+      <IssueDetail
+        id={activeIssue}
+        onClose={() => setActiveIssue(null)}
+        onTreatyJump={(tid) => {
+          useAppStore.getState().setEnvironmentTab('treaties')
+          select(`treaty:${tid}`)
+        }}
+      />
+    )
+  }
+
+  // 안내
+  return (
+    <aside className="card" aria-label="환경 정보">
+      {tab === 'issues' ? (
+        <p className="card__empty">
+          아래에서 <b>환경문제</b>를 골라 보세요. 지구본에 발생·피해 지역이 표시되고, 원인부터
+          대책까지 정리됩니다. 나라를 누르면 그 나라와 관련된 환경문제를 볼 수 있어요.
+        </p>
+      ) : (
+        <p className="card__empty">
+          아래 <b>연표</b>에서 협약을 골라 보세요. 연도·대상·핵심 내용과 헷갈리기 쉬운 포인트를
+          정리했습니다.
+        </p>
+      )}
+    </aside>
+  )
+}
+
+function IssueDetail({
+  id,
+  onClose,
+  onTreatyJump,
+}: {
+  id: IssueId
+  onClose: () => void
+  onTreatyJump: (id: TreatyId) => void
+}) {
+  const issue = ISSUE_BY_ID[id]
+  return (
+    <aside className="card" aria-label={`${issue.nameKo} 정보`}>
+      <button type="button" className="card__close" onClick={onClose}>
+        닫기 ✕
+      </button>
+      <h2 className="card__title">
+        {issue.icon} {issue.nameKo}
+      </h2>
+      <p className="cross-border">🌐 국경을 넘는 전 지구적 문제 — 국제 협력이 필요합니다.</p>
+      <Section title="원인" text={issue.cause} />
+      <Section title="현상" text={issue.phenomenon} />
+      <Section title="영향" text={issue.effect} />
+      <Section title="대책" text={issue.solution} />
+      <div className="card__section">
+        <h3 className="card__h3">관련 국제 협약</h3>
+        {issue.treaties.length > 0 ? (
+          <div className="badge-row">
+            {issue.treaties.map((tid) => (
+              <button key={tid} type="button" className="treaty-badge" onClick={() => onTreatyJump(tid)}>
+                🤝 {TREATY_BY_ID[tid].nameKo} ({TREATY_BY_ID[tid].year}) →
+              </button>
+            ))}
+          </div>
+        ) : (
+          <p className="no-treaty">
+            직접 대응하는 국제 협약은 시험 범위에 없습니다. 국가 간 협력으로 함께 해결해야 하는
+            문제예요.
+          </p>
+        )}
+      </div>
+      <div className="card__section">
+        <h3 className="card__h3">주요 발생·피해 지역</h3>
+        <div className="badge-row">
+          {issue.regions.map((r) => (
+            <span key={r.nameKo} className="region-badge">
+              📍 {r.nameKo}
+            </span>
+          ))}
+        </div>
+      </div>
+    </aside>
+  )
+}
+
+function TreatyDetail({ id, onClose }: { id: TreatyId; onClose: () => void }) {
+  const t = TREATY_BY_ID[id]
+  return (
+    <aside className="card" aria-label={`${t.nameKo} 정보`}>
+      <button type="button" className="card__close" onClick={onClose}>
+        닫기 ✕
+      </button>
+      <h2 className="card__title">
+        🤝 {t.nameKo} <span className="card__title-en">{t.year}</span>
+      </h2>
+      <div className="card__row">
+        <span className="treaty-target">대상: {t.target}</span>
+      </div>
+      <Section title="핵심 내용" text={t.summary} />
+      {t.confusion && (
+        <div className="confusion">
+          <b>⚠️ 헷갈리기 쉬운 포인트</b>
+          <p>{t.confusion}</p>
+        </div>
+      )}
+      {t.lineage === 'climate' && (
+        <p className="lineage-note">
+          기후 변화 대응 계보: <b>기후변화협약(1992) → 교토 의정서(1997) → 파리 협정(2015)</b>
+        </p>
+      )}
+    </aside>
+  )
+}
+
+function CountryEnvironment({
+  iso,
+  onClose,
+  onIssue,
+}: {
+  iso: string
+  onClose: () => void
+  onIssue: (id: IssueId) => void
+}) {
+  const related = ISSUES.filter((i) => i.countryIsos.includes(iso))
+  return (
+    <aside className="card" aria-label="나라별 환경문제">
+      <button type="button" className="card__close" onClick={onClose}>
+        닫기 ✕
+      </button>
+      <h2 className="card__title">{countryNameKo(iso)}<span className="card__title-en">관련 환경문제</span></h2>
+      {related.length > 0 ? (
+        <div className="issue-link-list">
+          {related.map((i) => (
+            <button key={i.id} type="button" className="issue-link" onClick={() => onIssue(i.id)}>
+              <span className="issue-link__icon">{i.icon}</span>
+              <span>
+                <b>{i.nameKo}</b>
+                <br />
+                <small>{i.phenomenon}</small>
+              </span>
+            </button>
+          ))}
+        </div>
+      ) : (
+        <p className="card__empty">
+          이 나라와 교과서에서 특별히 연결하는 환경문제는 정리되어 있지 않아요. 아래 문제 칩을 눌러
+          각 환경문제의 발생 지역을 지구본에서 확인해 보세요.
+        </p>
+      )}
+    </aside>
+  )
+}
+
+function Section({ title, text }: { title: string; text: string }) {
+  return (
+    <div className="card__section">
+      <h3 className="card__h3">{title}</h3>
+      <p className="card__note">{text}</p>
+    </div>
+  )
+}

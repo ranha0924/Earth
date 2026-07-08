@@ -1,21 +1,1062 @@
 {
-  "KR": { "nameKo": "대한민국", "nameEn": "South Korea", "group": "온대", "subtype": "온난습윤", "note": "여름 덥고 습하며 겨울은 춥고 건조" },
-  "JP": { "nameKo": "일본", "nameEn": "Japan", "group": "온대", "subtype": "온난습윤" },
-  "CN": { "nameKo": "중국", "nameEn": "China", "group": "온대", "subtype": "온대겨울건조", "note": "국토가 넓어 건조·냉대 기후도 나타남" },
-  "GB": { "nameKo": "영국", "nameEn": "United Kingdom", "group": "온대", "subtype": "서안해양성", "note": "편서풍과 난류로 연중 온화" },
-  "IT": { "nameKo": "이탈리아", "nameEn": "Italy", "group": "온대", "subtype": "지중해성", "note": "여름 고온건조, 겨울 온난습윤" },
-  "GR": { "nameKo": "그리스", "nameEn": "Greece", "group": "온대", "subtype": "지중해성" },
-  "SA": { "nameKo": "사우디아라비아", "nameEn": "Saudi Arabia", "group": "건조", "subtype": "사막" },
-  "EG": { "nameKo": "이집트", "nameEn": "Egypt", "group": "건조", "subtype": "사막" },
-  "MN": { "nameKo": "몽골", "nameEn": "Mongolia", "group": "건조", "subtype": "스텝" },
-  "BR": { "nameKo": "브라질", "nameEn": "Brazil", "group": "열대", "subtype": "사바나", "note": "아마존 일대는 열대우림" },
-  "ID": { "nameKo": "인도네시아", "nameEn": "Indonesia", "group": "열대", "subtype": "열대우림" },
-  "IN": { "nameKo": "인도", "nameEn": "India", "group": "열대", "subtype": "열대몬순", "note": "계절풍의 영향이 큼" },
-  "KE": { "nameKo": "케냐", "nameEn": "Kenya", "group": "열대", "subtype": "사바나" },
-  "RU": { "nameKo": "러시아", "nameEn": "Russia", "group": "냉대", "subtype": "냉대습윤", "note": "동시베리아는 냉대겨울건조" },
-  "CA": { "nameKo": "캐나다", "nameEn": "Canada", "group": "냉대", "subtype": "냉대습윤" },
-  "GL": { "nameKo": "그린란드", "nameEn": "Greenland", "group": "한대", "subtype": "빙설" },
-  "NP": { "nameKo": "네팔", "nameEn": "Nepal", "group": "고산", "subtype": "고산", "note": "히말라야 산지, 고도에 따라 기후가 달라짐" },
-  "BO": { "nameKo": "볼리비아", "nameEn": "Bolivia", "group": "고산", "subtype": "고산", "note": "안데스 고원(알티플라노)의 서늘한 고산 기후" },
-  "EC": { "nameKo": "에콰도르", "nameEn": "Ecuador", "group": "고산", "subtype": "고산", "note": "적도 부근이지만 안데스 고지대는 연중 서늘함" }
+  "KR": {
+    "nameKo": "대한민국",
+    "nameEn": "South Korea",
+    "group": "온대",
+    "subtype": "온난습윤",
+    "note": "여름 덥고 습하며 겨울은 춥고 건조"
+  },
+  "JP": {
+    "nameKo": "일본",
+    "nameEn": "Japan",
+    "group": "온대",
+    "subtype": "온난습윤"
+  },
+  "CN": {
+    "nameKo": "중국",
+    "nameEn": "China",
+    "group": "온대",
+    "subtype": "온대겨울건조",
+    "note": "국토가 넓어 건조·냉대 기후도 나타남"
+  },
+  "GB": {
+    "nameKo": "영국",
+    "nameEn": "United Kingdom",
+    "group": "온대",
+    "subtype": "서안해양성",
+    "note": "편서풍과 난류로 연중 온화"
+  },
+  "IT": {
+    "nameKo": "이탈리아",
+    "nameEn": "Italy",
+    "group": "온대",
+    "subtype": "지중해성",
+    "note": "여름 고온건조, 겨울 온난습윤"
+  },
+  "GR": {
+    "nameKo": "그리스",
+    "nameEn": "Greece",
+    "group": "온대",
+    "subtype": "지중해성"
+  },
+  "SA": {
+    "nameKo": "사우디아라비아",
+    "nameEn": "Saudi Arabia",
+    "group": "건조",
+    "subtype": "사막"
+  },
+  "EG": {
+    "nameKo": "이집트",
+    "nameEn": "Egypt",
+    "group": "건조",
+    "subtype": "사막"
+  },
+  "MN": {
+    "nameKo": "몽골",
+    "nameEn": "Mongolia",
+    "group": "건조",
+    "subtype": "스텝"
+  },
+  "BR": {
+    "nameKo": "브라질",
+    "nameEn": "Brazil",
+    "group": "열대",
+    "subtype": "사바나",
+    "note": "아마존 일대는 열대우림"
+  },
+  "ID": {
+    "nameKo": "인도네시아",
+    "nameEn": "Indonesia",
+    "group": "열대",
+    "subtype": "열대우림"
+  },
+  "IN": {
+    "nameKo": "인도",
+    "nameEn": "India",
+    "group": "열대",
+    "subtype": "열대몬순",
+    "note": "계절풍의 영향이 큼"
+  },
+  "KE": {
+    "nameKo": "케냐",
+    "nameEn": "Kenya",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "RU": {
+    "nameKo": "러시아",
+    "nameEn": "Russia",
+    "group": "냉대",
+    "subtype": "냉대습윤",
+    "note": "동시베리아는 냉대겨울건조"
+  },
+  "CA": {
+    "nameKo": "캐나다",
+    "nameEn": "Canada",
+    "group": "냉대",
+    "subtype": "냉대습윤"
+  },
+  "GL": {
+    "nameKo": "그린란드",
+    "nameEn": "Greenland",
+    "group": "한대",
+    "subtype": "빙설"
+  },
+  "NP": {
+    "nameKo": "네팔",
+    "nameEn": "Nepal",
+    "group": "고산",
+    "subtype": "고산",
+    "note": "히말라야 산지, 고도에 따라 기후가 달라짐"
+  },
+  "BO": {
+    "nameKo": "볼리비아",
+    "nameEn": "Bolivia",
+    "group": "고산",
+    "subtype": "고산",
+    "note": "안데스 고원(알티플라노)의 서늘한 고산 기후"
+  },
+  "EC": {
+    "nameKo": "에콰도르",
+    "nameEn": "Ecuador",
+    "group": "고산",
+    "subtype": "고산",
+    "note": "적도 부근이지만 안데스 고지대는 연중 서늘함"
+  },
+  "KP": {
+    "nameKo": "북한",
+    "nameEn": "North Korea",
+    "group": "냉대",
+    "subtype": "냉대겨울건조"
+  },
+  "TW": {
+    "nameKo": "타이완",
+    "nameEn": "Taiwan",
+    "group": "온대",
+    "subtype": "온난습윤"
+  },
+  "VN": {
+    "nameKo": "베트남",
+    "nameEn": "Vietnam",
+    "group": "열대",
+    "subtype": "열대몬순"
+  },
+  "LA": {
+    "nameKo": "라오스",
+    "nameEn": "Laos",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "KH": {
+    "nameKo": "캄보디아",
+    "nameEn": "Cambodia",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "TH": {
+    "nameKo": "타이",
+    "nameEn": "Thailand",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "MM": {
+    "nameKo": "미얀마",
+    "nameEn": "Myanmar",
+    "group": "열대",
+    "subtype": "열대몬순"
+  },
+  "MY": {
+    "nameKo": "말레이시아",
+    "nameEn": "Malaysia",
+    "group": "열대",
+    "subtype": "열대우림"
+  },
+  "BN": {
+    "nameKo": "브루나이",
+    "nameEn": "Brunei",
+    "group": "열대",
+    "subtype": "열대우림"
+  },
+  "PH": {
+    "nameKo": "필리핀",
+    "nameEn": "Philippines",
+    "group": "열대",
+    "subtype": "열대몬순"
+  },
+  "TL": {
+    "nameKo": "동티모르",
+    "nameEn": "Timor-Leste",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "PK": {
+    "nameKo": "파키스탄",
+    "nameEn": "Pakistan",
+    "group": "건조",
+    "subtype": "사막"
+  },
+  "BD": {
+    "nameKo": "방글라데시",
+    "nameEn": "Bangladesh",
+    "group": "열대",
+    "subtype": "열대몬순"
+  },
+  "LK": {
+    "nameKo": "스리랑카",
+    "nameEn": "Sri Lanka",
+    "group": "열대",
+    "subtype": "열대우림"
+  },
+  "BT": {
+    "nameKo": "부탄",
+    "nameEn": "Bhutan",
+    "group": "고산",
+    "subtype": "고산"
+  },
+  "AF": {
+    "nameKo": "아프가니스탄",
+    "nameEn": "Afghanistan",
+    "group": "건조",
+    "subtype": "스텝"
+  },
+  "KZ": {
+    "nameKo": "카자흐스탄",
+    "nameEn": "Kazakhstan",
+    "group": "건조",
+    "subtype": "스텝"
+  },
+  "UZ": {
+    "nameKo": "우즈베키스탄",
+    "nameEn": "Uzbekistan",
+    "group": "건조",
+    "subtype": "사막"
+  },
+  "TM": {
+    "nameKo": "투르크메니스탄",
+    "nameEn": "Turkmenistan",
+    "group": "건조",
+    "subtype": "사막"
+  },
+  "KG": {
+    "nameKo": "키르기스스탄",
+    "nameEn": "Kyrgyzstan",
+    "group": "고산",
+    "subtype": "고산"
+  },
+  "TJ": {
+    "nameKo": "타지키스탄",
+    "nameEn": "Tajikistan",
+    "group": "고산",
+    "subtype": "고산"
+  },
+  "IR": {
+    "nameKo": "이란",
+    "nameEn": "Iran",
+    "group": "건조",
+    "subtype": "사막"
+  },
+  "IQ": {
+    "nameKo": "이라크",
+    "nameEn": "Iraq",
+    "group": "건조",
+    "subtype": "사막"
+  },
+  "AE": {
+    "nameKo": "아랍에미리트",
+    "nameEn": "United Arab Emirates",
+    "group": "건조",
+    "subtype": "사막"
+  },
+  "QA": {
+    "nameKo": "카타르",
+    "nameEn": "Qatar",
+    "group": "건조",
+    "subtype": "사막"
+  },
+  "KW": {
+    "nameKo": "쿠웨이트",
+    "nameEn": "Kuwait",
+    "group": "건조",
+    "subtype": "사막"
+  },
+  "OM": {
+    "nameKo": "오만",
+    "nameEn": "Oman",
+    "group": "건조",
+    "subtype": "사막"
+  },
+  "YE": {
+    "nameKo": "예멘",
+    "nameEn": "Yemen",
+    "group": "건조",
+    "subtype": "사막"
+  },
+  "JO": {
+    "nameKo": "요르단",
+    "nameEn": "Jordan",
+    "group": "건조",
+    "subtype": "사막"
+  },
+  "IL": {
+    "nameKo": "이스라엘",
+    "nameEn": "Israel",
+    "group": "온대",
+    "subtype": "지중해성"
+  },
+  "PS": {
+    "nameKo": "팔레스타인",
+    "nameEn": "Palestine",
+    "group": "온대",
+    "subtype": "지중해성"
+  },
+  "LB": {
+    "nameKo": "레바논",
+    "nameEn": "Lebanon",
+    "group": "온대",
+    "subtype": "지중해성"
+  },
+  "SY": {
+    "nameKo": "시리아",
+    "nameEn": "Syria",
+    "group": "건조",
+    "subtype": "스텝"
+  },
+  "TR": {
+    "nameKo": "튀르키예",
+    "nameEn": "Turkey",
+    "group": "온대",
+    "subtype": "지중해성"
+  },
+  "CY": {
+    "nameKo": "키프로스",
+    "nameEn": "Cyprus",
+    "group": "온대",
+    "subtype": "지중해성"
+  },
+  "GE": {
+    "nameKo": "조지아",
+    "nameEn": "Georgia",
+    "group": "온대",
+    "subtype": "온난습윤"
+  },
+  "AM": {
+    "nameKo": "아르메니아",
+    "nameEn": "Armenia",
+    "group": "건조",
+    "subtype": "스텝"
+  },
+  "AZ": {
+    "nameKo": "아제르바이잔",
+    "nameEn": "Azerbaijan",
+    "group": "건조",
+    "subtype": "스텝"
+  },
+  "IE": {
+    "nameKo": "아일랜드",
+    "nameEn": "Ireland",
+    "group": "온대",
+    "subtype": "서안해양성"
+  },
+  "FR": {
+    "nameKo": "프랑스",
+    "nameEn": "France",
+    "group": "온대",
+    "subtype": "서안해양성"
+  },
+  "DE": {
+    "nameKo": "독일",
+    "nameEn": "Germany",
+    "group": "온대",
+    "subtype": "서안해양성"
+  },
+  "NL": {
+    "nameKo": "네덜란드",
+    "nameEn": "Netherlands",
+    "group": "온대",
+    "subtype": "서안해양성"
+  },
+  "BE": {
+    "nameKo": "벨기에",
+    "nameEn": "Belgium",
+    "group": "온대",
+    "subtype": "서안해양성"
+  },
+  "LU": {
+    "nameKo": "룩셈부르크",
+    "nameEn": "Luxembourg",
+    "group": "온대",
+    "subtype": "서안해양성"
+  },
+  "CH": {
+    "nameKo": "스위스",
+    "nameEn": "Switzerland",
+    "group": "온대",
+    "subtype": "서안해양성"
+  },
+  "AT": {
+    "nameKo": "오스트리아",
+    "nameEn": "Austria",
+    "group": "온대",
+    "subtype": "서안해양성"
+  },
+  "DK": {
+    "nameKo": "덴마크",
+    "nameEn": "Denmark",
+    "group": "온대",
+    "subtype": "서안해양성"
+  },
+  "NO": {
+    "nameKo": "노르웨이",
+    "nameEn": "Norway",
+    "group": "온대",
+    "subtype": "서안해양성"
+  },
+  "SE": {
+    "nameKo": "스웨덴",
+    "nameEn": "Sweden",
+    "group": "냉대",
+    "subtype": "냉대습윤"
+  },
+  "FI": {
+    "nameKo": "핀란드",
+    "nameEn": "Finland",
+    "group": "냉대",
+    "subtype": "냉대습윤"
+  },
+  "IS": {
+    "nameKo": "아이슬란드",
+    "nameEn": "Iceland",
+    "group": "한대",
+    "subtype": "툰드라"
+  },
+  "EE": {
+    "nameKo": "에스토니아",
+    "nameEn": "Estonia",
+    "group": "냉대",
+    "subtype": "냉대습윤"
+  },
+  "LV": {
+    "nameKo": "라트비아",
+    "nameEn": "Latvia",
+    "group": "냉대",
+    "subtype": "냉대습윤"
+  },
+  "LT": {
+    "nameKo": "리투아니아",
+    "nameEn": "Lithuania",
+    "group": "냉대",
+    "subtype": "냉대습윤"
+  },
+  "PL": {
+    "nameKo": "폴란드",
+    "nameEn": "Poland",
+    "group": "냉대",
+    "subtype": "냉대습윤"
+  },
+  "CZ": {
+    "nameKo": "체코",
+    "nameEn": "Czechia",
+    "group": "온대",
+    "subtype": "서안해양성"
+  },
+  "SK": {
+    "nameKo": "슬로바키아",
+    "nameEn": "Slovakia",
+    "group": "냉대",
+    "subtype": "냉대습윤"
+  },
+  "HU": {
+    "nameKo": "헝가리",
+    "nameEn": "Hungary",
+    "group": "냉대",
+    "subtype": "냉대습윤"
+  },
+  "PT": {
+    "nameKo": "포르투갈",
+    "nameEn": "Portugal",
+    "group": "온대",
+    "subtype": "지중해성"
+  },
+  "ES": {
+    "nameKo": "에스파냐",
+    "nameEn": "Spain",
+    "group": "온대",
+    "subtype": "지중해성"
+  },
+  "SI": {
+    "nameKo": "슬로베니아",
+    "nameEn": "Slovenia",
+    "group": "온대",
+    "subtype": "서안해양성"
+  },
+  "HR": {
+    "nameKo": "크로아티아",
+    "nameEn": "Croatia",
+    "group": "온대",
+    "subtype": "지중해성"
+  },
+  "BA": {
+    "nameKo": "보스니아헤르체고비나",
+    "nameEn": "Bosnia and Herz.",
+    "group": "온대",
+    "subtype": "서안해양성"
+  },
+  "RS": {
+    "nameKo": "세르비아",
+    "nameEn": "Serbia",
+    "group": "온대",
+    "subtype": "온난습윤"
+  },
+  "ME": {
+    "nameKo": "몬테네그로",
+    "nameEn": "Montenegro",
+    "group": "온대",
+    "subtype": "지중해성"
+  },
+  "XK": {
+    "nameKo": "코소보",
+    "nameEn": "Kosovo",
+    "group": "냉대",
+    "subtype": "냉대습윤"
+  },
+  "MK": {
+    "nameKo": "북마케도니아",
+    "nameEn": "Macedonia",
+    "group": "온대",
+    "subtype": "지중해성"
+  },
+  "AL": {
+    "nameKo": "알바니아",
+    "nameEn": "Albania",
+    "group": "온대",
+    "subtype": "지중해성"
+  },
+  "BG": {
+    "nameKo": "불가리아",
+    "nameEn": "Bulgaria",
+    "group": "냉대",
+    "subtype": "냉대습윤"
+  },
+  "RO": {
+    "nameKo": "루마니아",
+    "nameEn": "Romania",
+    "group": "냉대",
+    "subtype": "냉대습윤"
+  },
+  "MD": {
+    "nameKo": "몰도바",
+    "nameEn": "Moldova",
+    "group": "냉대",
+    "subtype": "냉대습윤"
+  },
+  "UA": {
+    "nameKo": "우크라이나",
+    "nameEn": "Ukraine",
+    "group": "냉대",
+    "subtype": "냉대습윤"
+  },
+  "BY": {
+    "nameKo": "벨라루스",
+    "nameEn": "Belarus",
+    "group": "냉대",
+    "subtype": "냉대습윤"
+  },
+  "LY": {
+    "nameKo": "리비아",
+    "nameEn": "Libya",
+    "group": "건조",
+    "subtype": "사막"
+  },
+  "TN": {
+    "nameKo": "튀니지",
+    "nameEn": "Tunisia",
+    "group": "온대",
+    "subtype": "지중해성"
+  },
+  "DZ": {
+    "nameKo": "알제리",
+    "nameEn": "Algeria",
+    "group": "건조",
+    "subtype": "사막"
+  },
+  "MA": {
+    "nameKo": "모로코",
+    "nameEn": "Morocco",
+    "group": "온대",
+    "subtype": "지중해성"
+  },
+  "EH": {
+    "nameKo": "서사하라",
+    "nameEn": "W. Sahara",
+    "group": "건조",
+    "subtype": "사막"
+  },
+  "MR": {
+    "nameKo": "모리타니",
+    "nameEn": "Mauritania",
+    "group": "건조",
+    "subtype": "사막"
+  },
+  "ML": {
+    "nameKo": "말리",
+    "nameEn": "Mali",
+    "group": "건조",
+    "subtype": "스텝"
+  },
+  "NE": {
+    "nameKo": "니제르",
+    "nameEn": "Niger",
+    "group": "건조",
+    "subtype": "스텝"
+  },
+  "TD": {
+    "nameKo": "차드",
+    "nameEn": "Chad",
+    "group": "건조",
+    "subtype": "스텝"
+  },
+  "SD": {
+    "nameKo": "수단",
+    "nameEn": "Sudan",
+    "group": "건조",
+    "subtype": "사막"
+  },
+  "SS": {
+    "nameKo": "남수단",
+    "nameEn": "S. Sudan",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "ET": {
+    "nameKo": "에티오피아",
+    "nameEn": "Ethiopia",
+    "group": "고산",
+    "subtype": "고산"
+  },
+  "ER": {
+    "nameKo": "에리트레아",
+    "nameEn": "Eritrea",
+    "group": "건조",
+    "subtype": "사막"
+  },
+  "DJ": {
+    "nameKo": "지부티",
+    "nameEn": "Djibouti",
+    "group": "건조",
+    "subtype": "사막"
+  },
+  "SO": {
+    "nameKo": "소말리아",
+    "nameEn": "Somalia",
+    "group": "건조",
+    "subtype": "스텝"
+  },
+  "UG": {
+    "nameKo": "우간다",
+    "nameEn": "Uganda",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "RW": {
+    "nameKo": "르완다",
+    "nameEn": "Rwanda",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "BI": {
+    "nameKo": "부룬디",
+    "nameEn": "Burundi",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "TZ": {
+    "nameKo": "탄자니아",
+    "nameEn": "Tanzania",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "SN": {
+    "nameKo": "세네갈",
+    "nameEn": "Senegal",
+    "group": "건조",
+    "subtype": "스텝"
+  },
+  "GM": {
+    "nameKo": "감비아",
+    "nameEn": "Gambia",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "GW": {
+    "nameKo": "기니비사우",
+    "nameEn": "Guinea-Bissau",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "GN": {
+    "nameKo": "기니",
+    "nameEn": "Guinea",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "SL": {
+    "nameKo": "시에라리온",
+    "nameEn": "Sierra Leone",
+    "group": "열대",
+    "subtype": "열대몬순"
+  },
+  "LR": {
+    "nameKo": "라이베리아",
+    "nameEn": "Liberia",
+    "group": "열대",
+    "subtype": "열대몬순"
+  },
+  "CI": {
+    "nameKo": "코트디부아르",
+    "nameEn": "Côte d'Ivoire",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "GH": {
+    "nameKo": "가나",
+    "nameEn": "Ghana",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "TG": {
+    "nameKo": "토고",
+    "nameEn": "Togo",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "BJ": {
+    "nameKo": "베냉",
+    "nameEn": "Benin",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "BF": {
+    "nameKo": "부르키나파소",
+    "nameEn": "Burkina Faso",
+    "group": "건조",
+    "subtype": "스텝"
+  },
+  "NG": {
+    "nameKo": "나이지리아",
+    "nameEn": "Nigeria",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "CM": {
+    "nameKo": "카메룬",
+    "nameEn": "Cameroon",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "CF": {
+    "nameKo": "중앙아프리카공화국",
+    "nameEn": "Central African Rep.",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "CG": {
+    "nameKo": "콩고공화국",
+    "nameEn": "Congo",
+    "group": "열대",
+    "subtype": "열대우림"
+  },
+  "CD": {
+    "nameKo": "콩고민주공화국",
+    "nameEn": "Dem. Rep. Congo",
+    "group": "열대",
+    "subtype": "열대우림"
+  },
+  "GA": {
+    "nameKo": "가봉",
+    "nameEn": "Gabon",
+    "group": "열대",
+    "subtype": "열대우림"
+  },
+  "GQ": {
+    "nameKo": "적도기니",
+    "nameEn": "Eq. Guinea",
+    "group": "열대",
+    "subtype": "열대우림"
+  },
+  "AO": {
+    "nameKo": "앙골라",
+    "nameEn": "Angola",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "ZM": {
+    "nameKo": "잠비아",
+    "nameEn": "Zambia",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "MW": {
+    "nameKo": "말라위",
+    "nameEn": "Malawi",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "MZ": {
+    "nameKo": "모잠비크",
+    "nameEn": "Mozambique",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "MG": {
+    "nameKo": "마다가스카르",
+    "nameEn": "Madagascar",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "ZW": {
+    "nameKo": "짐바브웨",
+    "nameEn": "Zimbabwe",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "BW": {
+    "nameKo": "보츠와나",
+    "nameEn": "Botswana",
+    "group": "건조",
+    "subtype": "스텝"
+  },
+  "NA": {
+    "nameKo": "나미비아",
+    "nameEn": "Namibia",
+    "group": "건조",
+    "subtype": "사막"
+  },
+  "ZA": {
+    "nameKo": "남아프리카공화국",
+    "nameEn": "South Africa",
+    "group": "온대",
+    "subtype": "지중해성"
+  },
+  "LS": {
+    "nameKo": "레소토",
+    "nameEn": "Lesotho",
+    "group": "온대",
+    "subtype": "온대겨울건조"
+  },
+  "SZ": {
+    "nameKo": "에스와티니",
+    "nameEn": "eSwatini",
+    "group": "온대",
+    "subtype": "온대겨울건조"
+  },
+  "TF": {
+    "nameKo": "프랑스령 남방·남극",
+    "nameEn": "Fr. S. Antarctic Lands",
+    "group": "한대",
+    "subtype": "툰드라"
+  },
+  "US": {
+    "nameKo": "미국",
+    "nameEn": "United States of America",
+    "group": "온대",
+    "subtype": "온난습윤"
+  },
+  "MX": {
+    "nameKo": "멕시코",
+    "nameEn": "Mexico",
+    "group": "건조",
+    "subtype": "스텝"
+  },
+  "GT": {
+    "nameKo": "과테말라",
+    "nameEn": "Guatemala",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "BZ": {
+    "nameKo": "벨리즈",
+    "nameEn": "Belize",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "HN": {
+    "nameKo": "온두라스",
+    "nameEn": "Honduras",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "SV": {
+    "nameKo": "엘살바도르",
+    "nameEn": "El Salvador",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "NI": {
+    "nameKo": "니카라과",
+    "nameEn": "Nicaragua",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "CR": {
+    "nameKo": "코스타리카",
+    "nameEn": "Costa Rica",
+    "group": "열대",
+    "subtype": "열대우림"
+  },
+  "PA": {
+    "nameKo": "파나마",
+    "nameEn": "Panama",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "CU": {
+    "nameKo": "쿠바",
+    "nameEn": "Cuba",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "JM": {
+    "nameKo": "자메이카",
+    "nameEn": "Jamaica",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "HT": {
+    "nameKo": "아이티",
+    "nameEn": "Haiti",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "DO": {
+    "nameKo": "도미니카공화국",
+    "nameEn": "Dominican Rep.",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "BS": {
+    "nameKo": "바하마",
+    "nameEn": "Bahamas",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "PR": {
+    "nameKo": "푸에르토리코",
+    "nameEn": "Puerto Rico",
+    "group": "열대",
+    "subtype": "열대몬순"
+  },
+  "TT": {
+    "nameKo": "트리니다드토바고",
+    "nameEn": "Trinidad and Tobago",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "CO": {
+    "nameKo": "콜롬비아",
+    "nameEn": "Colombia",
+    "group": "열대",
+    "subtype": "열대우림"
+  },
+  "VE": {
+    "nameKo": "베네수엘라",
+    "nameEn": "Venezuela",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "GY": {
+    "nameKo": "가이아나",
+    "nameEn": "Guyana",
+    "group": "열대",
+    "subtype": "열대우림"
+  },
+  "SR": {
+    "nameKo": "수리남",
+    "nameEn": "Suriname",
+    "group": "열대",
+    "subtype": "열대우림"
+  },
+  "PE": {
+    "nameKo": "페루",
+    "nameEn": "Peru",
+    "group": "고산",
+    "subtype": "고산"
+  },
+  "PY": {
+    "nameKo": "파라과이",
+    "nameEn": "Paraguay",
+    "group": "온대",
+    "subtype": "온난습윤"
+  },
+  "UY": {
+    "nameKo": "우루과이",
+    "nameEn": "Uruguay",
+    "group": "온대",
+    "subtype": "온난습윤"
+  },
+  "AR": {
+    "nameKo": "아르헨티나",
+    "nameEn": "Argentina",
+    "group": "온대",
+    "subtype": "온난습윤"
+  },
+  "CL": {
+    "nameKo": "칠레",
+    "nameEn": "Chile",
+    "group": "온대",
+    "subtype": "지중해성"
+  },
+  "FK": {
+    "nameKo": "포클랜드 제도",
+    "nameEn": "Falkland Is.",
+    "group": "한대",
+    "subtype": "툰드라"
+  },
+  "AU": {
+    "nameKo": "오스트레일리아",
+    "nameEn": "Australia",
+    "group": "건조",
+    "subtype": "사막"
+  },
+  "NZ": {
+    "nameKo": "뉴질랜드",
+    "nameEn": "New Zealand",
+    "group": "온대",
+    "subtype": "서안해양성"
+  },
+  "PG": {
+    "nameKo": "파푸아뉴기니",
+    "nameEn": "Papua New Guinea",
+    "group": "열대",
+    "subtype": "열대우림"
+  },
+  "SB": {
+    "nameKo": "솔로몬 제도",
+    "nameEn": "Solomon Is.",
+    "group": "열대",
+    "subtype": "열대우림"
+  },
+  "VU": {
+    "nameKo": "바누아투",
+    "nameEn": "Vanuatu",
+    "group": "열대",
+    "subtype": "열대우림"
+  },
+  "FJ": {
+    "nameKo": "피지",
+    "nameEn": "Fiji",
+    "group": "열대",
+    "subtype": "열대우림"
+  },
+  "NC": {
+    "nameKo": "누벨칼레도니아",
+    "nameEn": "New Caledonia",
+    "group": "열대",
+    "subtype": "사바나"
+  },
+  "SG": {
+    "nameKo": "싱가포르",
+    "nameEn": "Singapore",
+    "group": "열대",
+    "subtype": "열대우림"
+  }
 }

@@ -4,9 +4,17 @@ import { useAppStore } from '../store'
 import { featureToIso } from './featureIso'
 import { climateData, getCountryClimate } from '../climate/data'
 import { colorForGroup } from '../climate/types'
+import { getReligion } from '../culture/data'
+import { colorForReligion } from '../culture/types'
+import { ISSUE_BY_ID } from '../environment/data'
+import { FESTIVALS } from '../culture/festivals'
 
 const TEXTURE_URL = `${import.meta.env.BASE_URL}textures/koppen.png`
 const GEOJSON_URL = `${import.meta.env.BASE_URL}data/countries.geojson`
+
+const TRANSPARENT = 'rgba(0,0,0,0)'
+const NEUTRAL = 'rgba(30,44,68,0.82)'
+const DIM = 'rgba(24,34,52,0.7)'
 
 export function GlobeView() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -21,7 +29,7 @@ export function GlobeView() {
       .globeImageUrl(TEXTURE_URL)
       .backgroundColor('#0b1a2b')
       .polygonAltitude(0.006)
-      .polygonCapColor(() => 'rgba(0,0,0,0)')
+      .polygonCapColor(() => TRANSPARENT)
       .polygonSideColor(() => 'rgba(0,0,0,0)')
       .polygonStrokeColor(() => 'rgba(255,255,255,0.15)')
       .onPolygonClick((feat: object) => {
@@ -44,31 +52,105 @@ export function GlobeView() {
     }
     onResize()
     window.addEventListener('resize', onResize)
+    // 컨테이너 크기 변화(모드 전환으로 카드가 열리고 닫힐 때)에도 반응 — 캔버스가 카드를 덮지 않도록.
+    const ro = new ResizeObserver(onResize)
+    ro.observe(el)
     return () => {
       cancelled = true
       window.removeEventListener('resize', onResize)
+      ro.disconnect()
       globe._destructor?.()
       el.innerHTML = ''
     }
   }, [])
 
-  // 기후 필터 변경 시 폴리곤 강조 갱신.
+  const mode = useAppStore((s) => s.mode)
   const climateFilter = useAppStore((s) => s.climateFilter)
+  const activeIssue = useAppStore((s) => s.activeIssue)
+  const cultureLayer = useAppStore((s) => s.cultureLayer)
+  const religionFilter = useAppStore((s) => s.religionFilter)
+  const selectedIso = useAppStore((s) => s.selectedIso)
+
+  // 폴리곤 색칠 갱신 (모드별)
   useEffect(() => {
     const globe = globeRef.current
     if (!globe) return
-    globe
-      .polygonCapColor((feat: object) => {
-        if (!climateFilter) return 'rgba(0,0,0,0)'
-        const c = getCountryClimate(climateData, featureToIso(feat))
-        return c?.group === climateFilter ? `${colorForGroup(climateFilter)}cc` : 'rgba(0,0,0,0)'
-      })
-      .polygonStrokeColor((feat: object) => {
+
+    const capColor = (feat: object): string => {
+      const iso = featureToIso(feat)
+      if (mode === 'climate') {
+        if (!climateFilter) return TRANSPARENT
+        const c = getCountryClimate(climateData, iso)
+        return c?.group === climateFilter ? `${colorForGroup(climateFilter)}cc` : TRANSPARENT
+      }
+      if (mode === 'environment') {
+        if (!activeIssue) return NEUTRAL
+        const affected = ISSUE_BY_ID[activeIssue].countryIsos.includes(iso ?? '')
+        return affected ? 'rgba(248,113,113,0.9)' : DIM
+      }
+      if (mode === 'culture' && cultureLayer === 'religion') {
+        const r = getReligion(iso)
+        if (!r) return NEUTRAL
+        if (religionFilter && r !== religionFilter) return DIM
+        return `${colorForReligion(r)}e6`
+      }
+      // culture-festival, quiz: 중립 채움
+      return NEUTRAL
+    }
+
+    const strokeColor = (feat: object): string => {
+      const iso = featureToIso(feat)
+      if (iso && iso === selectedIso) return '#ffffff'
+      if (mode === 'climate') {
         if (!climateFilter) return 'rgba(255,255,255,0.15)'
-        const c = getCountryClimate(climateData, featureToIso(feat))
+        const c = getCountryClimate(climateData, iso)
         return c?.group === climateFilter ? '#ffffff' : 'rgba(255,255,255,0.05)'
+      }
+      return 'rgba(255,255,255,0.18)'
+    }
+
+    globe.polygonCapColor(capColor).polygonStrokeColor(strokeColor)
+  }, [mode, climateFilter, activeIssue, cultureLayer, religionFilter, selectedIso])
+
+  // 환경문제 지역 링
+  useEffect(() => {
+    const globe = globeRef.current
+    if (!globe) return
+    const rings =
+      mode === 'environment' && activeIssue
+        ? ISSUE_BY_ID[activeIssue].regions.map((r) => ({ lat: r.lat, lng: r.lng }))
+        : []
+    globe
+      .ringsData(rings)
+      .ringColor(() => (t: number) => `rgba(248,113,113,${Math.sqrt(1 - t)})`)
+      .ringMaxRadius(6)
+      .ringPropagationSpeed(1.6)
+      .ringRepeatPeriod(1100)
+  }, [mode, activeIssue])
+
+  // 문화 모드 축제 핀
+  useEffect(() => {
+    const globe = globeRef.current
+    if (!globe) return
+    const show = mode === 'culture' && cultureLayer === 'festival'
+    globe
+      .htmlElementsData(show ? FESTIVALS : [])
+      .htmlLat((d: object) => (d as (typeof FESTIVALS)[number]).lat)
+      .htmlLng((d: object) => (d as (typeof FESTIVALS)[number]).lng)
+      .htmlAltitude(0.02)
+      .htmlElement((d: object) => {
+        const f = d as (typeof FESTIVALS)[number]
+        const el = document.createElement('button')
+        el.className = 'festival-pin'
+        el.type = 'button'
+        el.innerHTML = `<span class="festival-pin__icon">🎉</span><span class="festival-pin__label">${f.nameKo}</span>`
+        el.onclick = (ev) => {
+          ev.stopPropagation()
+          useAppStore.getState().selectFestival(f.id)
+        }
+        return el
       })
-  }, [climateFilter])
+  }, [mode, cultureLayer])
 
   return (
     <div className="globe" style={{ position: 'relative' }}>
