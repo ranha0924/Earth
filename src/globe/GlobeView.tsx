@@ -143,6 +143,11 @@ export function GlobeView() {
       ro.disconnect()
       globe._destructor?.()
       el.innerHTML = ''
+      // 해칭 material/텍스처 해제 (StrictMode 이중 마운트 시 GPU 리소스 누수 방지)
+      const m = hatchRef.current as THREE.MeshBasicMaterial | null
+      m?.map?.dispose()
+      m?.dispose()
+      hatchRef.current = null
     }
   }, [])
 
