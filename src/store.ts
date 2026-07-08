@@ -46,7 +46,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   toggleClimateFilter: (g) => set({ climateFilter: get().climateFilter === g ? null : g }),
   setEnvironmentTab: (environmentTab) => set({ environmentTab, selectedIso: null, activeIssue: null }),
   setActiveIssue: (activeIssue) => set({ activeIssue }),
-  setCultureLayer: (cultureLayer) => set({ cultureLayer, selectedFestival: null }),
+  setCultureLayer: (cultureLayer) => set({ cultureLayer, selectedFestival: null, selectedIso: null }),
   toggleReligionFilter: (r) => set({ religionFilter: get().religionFilter === r ? null : r }),
   selectFestival: (selectedFestival) => set({ selectedFestival }),
 }))
