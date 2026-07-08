@@ -74,7 +74,7 @@ export const FESTIVALS: Festival[] = [
     countryNameKo: '페루',
     lat: -13.52,
     lng: -71.97,
-    season: '6월 24일 동지',
+    season: '6월 24일 (남반구 동지 무렵)',
     description:
       '옛 잉카 제국의 수도 쿠스코에서 태양신(인티)에게 감사를 올리는 축제. 남반구의 동지에 맞춰 태양이 다시 길어지기를 기원한다.',
     linkPoint:
