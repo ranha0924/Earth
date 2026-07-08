@@ -10,16 +10,16 @@ export interface ReligionInfo {
   color: string
 }
 
-// 종교 8분류와 지정 색. 범례·지구본 하이라이트 기준.
+// 종교 8분류 지정 색. 빈티지 아틀라스 톤 — 채도 낮은 지도책 색. 범례·지구본 면 채우기 기준.
 export const RELIGIONS: ReligionInfo[] = [
-  { id: 'catholic', nameKo: '가톨릭교', color: '#7b6cf0' },
-  { id: 'protestant', nameKo: '개신교', color: '#4cc9f0' },
-  { id: 'orthodox', nameKo: '정교회', color: '#f0a04c' },
-  { id: 'islam', nameKo: '이슬람교', color: '#2fb37a' },
-  { id: 'hindu', nameKo: '힌두교', color: '#f0c04c' },
-  { id: 'buddhist', nameKo: '불교', color: '#f0714c' },
-  { id: 'jewish', nameKo: '유대교', color: '#8fa0c0' },
-  { id: 'other', nameKo: '기타·토속·무종교', color: '#9aa4bd' },
+  { id: 'catholic', nameKo: '가톨릭교', color: '#7d6b93' }, // 머트 바이올렛
+  { id: 'protestant', nameKo: '개신교', color: '#6e8ca8' }, // 슬레이트 블루
+  { id: 'orthodox', nameKo: '정교회', color: '#c08a4b' }, // 번트 옥커
+  { id: 'islam', nameKo: '이슬람교', color: '#5f8069' }, // 세이지 그린
+  { id: 'hindu', nameKo: '힌두교', color: '#c8a24b' }, // 골드 옥커
+  { id: 'buddhist', nameKo: '불교', color: '#bd7350' }, // 테라코타
+  { id: 'jewish', nameKo: '유대교', color: '#8f9aae' }, // 페일 블루그레이
+  { id: 'other', nameKo: '기타·토속·무종교', color: '#a9a291' }, // 카키 그레이
 ]
 
 export function colorForReligion(id: ReligionId): string {

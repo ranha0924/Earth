@@ -1,6 +1,7 @@
 import { useAppStore } from '../../store'
 import { ISSUE_BY_ID, TREATY_BY_ID, ISSUES } from '../../environment/data'
 import { countryNameKo } from '../../data/countryNames'
+import { Icon } from '../Icon'
 import type { IssueId, TreatyId } from '../../environment/types'
 
 export function EnvironmentCard() {
@@ -74,12 +75,14 @@ function IssueDetail({
   return (
     <aside className="card" aria-label={`${issue.nameKo} 정보`}>
       <button type="button" className="card__close" onClick={onClose}>
-        닫기 ✕
+        닫기 <Icon name="close" size={12} />
       </button>
       <h2 className="card__title">
-        {issue.icon} {issue.nameKo}
+        <Icon name={issue.id} size={20} /> {issue.nameKo}
       </h2>
-      <p className="cross-border">🌐 국경을 넘는 전 지구적 문제 — 국제 협력이 필요합니다.</p>
+      <p className="cross-border">
+        <Icon name="globe" size={15} /> 국경을 넘는 전 지구적 문제 — 국제 협력이 필요합니다.
+      </p>
       <Section title="원인" text={issue.cause} />
       <Section title="현상" text={issue.phenomenon} />
       <Section title="영향" text={issue.effect} />
@@ -90,7 +93,7 @@ function IssueDetail({
           <div className="badge-row">
             {issue.treaties.map((tid) => (
               <button key={tid} type="button" className="treaty-badge" onClick={() => onTreatyJump(tid)}>
-                🤝 {TREATY_BY_ID[tid].nameKo} ({TREATY_BY_ID[tid].year}) →
+                <Icon name="treaty" size={13} /> {TREATY_BY_ID[tid].nameKo} · Fig. {TREATY_BY_ID[tid].year}
               </button>
             ))}
           </div>
@@ -106,7 +109,7 @@ function IssueDetail({
         <div className="badge-row">
           {issue.regions.map((r) => (
             <span key={r.nameKo} className="region-badge">
-              📍 {r.nameKo}
+              <Icon name="location" size={12} /> {r.nameKo}
             </span>
           ))}
         </div>
@@ -120,10 +123,11 @@ function TreatyDetail({ id, onClose }: { id: TreatyId; onClose: () => void }) {
   return (
     <aside className="card" aria-label={`${t.nameKo} 정보`}>
       <button type="button" className="card__close" onClick={onClose}>
-        닫기 ✕
+        닫기 <Icon name="close" size={12} />
       </button>
       <h2 className="card__title">
-        🤝 {t.nameKo} <span className="card__title-en">{t.year}</span>
+        <Icon name="treaty" size={19} /> {t.nameKo}
+        <span className="stamp">Fig. {t.year}</span>
       </h2>
       <div className="card__row">
         <span className="treaty-target">대상: {t.target}</span>
@@ -131,7 +135,7 @@ function TreatyDetail({ id, onClose }: { id: TreatyId; onClose: () => void }) {
       <Section title="핵심 내용" text={t.summary} />
       {t.confusion && (
         <div className="confusion">
-          <b>⚠️ 헷갈리기 쉬운 포인트</b>
+          <b><Icon name="warning" size={13} /> 헷갈리기 쉬운 포인트</b>
           <p>{t.confusion}</p>
         </div>
       )}
@@ -157,14 +161,14 @@ function CountryEnvironment({
   return (
     <aside className="card" aria-label="나라별 환경문제">
       <button type="button" className="card__close" onClick={onClose}>
-        닫기 ✕
+        닫기 <Icon name="close" size={12} />
       </button>
       <h2 className="card__title">{countryNameKo(iso)}<span className="card__title-en">관련 환경문제</span></h2>
       {related.length > 0 ? (
         <div className="issue-link-list">
           {related.map((i) => (
             <button key={i.id} type="button" className="issue-link" onClick={() => onIssue(i.id)}>
-              <span className="issue-link__icon">{i.icon}</span>
+              <span className="issue-link__icon"><Icon name={i.id} size={20} /></span>
               <span>
                 <b>{i.nameKo}</b>
                 <br />

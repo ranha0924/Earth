@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import * as THREE from 'three'
 import Globe, { type GlobeInstance } from 'globe.gl'
 import { useAppStore } from '../store'
 import { featureToIso } from './featureIso'
@@ -10,14 +11,58 @@ import { ISSUE_BY_ID } from '../environment/data'
 import { FESTIVALS, FESTIVAL_BY_ID } from '../culture/festivals'
 import type { TreatyId } from '../environment/types'
 
-const TEXTURE_URL = `${import.meta.env.BASE_URL}textures/koppen.png`
 const GEOJSON_URL = `${import.meta.env.BASE_URL}data/countries.geojson`
 
-const TRANSPARENT = 'rgba(0,0,0,0)'
-const NEUTRAL = 'rgba(30,44,68,0.82)'
-const DIM = 'rgba(24,34,52,0.7)'
+// 빈티지 아틀라스 팔레트 (App.css 토큰과 일치)
+const PAPER = '#f5f0e4'
+const OCEAN = '#ece1c6'
+const LAND = '#d6c9a8' // 중립 육지 (미매핑국·기타)
+const LAND_DIM = '#ddd4bd' // 흐림 처리
+const INK_STROKE = 'rgba(26,46,42,0.6)'
+const INK_STROKE_FAINT = 'rgba(26,46,42,0.28)'
+const VERMILLION = '#c8452c'
 
 const FLY_MS = 900
+
+// 30°(위) / 20°(경) 간격 경위선 — pathsData로 직접 그려 색·굵기 제어
+function buildGraticules(): [number, number][][] {
+  const paths: [number, number][][] = []
+  for (let lng = -180; lng < 180; lng += 20) {
+    const line: [number, number][] = []
+    for (let lat = -80; lat <= 80; lat += 4) line.push([lat, lng])
+    paths.push(line)
+  }
+  for (let lat = -60; lat <= 60; lat += 30) {
+    const line: [number, number][] = []
+    for (let lng = -180; lng <= 180; lng += 4) line.push([lat, lng])
+    paths.push(line)
+  }
+  return paths
+}
+const GRATICULES = buildGraticules()
+
+// 선택 지역용 사선 해칭 텍스처 (크림 바탕 + 버밀리언 대각선)
+function makeHatchMaterial(): THREE.Material {
+  const s = 24
+  const cvs = document.createElement('canvas')
+  cvs.width = cvs.height = s
+  const ctx = cvs.getContext('2d')!
+  ctx.fillStyle = PAPER
+  ctx.fillRect(0, 0, s, s)
+  ctx.strokeStyle = VERMILLION
+  ctx.lineWidth = 3
+  ctx.lineCap = 'round'
+  for (let o = -s; o < s * 2; o += 8) {
+    ctx.beginPath()
+    ctx.moveTo(o, 0)
+    ctx.lineTo(o + s, s)
+    ctx.stroke()
+  }
+  const tex = new THREE.CanvasTexture(cvs)
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping
+  tex.repeat.set(16, 16)
+  return new THREE.MeshBasicMaterial({ map: tex })
+}
 
 // 기후 대분류별 대표 지역 (범례 클릭 시 이동)
 const CLIMATE_FOCUS: Record<ClimateGroup, { lat: number; lng: number; altitude: number }> = {
@@ -45,19 +90,30 @@ const TREATY_FOCUS: Record<TreatyId, { lat: number; lng: number }> = {
 export function GlobeView() {
   const containerRef = useRef<HTMLDivElement>(null)
   const globeRef = useRef<GlobeInstance | null>(null)
+  const hatchRef = useRef<THREE.Material | null>(null)
   const [loadError, setLoadError] = useState(false)
 
   // 마운트: 지구본 생성 + 국경 로딩. 한 번만.
   useEffect(() => {
     const el = containerRef.current
     if (!el) return
+    hatchRef.current = makeHatchMaterial()
     const globe = new Globe(el)
-      .globeImageUrl(TEXTURE_URL)
-      .backgroundColor('#0b1a2b')
-      .polygonAltitude(0.006)
-      .polygonCapColor(() => TRANSPARENT)
-      .polygonSideColor(() => 'rgba(0,0,0,0)')
-      .polygonStrokeColor(() => 'rgba(255,255,255,0.15)')
+      .backgroundColor(PAPER)
+      .showAtmosphere(false)
+      .globeMaterial(new THREE.MeshBasicMaterial({ color: OCEAN })) // 크림 바다, 텍스처 없음
+      // 경위선 (직접 그림)
+      .pathsData(GRATICULES)
+      .pathPointLat((p) => (p as [number, number])[0])
+      .pathPointLng((p) => (p as [number, number])[1])
+      .pathColor(() => INK_STROKE_FAINT)
+      .pathStroke(0.5)
+      .pathTransitionDuration(0)
+      // 육지 폴리곤
+      .polygonAltitude(0.008)
+      .polygonCapColor(() => LAND)
+      .polygonSideColor(() => 'rgba(26,46,42,0.12)')
+      .polygonStrokeColor(() => INK_STROKE)
       .onPolygonClick((feat: object) => {
         useAppStore.getState().selectCountry(featureToIso(feat))
       })
@@ -103,7 +159,7 @@ export function GlobeView() {
     globeRef.current?.pointOfView({ lat, lng, altitude }, FLY_MS)
   }
 
-  // 폴리곤 색칠 갱신 (모드별)
+  // 폴리곤 색칠 갱신 (모드별) — 텍스처 없이 단색 면 채우기(choropleth)
   useEffect(() => {
     const globe = globeRef.current
     if (!globe) return
@@ -111,37 +167,43 @@ export function GlobeView() {
     const capColor = (feat: object): string => {
       const iso = featureToIso(feat)
       if (mode === 'climate') {
-        if (!climateFilter) return TRANSPARENT
+        // 텍스처 대신 나라별 대표 기후로 항상 색칠
         const c = getCountryClimate(climateData, iso)
-        return c?.group === climateFilter ? `${colorForGroup(climateFilter)}cc` : TRANSPARENT
+        if (!c) return LAND
+        if (climateFilter && c.group !== climateFilter) return LAND_DIM
+        return colorForGroup(c.group)
       }
       if (mode === 'environment') {
-        if (!activeIssue) return NEUTRAL
+        if (!activeIssue) return LAND
         const affected = ISSUE_BY_ID[activeIssue].countryIsos.includes(iso ?? '')
-        return affected ? 'rgba(248,113,113,0.9)' : DIM
+        return affected ? VERMILLION : LAND_DIM
       }
       if (mode === 'culture' && cultureLayer === 'religion') {
         const r = getReligion(iso)
-        if (!r) return NEUTRAL
-        if (religionFilter && r !== religionFilter) return DIM
-        return `${colorForReligion(r)}e6`
+        if (!r) return LAND
+        if (religionFilter && r !== religionFilter) return LAND_DIM
+        return colorForReligion(r)
       }
-      // culture-festival, quiz: 중립 채움
-      return NEUTRAL
+      // culture-festival, quiz: 중립 육지
+      return LAND
+    }
+
+    // 선택 지역만 사선 해칭 material, 나머지는 undefined → capColor 폴백
+    const capMaterial = (feat: object): THREE.Material | undefined => {
+      const iso = featureToIso(feat)
+      return iso && iso === selectedIso && hatchRef.current ? hatchRef.current : undefined
     }
 
     const strokeColor = (feat: object): string => {
       const iso = featureToIso(feat)
-      if (iso && iso === selectedIso) return '#ffffff'
-      if (mode === 'climate') {
-        if (!climateFilter) return 'rgba(255,255,255,0.15)'
-        const c = getCountryClimate(climateData, iso)
-        return c?.group === climateFilter ? '#ffffff' : 'rgba(255,255,255,0.05)'
-      }
-      return 'rgba(255,255,255,0.18)'
+      return iso && iso === selectedIso ? '#1a2e2a' : INK_STROKE
     }
 
-    globe.polygonCapColor(capColor).polygonStrokeColor(strokeColor)
+    globe
+      .polygonCapColor(capColor)
+      .polygonCapMaterial(capMaterial as (d: object) => THREE.Material)
+      .polygonStrokeColor(strokeColor)
+      .polygonAltitude((feat) => (featureToIso(feat as object) === selectedIso ? 0.018 : 0.008))
   }, [mode, climateFilter, activeIssue, cultureLayer, religionFilter, selectedIso])
 
   // 환경문제 지역 링
@@ -154,10 +216,10 @@ export function GlobeView() {
         : []
     globe
       .ringsData(rings)
-      .ringColor(() => (t: number) => `rgba(248,113,113,${Math.sqrt(1 - t)})`)
+      .ringColor(() => (t: number) => `rgba(200,69,44,${(1 - t) * 0.9})`)
       .ringMaxRadius(6)
-      .ringPropagationSpeed(1.6)
-      .ringRepeatPeriod(1100)
+      .ringPropagationSpeed(1.5)
+      .ringRepeatPeriod(1300)
   }, [mode, activeIssue])
 
   // 문화 모드 축제 핀
@@ -175,7 +237,7 @@ export function GlobeView() {
         const el = document.createElement('button')
         el.className = 'festival-pin'
         el.type = 'button'
-        el.innerHTML = `<span class="festival-pin__icon">🎉</span><span class="festival-pin__label">${f.nameKo}</span>`
+        el.innerHTML = `<span class="festival-pin__icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21V4"/><path d="M6 5c3-2 6 2 9 0v7c-3 2-6-2-9 0"/></svg></span><span class="festival-pin__label">${f.nameKo}</span>`
         el.onclick = (ev) => {
           ev.stopPropagation()
           useAppStore.getState().selectFestival(f.id)

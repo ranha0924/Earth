@@ -1,5 +1,6 @@
 import { useAppStore } from '../../store'
 import { ISSUES, TREATIES } from '../../environment/data'
+import { Icon } from '../Icon'
 
 /** 환경 모드 하단 컨트롤 — 탭(환경문제/국제협약) + 문제 칩 또는 협약 연표 */
 export function EnvironmentControls() {
@@ -20,7 +21,7 @@ export function EnvironmentControls() {
           className={`env-tab${tab === 'issues' ? ' env-tab--active' : ''}`}
           onClick={() => setTab('issues')}
         >
-          ⚠️ 환경문제
+          <Icon name="warning" size={14} /> 환경문제
         </button>
         <button
           type="button"
@@ -29,7 +30,7 @@ export function EnvironmentControls() {
           className={`env-tab${tab === 'treaties' ? ' env-tab--active' : ''}`}
           onClick={() => setTab('treaties')}
         >
-          🤝 국제협약
+          <Icon name="treaty" size={14} /> 국제협약
         </button>
       </div>
 
@@ -46,7 +47,7 @@ export function EnvironmentControls() {
                 select(null)
               }}
             >
-              <span aria-hidden="true">{issue.icon}</span> {issue.nameKo}
+              <Icon name={issue.id} size={16} /> {issue.nameKo}
             </button>
           ))}
         </div>
@@ -62,7 +63,7 @@ export function EnvironmentControls() {
               }`}
               onClick={() => select(`treaty:${t.id}`)}
             >
-              <span className="treaty-node__year">{t.year}</span>
+              <span className="stamp">Fig. {t.year}</span>
               <span className="treaty-node__name">{t.nameKo}</span>
             </button>
           ))}
@@ -70,7 +71,7 @@ export function EnvironmentControls() {
       )}
       {tab === 'treaties' && (
         <p className="treaty-lineage-hint">
-          ⭐ 파란 테두리 = <b>기후변화협약(1992) → 교토(1997) → 파리(2015)</b> 계보 (최다 출제)
+          <b>붉은 점</b> = 기후변화협약(1992) → 교토(1997) → 파리(2015) 계보 (최다 출제)
         </p>
       )}
     </div>

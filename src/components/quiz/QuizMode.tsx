@@ -4,6 +4,7 @@ import { QUIZ_BANK } from '../../quiz/data'
 import { CATEGORY_LABEL, isMapQuestion, type QuizQuestion } from '../../quiz/types'
 import { loadRecord, saveResult, type QuizRecord } from '../../quiz/storage'
 import { countryNameKo } from '../../data/countryNames'
+import { Icon } from '../Icon'
 
 const SET_SIZE = 10
 
@@ -98,7 +99,7 @@ export function QuizMode() {
   if (finished) {
     return (
       <aside className="card quiz-card" aria-label="퀴즈 결과">
-        <h2 className="card__title">🏁 퀴즈 결과</h2>
+        <h2 className="card__title"><Icon name="flag" size={19} /> 퀴즈 결과</h2>
         <p className="quiz-score">
           {SET_SIZE}문제 중 <b>{score}</b>개 정답!
         </p>
@@ -110,14 +111,14 @@ export function QuizMode() {
         </button>
         {wrongReview.length > 0 && (
           <div className="card__section">
-            <h3 className="card__h3">📌 오답 노트 (누적)</h3>
+            <h3 className="card__h3"><Icon name="note" size={13} /> 오답 노트 (누적)</h3>
             <div className="wrong-note-list">
               {wrongReview.map((q) => (
                 <div key={q.id} className="wrong-note">
                   <span className="wrong-note__cat">{CATEGORY_LABEL[q.category]}</span>
                   <p className="wrong-note__q">{q.question}</p>
                   <p className="wrong-note__a">
-                    ✅{' '}
+                    <Icon name="check" size={12} />{' '}
                     {isMapQuestion(q)
                       ? q.answerIsos.map(countryNameKo).join(', ')
                       : q.choices[q.answerIndex]}
@@ -146,10 +147,11 @@ export function QuizMode() {
 
       {isMapQuestion(current) ? (
         <div className="quiz-map-hint">
-          🌐 지구본을 돌려 알맞은 나라를 <b>직접 클릭</b>하세요.
+          <span><Icon name="globe" size={15} /> 지구본을 돌려 알맞은 나라를 <b>직접 클릭</b>하세요.</span>
           {answered && (
             <p className={`quiz-map-result ${answered.correct ? 'ok' : 'no'}`}>
-              {answered.correct ? '⭕ 정답' : '❌ 오답'} — {answered.picked}을(를) 선택했어요.
+              <Icon name={answered.correct ? 'check' : 'cross'} size={13} />{' '}
+              {answered.correct ? '정답' : '오답'} — {answered.picked}을(를) 선택했어요.
             </p>
           )}
         </div>
@@ -180,7 +182,10 @@ export function QuizMode() {
 
       {answered && (
         <div className={`quiz-explain ${answered.correct ? 'ok' : 'no'}`}>
-          <b>{answered.correct ? '⭕ 정답이에요!' : '❌ 아쉬워요'}</b>
+          <b>
+            <Icon name={answered.correct ? 'check' : 'cross'} size={13} />{' '}
+            {answered.correct ? '정답이에요!' : '아쉬워요'}
+          </b>
           <p>{current.explanation}</p>
         </div>
       )}
