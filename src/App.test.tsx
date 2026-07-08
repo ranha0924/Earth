@@ -45,9 +45,9 @@ describe('App', () => {
     render(<App />)
     expect(screen.getByRole('group', { name: '종교 범례' })).toBeInTheDocument()
   })
-  it('퀴즈 모드는 아직 준비 중 안내가 나타난다', () => {
+  it('퀴즈 모드에서는 퀴즈 카드(진행도)가 나타난다', () => {
     useAppStore.setState({ mode: 'quiz' })
     render(<App />)
-    expect(screen.getByText(/준비 중/)).toBeInTheDocument()
+    expect(screen.getByLabelText('퀴즈')).toBeInTheDocument()
   })
 })

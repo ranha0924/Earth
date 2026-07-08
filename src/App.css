@@ -161,6 +161,61 @@ body { font-family: system-ui, -apple-system, "Apple SD Gothic Neo", sans-serif;
   background: #2f6fb0; color: #fff; font-weight: 700; cursor: pointer;
 }
 
+/* ── 퀴즈 ───────────────────────────────────── */
+.app__quiz-hint {
+  position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%);
+  background: rgba(16,35,58,0.9); border: 1px solid #2a4a6b; color: #cde;
+  padding: 8px 16px; border-radius: 999px; font-size: 13px; white-space: nowrap;
+}
+.quiz-card { width: 380px; }
+.quiz-top { display: flex; align-items: center; gap: 8px; font-size: 12px; margin-bottom: 12px; }
+.quiz-progress { font-weight: 700; color: #9bd; }
+.quiz-cat { padding: 2px 9px; border-radius: 999px; background: rgba(76,201,240,0.16); color: #7fd3f0; font-weight: 600; }
+.quiz-live-score { margin-left: auto; color: #bcd; }
+.quiz-question { font-size: 16px; font-weight: 600; line-height: 1.5; margin: 0 0 14px; }
+.quiz-choices { display: flex; flex-direction: column; gap: 8px; }
+.quiz-choice {
+  padding: 12px 14px; border-radius: 10px; border: 1px solid #2a4a6b; background: rgba(42,74,107,0.25);
+  color: #eef; cursor: pointer; font-size: 14px; text-align: left; transition: background 0.12s;
+}
+.quiz-choice:hover:not(:disabled) { background: rgba(120,160,255,0.18); }
+.quiz-choice:disabled { cursor: default; }
+.quiz-choice--correct { border-color: #4ade80; background: rgba(74,222,128,0.2); color: #eaffea; }
+.quiz-choice--wrong { border-color: #f87171; background: rgba(248,113,113,0.2); color: #ffecec; }
+.quiz-map-hint {
+  padding: 14px; border-radius: 10px; border: 1px dashed rgba(120,160,255,0.4);
+  background: rgba(76,201,240,0.08); font-size: 14px; line-height: 1.5; color: #cde;
+}
+.quiz-map-result { margin: 10px 0 0; font-weight: 700; }
+.quiz-map-result.ok { color: #4ade80; }
+.quiz-map-result.no { color: #f87171; }
+.quiz-explain { margin: 14px 0 0; padding: 11px 13px; border-radius: 10px; font-size: 13px; line-height: 1.55; }
+.quiz-explain.ok { background: rgba(74,222,128,0.12); border: 1px solid rgba(74,222,128,0.35); }
+.quiz-explain.no { background: rgba(248,113,113,0.12); border: 1px solid rgba(248,113,113,0.35); }
+.quiz-explain b { display: block; margin-bottom: 4px; }
+.quiz-explain.ok b { color: #4ade80; }
+.quiz-explain.no b { color: #f87171; }
+.quiz-explain p { margin: 0; color: #eed; }
+.quiz-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+.quiz-primary {
+  padding: 12px; border-radius: 10px; border: none; background: #2f6fb0; color: #fff;
+  font-weight: 700; font-size: 14px; cursor: pointer;
+}
+.quiz-primary:hover { background: #3a82cc; }
+.quiz-skip, .quiz-quit {
+  padding: 9px; border-radius: 10px; border: 1px solid #2a4a6b; background: transparent;
+  color: #9bd; cursor: pointer; font-size: 13px;
+}
+.quiz-skip:hover, .quiz-quit:hover { background: rgba(120,160,255,0.1); }
+.quiz-score { font-size: 18px; margin: 4px 0; }
+.quiz-score b { color: #4ade80; font-size: 24px; }
+.wrong-note-list { display: flex; flex-direction: column; gap: 10px; }
+.wrong-note { padding: 10px; border-radius: 9px; background: rgba(42,74,107,0.25); border: 1px solid #2a4a6b; }
+.wrong-note__cat { font-size: 11px; font-weight: 700; color: #7fd3f0; }
+.wrong-note__q { font-size: 13px; font-weight: 600; margin: 4px 0; line-height: 1.4; }
+.wrong-note__a { font-size: 13px; color: #4ade80; margin: 4px 0; }
+.wrong-note__e { font-size: 12px; color: #bcd; margin: 0; line-height: 1.5; }
+
 /* ── 축제 핀 ────────────────────────────────── */
 .festival-pin {
   display: flex; align-items: center; gap: 4px; padding: 3px 9px 3px 5px; border-radius: 999px;

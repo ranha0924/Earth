@@ -8,14 +8,8 @@ import { EnvironmentCard } from './components/environment/EnvironmentCard'
 import { MatchingGame } from './components/environment/MatchingGame'
 import { CultureControls } from './components/culture/CultureControls'
 import { CultureCard } from './components/culture/CultureCard'
-import { useAppStore, type Mode } from './store'
-
-const MODE_NAMES: Record<Mode, string> = {
-  climate: '기후',
-  environment: '환경',
-  culture: '문화',
-  quiz: '퀴즈',
-}
+import { QuizMode } from './components/quiz/QuizMode'
+import { useAppStore } from './store'
 
 export default function App() {
   const mode = useAppStore((s) => s.mode)
@@ -62,16 +56,14 @@ export default function App() {
           )}
 
           {mode === 'quiz' && (
-            <div className="app__soon">
-              🚧 {MODE_NAMES[mode]} 모드는 준비 중이에요. 지금은 기후·환경·문화 모드를 이용해
-              주세요.
-            </div>
+            <div className="app__quiz-hint">🌍 지도 문제는 지구본을 돌려 나라를 클릭하세요</div>
           )}
         </div>
 
         {mode === 'climate' && <InfoCard />}
         {mode === 'environment' && <EnvironmentCard />}
         {mode === 'culture' && <CultureCard />}
+        {mode === 'quiz' && <QuizMode />}
       </main>
 
       {showMatching && <MatchingGame onClose={() => setShowMatching(false)} />}
