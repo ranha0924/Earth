@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Globe, { type GlobeInstance } from 'globe.gl'
 import { useAppStore } from '../store'
 import { featureToIso } from './featureIso'
@@ -11,6 +11,7 @@ const GEOJSON_URL = `${import.meta.env.BASE_URL}data/countries.geojson`
 export function GlobeView() {
   const containerRef = useRef<HTMLDivElement>(null)
   const globeRef = useRef<GlobeInstance | null>(null)
+  const [loadError, setLoadError] = useState(false)
 
   // 마운트: 지구본 생성 + 국경 로딩. 한 번만.
   useEffect(() => {
@@ -35,7 +36,7 @@ export function GlobeView() {
         if (!cancelled) globe.polygonsData(geo.features)
       })
       .catch(() => {
-        if (!cancelled) el.setAttribute('data-globe-error', 'true')
+        if (!cancelled) setLoadError(true)
       })
 
     const onResize = () => {
@@ -69,5 +70,12 @@ export function GlobeView() {
       })
   }, [climateFilter])
 
-  return <div ref={containerRef} data-testid="globe" className="globe" />
+  return (
+    <div className="globe" style={{ position: 'relative' }}>
+      <div ref={containerRef} data-testid="globe" style={{ width: '100%', height: '100%' }} />
+      {loadError && (
+        <div className="globe__error">지구본을 불러오지 못했어요. 페이지를 새로고침 해주세요.</div>
+      )}
+    </div>
+  )
 }

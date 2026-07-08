@@ -15,10 +15,13 @@ describe('InfoCard', () => {
   })
   it('데이터가 있는 나라는 이름과 기후를 보여준다', () => {
     useAppStore.setState({ selectedIso: 'KR' })
-    render(<InfoCard />)
+    const { container } = render(<InfoCard />)
     expect(screen.getByText('대한민국')).toBeInTheDocument()
     expect(screen.getByText(/온대/)).toBeInTheDocument()
     expect(screen.getByText(/온난습윤/)).toBeInTheDocument()
+    expect(screen.getByText(/여름 덥고 습/)).toBeInTheDocument()
+    const swatch = container.querySelector('.card__swatch')
+    expect(swatch?.getAttribute('aria-hidden')).toBe('true')
   })
   it('데이터가 없는 나라는 준비 중 안내를 보여준다', () => {
     useAppStore.setState({ selectedIso: 'ZZ' })

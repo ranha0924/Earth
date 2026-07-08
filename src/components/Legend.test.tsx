@@ -20,9 +20,10 @@ describe('Legend', () => {
     await userEvent.click(screen.getByRole('button', { name: /온대/ }))
     expect(useAppStore.getState().climateFilter).toBe('온대')
   })
-  it('활성 항목은 aria-pressed=true', () => {
+  it('활성 항목은 aria-pressed=true, 비활성 항목은 aria-pressed=false', () => {
     useAppStore.setState({ climateFilter: '건조' })
     render(<Legend />)
     expect(screen.getByRole('button', { name: /건조/ })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: /온대/ })).toHaveAttribute('aria-pressed', 'false')
   })
 })

@@ -20,4 +20,7 @@ describe('getCountryClimate', () => {
     expect(getCountryClimate(sample, null)).toBeNull()
     expect(getCountryClimate(sample, undefined)).toBeNull()
   })
+  it('빈 문자열이면 null', () => {
+    expect(getCountryClimate(sample, '')).toBeNull()
+  })
 })

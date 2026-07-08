@@ -14,5 +14,8 @@
   "KE": { "nameKo": "케냐", "nameEn": "Kenya", "group": "열대", "subtype": "사바나" },
   "RU": { "nameKo": "러시아", "nameEn": "Russia", "group": "냉대", "subtype": "냉대습윤", "note": "동시베리아는 냉대겨울건조" },
   "CA": { "nameKo": "캐나다", "nameEn": "Canada", "group": "냉대", "subtype": "냉대습윤" },
-  "GL": { "nameKo": "그린란드", "nameEn": "Greenland", "group": "한대", "subtype": "빙설" }
+  "GL": { "nameKo": "그린란드", "nameEn": "Greenland", "group": "한대", "subtype": "빙설" },
+  "NP": { "nameKo": "네팔", "nameEn": "Nepal", "group": "고산", "subtype": "고산", "note": "히말라야 산지, 고도에 따라 기후가 달라짐" },
+  "BO": { "nameKo": "볼리비아", "nameEn": "Bolivia", "group": "고산", "subtype": "고산", "note": "안데스 고원(알티플라노)의 서늘한 고산 기후" },
+  "EC": { "nameKo": "에콰도르", "nameEn": "Ecuador", "group": "고산", "subtype": "고산", "note": "적도 부근이지만 안데스 고지대는 연중 서늘함" }
 }
