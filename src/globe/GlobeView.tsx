@@ -3,11 +3,12 @@ import Globe, { type GlobeInstance } from 'globe.gl'
 import { useAppStore } from '../store'
 import { featureToIso } from './featureIso'
 import { climateData, getCountryClimate } from '../climate/data'
-import { colorForGroup } from '../climate/types'
+import { colorForGroup, type ClimateGroup } from '../climate/types'
 import { getReligion } from '../culture/data'
 import { colorForReligion } from '../culture/types'
 import { ISSUE_BY_ID } from '../environment/data'
-import { FESTIVALS } from '../culture/festivals'
+import { FESTIVALS, FESTIVAL_BY_ID } from '../culture/festivals'
+import type { TreatyId } from '../environment/types'
 
 const TEXTURE_URL = `${import.meta.env.BASE_URL}textures/koppen.png`
 const GEOJSON_URL = `${import.meta.env.BASE_URL}data/countries.geojson`
@@ -15,6 +16,31 @@ const GEOJSON_URL = `${import.meta.env.BASE_URL}data/countries.geojson`
 const TRANSPARENT = 'rgba(0,0,0,0)'
 const NEUTRAL = 'rgba(30,44,68,0.82)'
 const DIM = 'rgba(24,34,52,0.7)'
+
+const FLY_MS = 900
+
+// 기후 대분류별 대표 지역 (범례 클릭 시 이동)
+const CLIMATE_FOCUS: Record<ClimateGroup, { lat: number; lng: number; altitude: number }> = {
+  열대: { lat: 0, lng: 18, altitude: 2.1 },
+  건조: { lat: 23, lng: 13, altitude: 2 },
+  온대: { lat: 40, lng: 12, altitude: 1.9 },
+  냉대: { lat: 60, lng: 95, altitude: 2 },
+  한대: { lat: 74, lng: -42, altitude: 2 },
+  고산: { lat: -15, lng: -70, altitude: 1.9 },
+}
+
+// 협약 채택지 (연표 클릭 시 이동)
+const TREATY_FOCUS: Record<TreatyId, { lat: number; lng: number }> = {
+  ramsar: { lat: 36.9, lng: 50.68 }, // 이란 람사르
+  london: { lat: 51.5, lng: -0.13 }, // 런던
+  montreal: { lat: 45.5, lng: -73.57 }, // 몬트리올
+  basel: { lat: 47.56, lng: 7.59 }, // 바젤
+  unfccc: { lat: -22.9, lng: -43.2 }, // 리우데자네이루
+  cbd: { lat: -22.9, lng: -43.2 }, // 리우데자네이루
+  unccd: { lat: 48.85, lng: 2.35 }, // 파리(채택)
+  kyoto: { lat: 35.0, lng: 135.77 }, // 교토
+  paris: { lat: 48.85, lng: 2.35 }, // 파리
+}
 
 export function GlobeView() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -70,6 +96,12 @@ export function GlobeView() {
   const cultureLayer = useAppStore((s) => s.cultureLayer)
   const religionFilter = useAppStore((s) => s.religionFilter)
   const selectedIso = useAppStore((s) => s.selectedIso)
+  const selectedFestival = useAppStore((s) => s.selectedFestival)
+
+  // 선택한 대상의 해당 지역으로 지구본을 부드럽게 이동
+  const flyTo = (lat: number, lng: number, altitude = 1.9) => {
+    globeRef.current?.pointOfView({ lat, lng, altitude }, FLY_MS)
+  }
 
   // 폴리곤 색칠 갱신 (모드별)
   useEffect(() => {
@@ -151,6 +183,42 @@ export function GlobeView() {
         return el
       })
   }, [mode, cultureLayer])
+
+  // ── 선택 시 해당 지역으로 지구본 이동 ──
+  // 기후 범례 → 대표 지역
+  useEffect(() => {
+    if (climateFilter) {
+      const f = CLIMATE_FOCUS[climateFilter]
+      flyTo(f.lat, f.lng, f.altitude)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [climateFilter])
+
+  // 환경문제 → 첫 번째 발생·피해 지역
+  useEffect(() => {
+    if (activeIssue) {
+      const r = ISSUE_BY_ID[activeIssue].regions[0]
+      if (r) flyTo(r.lat, r.lng, 2)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeIssue])
+
+  // 협약(연표) → 채택지, 축제 → 개최지
+  useEffect(() => {
+    if (selectedIso?.startsWith('treaty:')) {
+      const t = TREATY_FOCUS[selectedIso.slice('treaty:'.length) as TreatyId]
+      if (t) flyTo(t.lat, t.lng, 1.9)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedIso])
+
+  useEffect(() => {
+    if (selectedFestival) {
+      const f = FESTIVAL_BY_ID[selectedFestival]
+      if (f) flyTo(f.lat, f.lng, 1.7)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedFestival])
 
   return (
     <div className="globe" style={{ position: 'relative' }}>
