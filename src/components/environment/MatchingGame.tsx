@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { TREATIES } from '../../environment/data'
 import type { TreatyId } from '../../environment/types'
+import { Icon } from '../Icon'
 
 // 결정적 셔플 (Math.random 없이도 되지만 게임이라 재시작마다 섞이도록 seed 사용)
 function shuffle<T>(arr: T[], seed: number): T[] {
@@ -59,9 +60,9 @@ export function MatchingGame({ onClose }: MatchingGameProps) {
     <div className="matching-overlay" role="dialog" aria-label="협약 매칭 게임">
       <div className="matching">
         <div className="matching__head">
-          <h2>협약 ↔ 키워드 매칭</h2>
+          <h2>협약 · 키워드 매칭</h2>
           <button type="button" className="card__close" onClick={onClose}>
-            닫기 ✕
+            닫기 <Icon name="close" size={12} />
           </button>
         </div>
         <p className="matching__hint">
@@ -70,7 +71,7 @@ export function MatchingGame({ onClose }: MatchingGameProps) {
         </p>
         {done ? (
           <div className="matching__done">
-            <p>🎉 모두 맞혔어요! 9개 협약을 완벽하게 정리했네요.</p>
+            <p>모두 맞혔어요! 9개 협약을 완벽하게 정리했네요.</p>
             <button type="button" className="matching__restart" onClick={restart}>
               다시 섞어서 도전
             </button>
@@ -91,7 +92,7 @@ export function MatchingGame({ onClose }: MatchingGameProps) {
                     onClick={() => onLeft(id)}
                   >
                     {t.nameKo}
-                    <small>{t.year}</small>
+                    <small>Fig. {t.year}</small>
                   </button>
                 )
               })}

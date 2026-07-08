@@ -9,7 +9,15 @@ import { MatchingGame } from './components/environment/MatchingGame'
 import { CultureControls } from './components/culture/CultureControls'
 import { CultureCard } from './components/culture/CultureCard'
 import { QuizMode } from './components/quiz/QuizMode'
+import { Icon } from './components/Icon'
 import { useAppStore } from './store'
+
+const MODE_CAPTION: Record<string, string> = {
+  climate: 'Fig. I — 세계 기후 구분도 (Köppen)',
+  environment: 'Fig. II — 지구 환경 문제 분포도',
+  culture: 'Fig. III — 세계 종교·문화 분포도',
+  quiz: 'Plate IV — 학습 평가',
+}
 
 export default function App() {
   const mode = useAppStore((s) => s.mode)
@@ -18,53 +26,69 @@ export default function App() {
 
   return (
     <div className="app">
-      <header className="app__bar">
-        <h1 className="app__title">🌍 지구본 사회공부</h1>
+      <header className="masthead">
+        <div className="masthead__brand">
+          <h1 className="masthead__title">지구본 사회공부</h1>
+          <p className="masthead__sub">Atlas of World Geography · 통합사회</p>
+        </div>
         <ModeSwitcher />
       </header>
-      <main className="app__main">
-        <div className="app__globe">
-          <GlobeView />
 
+      <div className="atlas">
+        <div className="atlas__map">
+          <GlobeView />
+          <span className="ticks ticks--top" />
+          <span className="ticks ticks--left" />
+          <span className="crop crop--tl" />
+          <span className="crop crop--tr" />
+          <span className="crop crop--bl" />
+          <span className="crop crop--br" />
+          {mode === 'quiz' ? (
+            <div className="map-caption quiz-hint">지도 문제는 지구본을 돌려 나라를 클릭하세요</div>
+          ) : (
+            <div className="map-caption">{MODE_CAPTION[mode]}</div>
+          )}
+        </div>
+
+        <aside className="atlas__panel">
           {mode === 'climate' && (
-            <div className="app__legend">
-              <Legend />
-            </div>
+            <>
+              <div className="panel-section">
+                <h2 className="panel-head">기후 범례</h2>
+                <Legend />
+              </div>
+              <InfoCard />
+            </>
           )}
 
           {mode === 'environment' && (
             <>
-              <div className="app__bottom">
+              <div className="panel-section">
+                <h2 className="panel-head">환경 · 국제협약</h2>
                 <EnvironmentControls />
+                {environmentTab === 'treaties' && (
+                  <button type="button" className="matching-launch" onClick={() => setShowMatching(true)}>
+                    <Icon name="target" /> 협약 매칭 게임
+                  </button>
+                )}
               </div>
-              {environmentTab === 'treaties' && (
-                <button
-                  type="button"
-                  className="matching-launch"
-                  onClick={() => setShowMatching(true)}
-                >
-                  🎯 협약 매칭 게임
-                </button>
-              )}
+              <EnvironmentCard />
             </>
           )}
 
           {mode === 'culture' && (
-            <div className="app__bottom">
-              <CultureControls />
-            </div>
+            <>
+              <div className="panel-section">
+                <h2 className="panel-head">문화 · 종교 · 축제</h2>
+                <CultureControls />
+              </div>
+              <CultureCard />
+            </>
           )}
 
-          {mode === 'quiz' && (
-            <div className="app__quiz-hint">🌍 지도 문제는 지구본을 돌려 나라를 클릭하세요</div>
-          )}
-        </div>
-
-        {mode === 'climate' && <InfoCard />}
-        {mode === 'environment' && <EnvironmentCard />}
-        {mode === 'culture' && <CultureCard />}
-        {mode === 'quiz' && <QuizMode />}
-      </main>
+          {mode === 'quiz' && <QuizMode />}
+        </aside>
+      </div>
 
       {showMatching && <MatchingGame onClose={() => setShowMatching(false)} />}
     </div>

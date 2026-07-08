@@ -3,6 +3,7 @@ import { getCulture, getReligion } from '../../culture/data'
 import { RELIGION_LABEL, colorForReligion } from '../../culture/types'
 import { FESTIVAL_BY_ID } from '../../culture/festivals'
 import { countryNameKo, countryNameEn, hasCountryName } from '../../data/countryNames'
+import { Icon } from '../Icon'
 
 export function CultureCard() {
   const layer = useAppStore((s) => s.cultureLayer)
@@ -18,9 +19,9 @@ export function CultureCard() {
       return (
         <aside className="card" aria-label={`${f.nameKo} 정보`}>
           <button type="button" className="card__close" onClick={() => selectFestival(null)}>
-            닫기 ✕
+            닫기 <Icon name="close" size={12} />
           </button>
-          <h2 className="card__title">🎉 {f.nameKo}</h2>
+          <h2 className="card__title"><Icon name="festival" size={19} /> {f.nameKo}</h2>
           <p className="card__title-en">
             {f.countryNameKo} · {f.season}
           </p>
@@ -29,7 +30,7 @@ export function CultureCard() {
             <p className="card__note">{f.description}</p>
           </div>
           <div className="confusion">
-            <b>🔑 시험 포인트</b>
+            <b><Icon name="key" size={13} /> 시험 포인트</b>
             <p>{f.linkPoint}</p>
           </div>
         </aside>
@@ -44,7 +45,7 @@ export function CultureCard() {
     return (
       <aside className="card" aria-label="나라 문화 정보">
         <button type="button" className="card__close" onClick={() => select(null)}>
-          닫기 ✕
+          닫기 <Icon name="close" size={12} />
         </button>
         <h2 className="card__title">
           {countryNameKo(selectedIso)} <span className="card__title-en">{countryNameEn(selectedIso)}</span>
@@ -52,25 +53,25 @@ export function CultureCard() {
         {religion && (
           <div className="card__row">
             <span className="card__swatch" style={{ backgroundColor: colorForReligion(religion) }} aria-hidden="true" />
-            <span className="card__climate">⛪ 주요 종교 · {RELIGION_LABEL[religion]}</span>
+            <span className="card__climate">주요 종교 · {RELIGION_LABEL[religion]}</span>
           </div>
         )}
         {culture ? (
           <>
             <div className="card__section">
-              <h3 className="card__h3">🏠 전통 가옥</h3>
+              <h3 className="card__h3"><Icon name="housing" size={13} /> 전통 가옥</h3>
               <p className="card__note">{culture.housing}</p>
             </div>
             <div className="card__section">
-              <h3 className="card__h3">👕 전통 의복</h3>
+              <h3 className="card__h3"><Icon name="clothing" size={13} /> 전통 의복</h3>
               <p className="card__note">{culture.clothing}</p>
             </div>
             <div className="card__section">
-              <h3 className="card__h3">🍚 음식·식문화</h3>
+              <h3 className="card__h3"><Icon name="food" size={13} /> 음식·식문화</h3>
               <p className="card__note">{culture.food}</p>
             </div>
             <div className="card__section">
-              <h3 className="card__h3">🙏 종교와 생활</h3>
+              <h3 className="card__h3"><Icon name="religion" size={13} /> 종교와 생활</h3>
               <p className="card__note">{culture.religionNote}</p>
             </div>
           </>
@@ -94,7 +95,7 @@ export function CultureCard() {
         </p>
       ) : (
         <p className="card__empty">
-          지구본의 🎉 <b>축제 핀</b>이나 아래 축제 목록을 눌러 세계의 대표 축제를 살펴보세요. 각
+          지구본의 <b>축제 핀</b>이나 아래 축제 목록을 눌러 세계의 대표 축제를 살펴보세요. 각
           축제가 그 지역의 기후·종교와 어떻게 이어지는지 정리했어요.
         </p>
       )}

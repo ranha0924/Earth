@@ -10,14 +10,14 @@ export interface CountryClimate {
 
 export type ClimateData = Record<string, CountryClimate>
 
-// 대분류 6개와 지정 색(Global Constraints와 일치). 범례·텍스처 색 기준.
+// 대분류 6개 지정 색. 빈티지 아틀라스 톤 — 채도 낮은 지도책 색. 범례·지구본 면 채우기 기준.
 export const CLIMATE_GROUPS: { group: ClimateGroup; color: string }[] = [
-  { group: '열대', color: '#1b7837' },
-  { group: '건조', color: '#f2c744' },
-  { group: '온대', color: '#91cf60' },
-  { group: '냉대', color: '#4575b4' },
-  { group: '한대', color: '#d9d9d9' },
-  { group: '고산', color: '#8c6bb1' },
+  { group: '열대', color: '#5f7052' }, // 세이지 그린
+  { group: '건조', color: '#c8a24b' }, // 황토/옥색
+  { group: '온대', color: '#9aa76a' }, // 연올리브
+  { group: '냉대', color: '#6e8ca8' }, // 슬레이트 블루
+  { group: '한대', color: '#bcc3c0' }, // 페일 그레이블루
+  { group: '고산', color: '#93748a' }, // 머트 플럼
 ]
 
 export function colorForGroup(group: ClimateGroup): string {

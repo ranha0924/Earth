@@ -1,6 +1,7 @@
 import { useAppStore } from '../../store'
 import { RELIGIONS } from '../../culture/types'
 import { FESTIVALS } from '../../culture/festivals'
+import { Icon } from '../Icon'
 
 /** 문화 모드 하단 컨트롤 — 레이어 토글(종교/축제) + 종교 범례 또는 축제 목록 */
 export function CultureControls() {
@@ -21,7 +22,7 @@ export function CultureControls() {
           className={`env-tab${layer === 'religion' ? ' env-tab--active' : ''}`}
           onClick={() => setLayer('religion')}
         >
-          ⛪ 종교 분포
+          <Icon name="religion" size={14} /> 종교 분포
         </button>
         <button
           type="button"
@@ -30,7 +31,7 @@ export function CultureControls() {
           className={`env-tab${layer === 'festival' ? ' env-tab--active' : ''}`}
           onClick={() => setLayer('festival')}
         >
-          🎉 축제
+          <Icon name="festival" size={14} /> 축제
         </button>
       </div>
 
@@ -61,7 +62,7 @@ export function CultureControls() {
               className={`env-chip${selectedFestival === f.id ? ' env-chip--active' : ''}`}
               onClick={() => selectFestival(f.id)}
             >
-              🎉 {f.nameKo.replace(/\s*\(.*\)/, '')} · {f.countryNameKo}
+              <Icon name="festival" size={15} /> {f.nameKo.replace(/\s*\(.*\)/, '')} · {f.countryNameKo}
             </button>
           ))}
         </div>
