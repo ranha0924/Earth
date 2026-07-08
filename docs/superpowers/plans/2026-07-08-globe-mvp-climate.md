@@ -1223,66 +1223,77 @@ git commit -m "test: e2e for load, legend, and globe canvas"
 
 ---
 
-### Task 12: GitHub Pages 배포
+### Task 12: Vercel 배포
 
 **Files:**
-- Create: `.github/workflows/deploy.yml`
+- Create: `vercel.json`
+- Create: `docs/DEPLOY.md` (배포 방법 안내)
 
 **Interfaces:**
-- Consumes: `npm run build`, `vite.config.ts`의 `DEPLOY_BASE`
-- Produces: main push 시 GitHub Pages로 자동 배포되는 워크플로.
+- Consumes: `npm run build` (출력 `dist`), `vite.config.ts`의 base(기본 `/`)
+- Produces: Vercel에 바로 배포 가능한 정적 설정 + 배포 절차 문서.
 
-- [ ] **Step 1: 배포 워크플로 작성 (`.github/workflows/deploy.yml`)**
+**배경:** Vercel은 도메인 루트(`/`)에서 앱을 서빙하므로 GitHub Pages와 달리 base 프리픽스가 필요 없다. `vite.config.ts`의 base 기본값 `/`가 그대로 맞다(`DEPLOY_BASE` 미설정). Vercel은 Vite 프레임워크를 자동 감지하지만, 빌드 설정과 SPA 폴백을 명시하기 위해 `vercel.json`을 커밋한다.
 
-`REPO_NAME`은 실제 저장소 이름으로 바꾼다(예: `earth`). 프로젝트 페이지는 base가 `/REPO_NAME/`이어야 한다.
-```yaml
-name: Deploy
-on:
-  push:
-    branches: [main]
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: '20', cache: 'npm' }
-      - run: npm ci
-      - run: npm run build
-        env:
-          DEPLOY_BASE: /REPO_NAME/
-      - uses: actions/upload-pages-artifact@v3
-        with: { path: dist }
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+- [ ] **Step 1: `vercel.json` 작성**
+
+```json
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "vite",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}
+```
+참고: 단일 페이지 앱이라 모든 경로를 `index.html`로 되돌리는 rewrite를 둔다. 정적 애셋(`/textures/*`, `/data/*`, `/assets/*`)은 Vercel이 실제 파일을 먼저 찾으므로 rewrite보다 우선한다.
+
+- [ ] **Step 2: 루트 base로 빌드 검증**
+
+Run: `npm run build && npm run preview -- --port 4173`
+Expected: 애셋이 루트 경로(`/textures/koppen.png`, `/data/countries.geojson`, `/assets/*`)에서 정상 로딩(콘솔 404 없음). `import.meta.env.BASE_URL`이 `/`이므로 GlobeView의 fetch 경로가 `/textures/...`, `/data/...`로 뜬다.
+
+- [ ] **Step 3: 배포 절차 문서 작성 (`docs/DEPLOY.md`)**
+
+```md
+# 배포 (Vercel)
+
+이 앱은 서버 없는 정적 Vite 앱이라 Vercel에 그대로 배포된다. 두 가지 방법:
+
+## 방법 A — Git 연동 (권장, 자동 배포)
+1. https://vercel.com 에 GitHub 계정으로 로그인
+2. "Add New… → Project" → 이 저장소(Earth) import
+3. Framework Preset: **Vite** (자동 감지됨), Build Command `npm run build`, Output `dist` (vercel.json에 이미 지정됨)
+4. Deploy 클릭. 이후 main에 push하면 자동 재배포된다.
+
+## 방법 B — CLI (즉시 배포)
+로컬에서:
+```
+npx vercel          # 최초 1회 로그인 + 프로젝트 연결(대화형)
+npx vercel --prod   # 프로덕션 배포
+```
+CLI 로그인은 대화형이므로 터미널에서 직접 실행해야 한다.
+
+## 주의
+- base 경로는 루트(`/`)다. 별도 환경변수 불필요.
+- 텍스처/GeoJSON은 `public/`에 있어 빌드 시 `dist/` 루트로 복사되고 `/textures`, `/data`에서 서빙된다.
 ```
 
-- [ ] **Step 2: 로컬에서 base 적용 빌드 검증**
+- [ ] **Step 4: 배포 설정 로컬 확인**
 
-Run: `DEPLOY_BASE=/REPO_NAME/ npm run build && npm run preview`
-Expected: 애셋 경로가 `/REPO_NAME/`로 프리픽스되어 텍스처·GeoJSON이 정상 로딩(콘솔 404 없음).
+Run: `npx vercel build` (설치돼 있지 않으면 npx가 임시 설치). 
+Expected: `.vercel/output/`이 생성되고 에러 없이 끝남. (실제 원격 배포는 로그인이 필요한 사용자 작업이므로 여기서는 빌드 산출물 생성까지만 확인한다. `npx vercel build`가 로그인/네트워크를 요구해 실패하면 Step 2의 `npm run build` 성공으로 대체하고 그 사실을 기록한다.)
 
-- [ ] **Step 3: 커밋**
+- [ ] **Step 5: 커밋**
 
 ```bash
-git add .github/workflows/deploy.yml
-git commit -m "ci: deploy to github pages"
+git add vercel.json docs/DEPLOY.md
+git commit -m "chore: add vercel deploy config and instructions"
 ```
 
-- [ ] **Step 4: (사용자 작업) GitHub에서 Pages 소스를 'GitHub Actions'로 설정**
+- [ ] **Step 6: (사용자 작업) 실제 배포**
 
-저장소 Settings → Pages → Source: GitHub Actions. main에 push하면 배포된다.
+`docs/DEPLOY.md`의 방법 A(대시보드에서 저장소 import) 또는 방법 B(`npx vercel --prod`)로 배포한다. CLI 로그인은 대화형이라 사용자가 직접 실행한다.
 
 ---
 
