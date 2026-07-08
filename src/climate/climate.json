@@ -1,0 +1,21 @@
+{
+  "KR": { "nameKo": "대한민국", "nameEn": "South Korea", "group": "온대", "subtype": "온난습윤", "note": "여름 덥고 습하며 겨울은 춥고 건조" },
+  "JP": { "nameKo": "일본", "nameEn": "Japan", "group": "온대", "subtype": "온난습윤" },
+  "CN": { "nameKo": "중국", "nameEn": "China", "group": "온대", "subtype": "온대겨울건조", "note": "국토가 넓어 건조·냉대 기후도 나타남" },
+  "GB": { "nameKo": "영국", "nameEn": "United Kingdom", "group": "온대", "subtype": "서안해양성", "note": "편서풍과 난류로 연중 온화" },
+  "IT": { "nameKo": "이탈리아", "nameEn": "Italy", "group": "온대", "subtype": "지중해성", "note": "여름 고온건조, 겨울 온난습윤" },
+  "GR": { "nameKo": "그리스", "nameEn": "Greece", "group": "온대", "subtype": "지중해성" },
+  "SA": { "nameKo": "사우디아라비아", "nameEn": "Saudi Arabia", "group": "건조", "subtype": "사막" },
+  "EG": { "nameKo": "이집트", "nameEn": "Egypt", "group": "건조", "subtype": "사막" },
+  "MN": { "nameKo": "몽골", "nameEn": "Mongolia", "group": "건조", "subtype": "스텝" },
+  "BR": { "nameKo": "브라질", "nameEn": "Brazil", "group": "열대", "subtype": "사바나", "note": "아마존 일대는 열대우림" },
+  "ID": { "nameKo": "인도네시아", "nameEn": "Indonesia", "group": "열대", "subtype": "열대우림" },
+  "IN": { "nameKo": "인도", "nameEn": "India", "group": "열대", "subtype": "열대몬순", "note": "계절풍의 영향이 큼" },
+  "KE": { "nameKo": "케냐", "nameEn": "Kenya", "group": "열대", "subtype": "사바나" },
+  "RU": { "nameKo": "러시아", "nameEn": "Russia", "group": "냉대", "subtype": "냉대습윤", "note": "동시베리아는 냉대겨울건조" },
+  "CA": { "nameKo": "캐나다", "nameEn": "Canada", "group": "냉대", "subtype": "냉대습윤" },
+  "GL": { "nameKo": "그린란드", "nameEn": "Greenland", "group": "한대", "subtype": "빙설" },
+  "NP": { "nameKo": "네팔", "nameEn": "Nepal", "group": "고산", "subtype": "고산", "note": "히말라야 산지, 고도에 따라 기후가 달라짐" },
+  "BO": { "nameKo": "볼리비아", "nameEn": "Bolivia", "group": "고산", "subtype": "고산", "note": "안데스 고원(알티플라노)의 서늘한 고산 기후" },
+  "EC": { "nameKo": "에콰도르", "nameEn": "Ecuador", "group": "고산", "subtype": "고산", "note": "적도 부근이지만 안데스 고지대는 연중 서늘함" }
+}

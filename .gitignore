@@ -1,0 +1,7 @@
+node_modules/
+dist/
+*.tsbuildinfo
+/.tsc-out
+/test-results/
+/playwright-report/
+.vercel/
