@@ -182,8 +182,8 @@ body {
   border-bottom: 1px solid var(--ink-12);
 }
 .legend__swatch--hatch {
-  background-color: var(--paper);
-  background-image: repeating-linear-gradient(45deg, #6a4c7a 0 1.6px, transparent 1.6px 4px);
+  background-color: #fff;
+  background-image: repeating-linear-gradient(45deg, #3d3d3d 0 1.4px, transparent 1.4px 4px);
 }
 .legend__item {
   display: flex; align-items: center; gap: 9px;
