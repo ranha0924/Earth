@@ -321,11 +321,11 @@ export const QUIZ_BANK: QuizQuestion[] = [
     explanation: '브라질은 아마존 열대 우림이 분포하며, 열대림 파괴 문제와 관련이 깊습니다.',
   },
 
-  // ── 그래프 판독 (하이서그래프) ────────────────
+  // ── 그래프 판독 (기후 그래프) ────────────────
   {
     id: 'g1',
     category: 'graph',
-    question: '다음 하이서그래프가 나타내는 기후는?',
+    question: '다음 기후 그래프가 나타내는 기후는?',
     graphIso: 'IT',
     choices: ['온난습윤 기후', '서안 해양성 기후', '지중해성 기후', '사바나 기후'],
     answerIndex: 2,
@@ -334,7 +334,7 @@ export const QUIZ_BANK: QuizQuestion[] = [
   {
     id: 'g2',
     category: 'graph',
-    question: '다음 하이서그래프가 나타내는 기후는?',
+    question: '다음 기후 그래프가 나타내는 기후는?',
     graphIso: 'SA',
     choices: ['스텝 기후', '사막 기후', '사바나 기후', '온대 겨울 건조 기후'],
     answerIndex: 1,
@@ -343,7 +343,7 @@ export const QUIZ_BANK: QuizQuestion[] = [
   {
     id: 'g3',
     category: 'graph',
-    question: '다음 하이서그래프가 나타내는 기후는?',
+    question: '다음 기후 그래프가 나타내는 기후는?',
     graphIso: 'RU',
     choices: ['냉대 습윤 기후', '툰드라 기후', '온난습윤 기후', '지중해성 기후'],
     answerIndex: 0,
@@ -352,7 +352,7 @@ export const QUIZ_BANK: QuizQuestion[] = [
   {
     id: 'g4',
     category: 'graph',
-    question: '다음 하이서그래프가 나타내는 기후는? (저위도 지역)',
+    question: '다음 기후 그래프가 나타내는 기후는? (저위도 지역)',
     graphIso: 'BO',
     choices: ['툰드라 기후', '고산 기후', '사바나 기후', '스텝 기후'],
     answerIndex: 1,
@@ -361,7 +361,7 @@ export const QUIZ_BANK: QuizQuestion[] = [
   {
     id: 'g5',
     category: 'graph',
-    question: '다음 하이서그래프가 나타내는 기후는?',
+    question: '다음 기후 그래프가 나타내는 기후는?',
     graphIso: 'GB',
     choices: ['서안 해양성 기후', '지중해성 기후', '냉대 습윤 기후', '온난습윤 기후'],
     answerIndex: 0,
@@ -370,7 +370,7 @@ export const QUIZ_BANK: QuizQuestion[] = [
   {
     id: 'g6',
     category: 'graph',
-    question: '다음 하이서그래프가 나타내는 기후는?',
+    question: '다음 기후 그래프가 나타내는 기후는?',
     graphIso: 'ID',
     choices: ['사바나 기후', '열대우림 기후', '열대몬순 기후', '온난습윤 기후'],
     answerIndex: 1,

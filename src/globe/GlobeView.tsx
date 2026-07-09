@@ -3,9 +3,8 @@ import * as THREE from 'three'
 import Globe, { type GlobeInstance } from 'globe.gl'
 import { useAppStore } from '../store'
 import { featureToIso } from './featureIso'
-import { climateData, getCountryClimate } from '../climate/data'
 import type { ClimateGroup } from '../climate/types'
-import { SUBTYPE_BY_KO, colorForSubtypeKo } from '../climate/subtypes'
+import { SUBTYPE_BY_KO } from '../climate/subtypes'
 import { getReligion } from '../culture/data'
 import { colorForReligion } from '../culture/types'
 import { ISSUE_BY_ID, TREATY_BY_ID } from '../environment/data'
@@ -14,6 +13,9 @@ import { HIGHLANDS, HIGHLAND_BY_ID } from '../climate/highlands'
 import type { TreatyId } from '../environment/types'
 
 const GEOJSON_URL = `${import.meta.env.BASE_URL}data/countries.geojson`
+// 기후 모드: 실제 쾨펜 기후 지도 텍스처 (교과서 14색으로 재채색, 한 나라 안의 여러 기후 표시)
+const CLIMATE_TEXTURE_URL = `${import.meta.env.BASE_URL}textures/koppen.png`
+const TRANSPARENT = 'rgba(0,0,0,0)'
 
 // 빈티지 아틀라스 팔레트 (App.css 토큰과 일치)
 const PAPER = '#f5f0e4'
@@ -93,7 +95,9 @@ export function GlobeView() {
   const containerRef = useRef<HTMLDivElement>(null)
   const globeRef = useRef<GlobeInstance | null>(null)
   const hatchRef = useRef<THREE.Material | null>(null) // 선택 지역 (버밀리언)
-  const highlandHatchRef = useRef<THREE.Material | null>(null) // 고산 기후 (플럼)
+  const surfaceMatRef = useRef<THREE.MeshBasicMaterial | null>(null) // 지구본 표면 (크림 or 기후 텍스처)
+  const climateTexRef = useRef<THREE.Texture | null>(null)
+  const [texLoaded, setTexLoaded] = useState(false)
   const [loadError, setLoadError] = useState(false)
 
   // 마운트: 지구본 생성 + 국경 로딩. 한 번만.
@@ -101,11 +105,17 @@ export function GlobeView() {
     const el = containerRef.current
     if (!el) return
     hatchRef.current = makeHatchMaterial(VERMILLION, 3)
-    highlandHatchRef.current = makeHatchMaterial('#3d3d3d', 2.8) // 교과서식 검은 사선(고산)
+    surfaceMatRef.current = new THREE.MeshBasicMaterial({ color: OCEAN })
+    // 기후 텍스처를 비동기 로드 (실제 쾨펜 기후 지도)
+    new THREE.TextureLoader().load(CLIMATE_TEXTURE_URL, (tex) => {
+      tex.colorSpace = THREE.SRGBColorSpace
+      climateTexRef.current = tex
+      setTexLoaded(true)
+    })
     const globe = new Globe(el)
       .backgroundColor(PAPER)
       .showAtmosphere(false)
-      .globeMaterial(new THREE.MeshBasicMaterial({ color: OCEAN })) // 크림 바다, 텍스처 없음
+      .globeMaterial(surfaceMatRef.current) // 표면 재질 (모드에 따라 크림/기후 텍스처 토글)
       // 경위선 (직접 그림)
       .pathsData(GRATICULES)
       .pathPointLat((p) => (p as [number, number])[0])
@@ -148,12 +158,14 @@ export function GlobeView() {
       globe._destructor?.()
       el.innerHTML = ''
       // 해칭 material/텍스처 해제 (StrictMode 이중 마운트 시 GPU 리소스 누수 방지)
-      for (const ref of [hatchRef, highlandHatchRef]) {
-        const m = ref.current as THREE.MeshBasicMaterial | null
-        m?.map?.dispose()
-        m?.dispose()
-        ref.current = null
-      }
+      const m = hatchRef.current as THREE.MeshBasicMaterial | null
+      m?.map?.dispose()
+      m?.dispose()
+      hatchRef.current = null
+      surfaceMatRef.current?.dispose()
+      surfaceMatRef.current = null
+      climateTexRef.current?.dispose()
+      climateTexRef.current = null
     }
   }, [])
 
@@ -178,12 +190,8 @@ export function GlobeView() {
     const capColor = (feat: object): string => {
       const iso = featureToIso(feat)
       if (mode === 'climate') {
-        // 나라별 대표 기후 소분류로 색칠 (통합사회 팔레트)
-        const c = getCountryClimate(climateData, iso)
-        if (!c) return LAND
-        if (climateFilter && c.subtype !== climateFilter) return LAND_DIM
-        if (SUBTYPE_BY_KO[c.subtype]?.hatch) return PAPER // 고산: 해칭 재료 바탕
-        return colorForSubtypeKo(c.subtype) ?? LAND
+        // 폴리곤은 투명 — 지구본 표면의 실제 기후 텍스처가 그대로 보이게 (한 나라 안 여러 기후)
+        return TRANSPARENT
       }
       if (mode === 'environment') {
         // 협약 선택 시 채택지 국가 강조
@@ -205,18 +213,10 @@ export function GlobeView() {
       return LAND
     }
 
-    // 사선 해칭 material: 선택 지역(버밀리언) 우선, 기후 모드의 고산(플럼) 그다음
+    // 선택 지역만 사선 해칭(버밀리언). 나머지는 undefined → capColor 폴백
     const capMaterial = (feat: object): THREE.Material | undefined => {
       const iso = featureToIso(feat)
-      if (iso && iso === selectedIso && hatchRef.current) return hatchRef.current
-      if (mode === 'climate') {
-        const c = getCountryClimate(climateData, iso)
-        if (c && SUBTYPE_BY_KO[c.subtype]?.hatch && highlandHatchRef.current) {
-          if (climateFilter && c.subtype !== climateFilter) return undefined // 흐림 처리 시 해칭 생략
-          return highlandHatchRef.current
-        }
-      }
-      return undefined
+      return iso && iso === selectedIso && hatchRef.current ? hatchRef.current : undefined
     }
 
     const strokeColor = (feat: object): string => {
@@ -230,6 +230,21 @@ export function GlobeView() {
       .polygonStrokeColor(strokeColor)
       .polygonAltitude((feat) => (featureToIso(feat as object) === selectedIso ? 0.018 : 0.008))
   }, [mode, climateFilter, activeIssue, cultureLayer, religionFilter, selectedIso])
+
+  // 지구본 표면: 기후 모드 = 실제 쾨펜 기후 텍스처, 나머지 = 크림 단색.
+  // 내 재질의 map을 직접 토글 (globeImageUrl은 재질을 교체해 버려 사용하지 않음)
+  useEffect(() => {
+    const mat = surfaceMatRef.current
+    if (!mat) return
+    if (mode === 'climate' && climateTexRef.current) {
+      mat.map = climateTexRef.current
+      mat.color.set('#ffffff') // 텍스처 원색 그대로
+    } else {
+      mat.map = null
+      mat.color.set(OCEAN)
+    }
+    mat.needsUpdate = true
+  }, [mode, texLoaded])
 
   // 환경문제 지역 링
   useEffect(() => {

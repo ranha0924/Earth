@@ -1,12 +1,11 @@
-// Recolors public/textures/koppen.png (Beck et al. 2018 Köppen-Geiger classification map,
-// standard ~30-class palette) into the app's 6-group legend palette.
+// Recolors koppen-standard.png (Beck et al. 2018 Köppen-Geiger classification map,
+// standard ~30-class palette, equirectangular 4320×2160) into the app's 14-subtype
+// 통합사회(필립스 세계지도 2021) 팔레트. 바다/no-data → 크림색(#ece1c6) 불투명.
 //
 // Usage:
-//   node scripts/recolor-koppen.mjs            # recolor koppen-standard.png -> koppen.png
-//   node scripts/recolor-koppen.mjs --inspect   # just print the dominant source colors
+//   node scripts/recolor-koppen.mjs            # koppen-standard.png -> koppen.png
+//   node scripts/recolor-koppen.mjs --inspect   # print dominant source colors
 //   node scripts/recolor-koppen.mjs --verify    # sample known lat/lng points on koppen.png
-//
-// See scripts/README.md for the full source-palette -> group-color mapping table.
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -18,66 +17,57 @@ const ROOT = path.resolve(__dirname, '..');
 const SRC = path.join(ROOT, 'public/textures/koppen-standard.png');
 const OUT = path.join(ROOT, 'public/textures/koppen.png');
 
-// Standard Beck et al. (2018) Köppen-Geiger 30-class legend RGB values, grouped by
-// Köppen main group, mapped to the app's 6-group legend palette.
-//
-//   A tropical              -> 열대 #1b7837
-//   B arid                  -> 건조 #f2c744
-//   C temperate             -> 온대 #91cf60
-//   D continental/cold      -> 냉대 #4575b4
-//   E polar                 -> 한대 #d9d9d9
-//   (no F/highland class exists in Köppen-Geiger; 고산 has no target pixels here)
-const GROUP_COLORS = {
-  A: [0x1b, 0x78, 0x37],
-  B: [0xf2, 0xc7, 0x44],
-  C: [0x91, 0xcf, 0x60],
-  D: [0x45, 0x75, 0xb4],
-  E: [0xd9, 0xd9, 0xd9],
+const OCEAN = [0xec, 0xe1, 0xc6]; // 크림 바다 (App.css --ocean)
+
+// 14 소분류 → 교과서 색 (src/climate/subtypes.ts SUBTYPE와 동일)
+const HEX = {
+  Af: '#e23b2c', Am: '#ef8b34', Aw: '#f4d13c',
+  BS: '#ece3c4', BW: '#d6af5a',
+  Cfa: '#367a31', Cfb: '#77b04c', Cs: '#b6cd61', Cw: '#9dc44d',
+  Df: '#a8dedb', Dw: '#67c4c6',
+  ET: '#cbbde0', EF: '#9d80c5',
 };
+const h2rgb = (h) => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
 
-// className: [r,g,b] (standard Beck et al. legend), group letter
+// 표준 Beck et al. 30-class 원본 RGB → 14 소분류. (Ds 여름건조 냉대는 희귀 → Dw로, Cfc→Cfb 등 병합)
 const CLASS_TABLE = [
-  ['Af', [0, 0, 255], 'A'],
-  ['Am', [0, 120, 255], 'A'],
-  ['Aw/As', [70, 170, 250], 'A'],
+  ['Af', [0, 0, 255], 'Af'],
+  ['Am', [0, 120, 255], 'Am'],
+  ['Aw/As', [70, 170, 250], 'Aw'],
 
-  ['BWh', [255, 0, 0], 'B'],
-  ['BWk', [255, 150, 150], 'B'],
-  ['BSh', [245, 165, 0], 'B'],
-  ['BSk', [255, 220, 100], 'B'],
+  ['BWh', [255, 0, 0], 'BW'],
+  ['BWk', [255, 150, 150], 'BW'],
+  ['BSh', [245, 165, 0], 'BS'],
+  ['BSk', [255, 220, 100], 'BS'],
 
-  ['Csa', [255, 255, 0], 'C'],
-  ['Csb', [200, 200, 0], 'C'],
-  ['Csc', [150, 150, 0], 'C'],
-  ['Cwa', [150, 255, 150], 'C'],
-  ['Cwb', [100, 200, 100], 'C'],
-  ['Cwc', [50, 150, 50], 'C'],
-  ['Cfa', [200, 255, 80], 'C'],
-  ['Cfb', [100, 255, 80], 'C'],
-  ['Cfc', [50, 200, 0], 'C'],
+  ['Csa', [255, 255, 0], 'Cs'],
+  ['Csb', [200, 200, 0], 'Cs'],
+  ['Csc', [150, 150, 0], 'Cs'],
+  ['Cwa', [150, 255, 150], 'Cw'],
+  ['Cwb', [100, 200, 100], 'Cw'],
+  ['Cwc', [50, 150, 50], 'Cw'],
+  ['Cfa', [200, 255, 80], 'Cfa'],
+  ['Cfb', [100, 255, 80], 'Cfb'],
+  ['Cfc', [50, 200, 0], 'Cfb'],
 
-  ['Dsa', [255, 0, 255], 'D'],
-  ['Dsb', [200, 0, 200], 'D'],
-  ['Dsc', [150, 50, 150], 'D'],
-  ['Dsd', [150, 100, 150], 'D'],
-  ['Dwa', [170, 175, 255], 'D'],
-  ['Dwb', [89, 120, 220], 'D'],
-  ['Dwc', [75, 80, 179], 'D'],
-  ['Dwd', [50, 0, 135], 'D'],
-  ['Dfa', [0, 255, 255], 'D'],
-  ['Dfb', [55, 200, 255], 'D'],
-  ['Dfc', [0, 125, 125], 'D'],
-  ['Dfd', [0, 70, 95], 'D'],
+  ['Dsa', [255, 0, 255], 'Dw'],
+  ['Dsb', [200, 0, 200], 'Dw'],
+  ['Dsc', [150, 50, 150], 'Dw'],
+  ['Dsd', [150, 100, 150], 'Dw'],
+  ['Dwa', [170, 175, 255], 'Dw'],
+  ['Dwb', [89, 120, 220], 'Dw'],
+  ['Dwc', [75, 80, 179], 'Dw'],
+  ['Dwd', [50, 0, 135], 'Dw'],
+  ['Dfa', [0, 255, 255], 'Df'],
+  ['Dfb', [55, 200, 255], 'Df'],
+  ['Dfc', [0, 125, 125], 'Df'],
+  ['Dfd', [0, 70, 95], 'Df'],
 
-  ['ET', [178, 178, 178], 'E'],
-  ['EF', [102, 102, 102], 'E'],
+  ['ET', [178, 178, 178], 'ET'],
+  ['EF', [102, 102, 102], 'EF'],
 ];
 
-const LOOKUP = CLASS_TABLE.map(([name, rgb, group]) => ({
-  name,
-  rgb,
-  target: GROUP_COLORS[group],
-}));
+const LOOKUP = CLASS_TABLE.map(([name, rgb, sub]) => ({ name, rgb, target: h2rgb(HEX[sub]) }));
 
 function nearestTarget(r, g, b) {
   let best = null;
@@ -94,21 +84,15 @@ function nearestTarget(r, g, b) {
 }
 
 function isOceanOrNoData(r, g, b, a) {
-  // Fully (or mostly) transparent -> no-data / ocean in the source texture.
   if (a < 16) return true;
-  // Near-white, opaque pixel (not part of the 30-class palette) -> treat as ocean too,
-  // just in case some export step flattened alpha to white.
   if (a >= 16 && r > 250 && g > 250 && b > 250) return true;
   return false;
 }
 
-function loadPng(file) {
-  return PNG.sync.read(fs.readFileSync(file));
-}
+const loadPng = (file) => PNG.sync.read(fs.readFileSync(file));
 
 function inspect() {
-  const png = loadPng(SRC);
-  const { width, height, data } = png;
+  const { width, height, data } = loadPng(SRC);
   console.log('dims', width, height);
   const counts = new Map();
   for (let i = 0; i < data.length; i += 4) {
@@ -117,33 +101,27 @@ function inspect() {
   }
   const sorted = [...counts.entries()].sort((a, b) => b[1] - a[1]);
   console.log('total distinct colors:', sorted.length);
-  for (const [k, c] of sorted.slice(0, 40)) {
-    console.log(k, c);
-  }
+  for (const [k, c] of sorted.slice(0, 40)) console.log(k, c);
 }
 
 function recolor() {
   const png = loadPng(SRC);
   const { width, height, data } = png;
   const out = new PNG({ width, height });
-
   let oceanCount = 0;
   let paintedCount = 0;
 
   for (let i = 0; i < data.length; i += 4) {
     const r = data[i], g = data[i + 1], b = data[i + 2], a = data[i + 3];
-
     if (isOceanOrNoData(r, g, b, a)) {
-      out.data[i] = r;
-      out.data[i + 1] = g;
-      out.data[i + 2] = b;
-      out.data[i + 3] = a;
+      out.data[i] = OCEAN[0];
+      out.data[i + 1] = OCEAN[1];
+      out.data[i + 2] = OCEAN[2];
+      out.data[i + 3] = 255;
       oceanCount++;
       continue;
     }
-
-    const match = nearestTarget(r, g, b);
-    const [tr, tg, tb] = match.target;
+    const [tr, tg, tb] = nearestTarget(r, g, b).target;
     out.data[i] = tr;
     out.data[i + 1] = tg;
     out.data[i + 2] = tb;
@@ -153,44 +131,35 @@ function recolor() {
 
   fs.writeFileSync(OUT, PNG.sync.write(out));
   console.log('wrote', OUT);
-  console.log('ocean/no-data pixels:', oceanCount);
+  console.log('ocean/no-data pixels -> cream:', oceanCount);
   console.log('painted (land) pixels:', paintedCount);
 }
 
-function hex([r, g, b]) {
-  return '#' + [r, g, b].map((v) => v.toString(16).padStart(2, '0')).join('');
-}
+const hex = ([r, g, b]) => '#' + [r, g, b].map((v) => v.toString(16).padStart(2, '0')).join('');
 
 function verify() {
-  const png = loadPng(OUT);
-  const { width, height, data } = png;
-
+  const { width, height, data } = loadPng(OUT);
   const points = [
-    ['Amazon', -3, -60, '#1b7837'],
-    ['Sahara', 23, 13, '#f2c744'],
-    ['Western Europe / France', 47, 2, '#91cf60'],
-    ['Central Siberia', 63, 100, '#4575b4'],
-    ['Antarctica', -80, 0, '#d9d9d9'],
-    ['Mid-Pacific ocean', 0, -140, 'ocean (preserve)'],
+    ['Amazon', -3, -60, HEX.Af],
+    ['Sahara', 23, 13, HEX.BW],
+    ['Sahel', 15, 5, HEX.BS],
+    ['Western Europe / France', 47, 2, HEX.Cfb],
+    ['Mediterranean / Spain', 39, -4, HEX.Cs],
+    ['Central Siberia', 63, 100, HEX.Df],
+    ['NE China / Manchuria', 47, 125, HEX.Dw],
+    ['Antarctica', -80, 0, HEX.EF + ' or ' + HEX.ET],
+    ['Mid-Pacific ocean', 0, -140, hex(OCEAN) + ' (cream)'],
   ];
-
   for (const [label, lat, lng, expected] of points) {
     const x = Math.min(width - 1, Math.floor(((lng + 180) / 360) * width));
     const y = Math.min(height - 1, Math.floor(((90 - lat) / 180) * height));
     const idx = (y * width + x) * 4;
     const r = data[idx], g = data[idx + 1], b = data[idx + 2], a = data[idx + 3];
-    const rgbHex = hex([r, g, b]);
-    console.log(
-      `${label} (lat ${lat}, lng ${lng}) px(${x},${y}) -> rgba(${r},${g},${b},${a}) hex=${rgbHex} expected=${expected}`
-    );
+    console.log(`${label} (lat ${lat}, lng ${lng}) -> ${hex([r, g, b])} a=${a}  expected=${expected}`);
   }
 }
 
 const args = process.argv.slice(2);
-if (args.includes('--inspect')) {
-  inspect();
-} else if (args.includes('--verify')) {
-  verify();
-} else {
-  recolor();
-}
+if (args.includes('--inspect')) inspect();
+else if (args.includes('--verify')) verify();
+else recolor();
