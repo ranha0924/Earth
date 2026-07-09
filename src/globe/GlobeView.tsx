@@ -6,7 +6,7 @@ import { featureToIso } from './featureIso'
 import type { ClimateGroup } from '../climate/types'
 import { SUBTYPE_BY_KO } from '../climate/subtypes'
 import { getReligion } from '../culture/data'
-import { colorForReligion } from '../culture/types'
+import { colorForReligion, type ReligionId } from '../culture/types'
 import { ISSUE_BY_ID, TREATY_BY_ID } from '../environment/data'
 import { FESTIVALS, FESTIVAL_BY_ID } from '../culture/festivals'
 import { HIGHLANDS, HIGHLAND_BY_ID } from '../climate/highlands'
@@ -89,6 +89,18 @@ const TREATY_FOCUS: Record<TreatyId, { lat: number; lng: number }> = {
   unccd: { lat: 48.85, lng: 2.35 }, // 파리(채택)
   kyoto: { lat: 35.0, lng: 135.77 }, // 교토
   paris: { lat: 48.85, lng: 2.35 }, // 파리
+}
+
+// 종교별 대표 분포 지역 (범례 클릭 시 이동)
+const RELIGION_FOCUS: Record<ReligionId, { lat: number; lng: number; altitude: number }> = {
+  catholic: { lat: -12, lng: -58, altitude: 2.3 }, // 라틴 아메리카·남유럽
+  protestant: { lat: 52, lng: 4, altitude: 2.1 }, // 북서 유럽·북아메리카
+  orthodox: { lat: 54, lng: 40, altitude: 2.1 }, // 동유럽·러시아
+  islam: { lat: 25, lng: 45, altitude: 2.0 }, // 서아시아·북아프리카
+  hindu: { lat: 22, lng: 79, altitude: 1.6 }, // 인도
+  buddhist: { lat: 18, lng: 100, altitude: 1.9 }, // 동남·동아시아
+  jewish: { lat: 31.5, lng: 35, altitude: 1.4 }, // 이스라엘
+  other: { lat: 35, lng: 105, altitude: 2.0 }, // 동아시아 등
 }
 
 export function GlobeView() {
@@ -336,6 +348,15 @@ export function GlobeView() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFestival])
+
+  // 종교(범례) → 해당 종교 대표 분포 지역
+  useEffect(() => {
+    if (religionFilter) {
+      const f = RELIGION_FOCUS[religionFilter]
+      if (f) flyTo(f.lat, f.lng, f.altitude)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [religionFilter])
 
   return (
     <div className="globe" style={{ position: 'relative' }}>
