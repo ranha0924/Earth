@@ -20,9 +20,12 @@ export function ClimateChart({ city }: ClimateChartProps) {
   const plotW = W - M.left - M.right
   const plotH = H - M.top - M.bottom
 
-  const tMin = Math.min(0, Math.floor((Math.min(...city.temps) - 4) / 10) * 10)
+  // 교과서 기후 그래프 관례: 기온선은 위쪽 밴드, 강수 막대는 아래쪽 밴드에 놓여 서로 겹치지 않게 축을 잡는다.
+  // 기온 축 바닥을 최소 -10℃까지 내려 기온선을 위로 띄우고,
+  // 강수 축엔 최고 막대가 그래프 절반 높이(≈50%)에 그치도록 최댓값의 2배를 여유로 준다.
+  const tMin = Math.min(-10, Math.floor((Math.min(...city.temps) - 4) / 10) * 10)
   const tMax = Math.max(30, Math.ceil((Math.max(...city.temps) + 4) / 10) * 10)
-  const pMax = Math.max(100, Math.ceil(Math.max(...city.precip) / 100) * 100)
+  const pMax = Math.max(100, Math.ceil((Math.max(...city.precip) * 2) / 100) * 100)
 
   const x = (i: number) => M.left + ((i + 0.5) / 12) * plotW
   const yT = (t: number) => M.top + plotH - ((t - tMin) / (tMax - tMin)) * plotH
