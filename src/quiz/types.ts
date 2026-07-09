@@ -21,7 +21,7 @@ export interface GraphQuestion {
   id: string
   category: 'graph'
   question: string
-  graphIso: string // 하이서그래프를 보여줄 국가 ISO_A2 (featured 데이터 필요)
+  graphIso: string // 기후 그래프를 보여줄 국가 ISO_A2 (featured 데이터 필요)
   choices: string[]
   answerIndex: number
   explanation: string

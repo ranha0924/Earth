@@ -21,7 +21,7 @@ describe('퀴즈 문제 은행', () => {
       expect(q.explanation).not.toBe('')
     }
   })
-  it('그래프 문제는 하이서그래프 데이터가 있는 나라를 참조한다', () => {
+  it('그래프 문제는 기후 그래프 데이터가 있는 나라를 참조한다', () => {
     for (const q of QUIZ_BANK) {
       if (!isGraphQuestion(q)) continue
       expect(getFeaturedClimate(q.graphIso)).not.toBeNull()

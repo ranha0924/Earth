@@ -71,7 +71,7 @@ export function InfoCard() {
                   </span>
                 ))}
               </div>
-              <p className="climate-list__note">※ 지도 색은 대표 기후 한 가지예요. 실제 기후는 지역(위도·지형)마다 달라요.</p>
+              <p className="climate-list__note">※ 지도는 위도·지형에 따른 실제 기후 분포를 보여줘요. 아래 스와치가 대표 기후예요.</p>
             </div>
           )}
 

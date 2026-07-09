@@ -12,7 +12,7 @@ interface ClimateChartProps {
   city: FeaturedClimate
 }
 
-/** 하이서그래프: 월별 기온(꺾은선) + 강수량(막대). 시험 판독 연습용. */
+/** 기후 그래프(기온·강수량 그래프): 월별 기온(꺾은선) + 강수량(막대). 시험 판독 연습용. */
 export function ClimateChart({ city }: ClimateChartProps) {
   const W = 360
   const H = 220
@@ -41,7 +41,7 @@ export function ClimateChart({ city }: ClimateChartProps) {
         <span className="climograph__city">{city.cityKo}의 기온·강수량</span>
         {city.southern && <span className="climograph__south">남반구 — 1월이 여름</span>}
       </div>
-      <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`${city.cityKo} 하이서그래프`}>
+      <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`${city.cityKo} 기후 그래프`}>
         {tTicks.map((t) => (
           <g key={`t${t}`}>
             <line x1={M.left} x2={W - M.right} y1={yT(t)} y2={yT(t)} stroke={INK_FAINT} strokeWidth="0.5" />
