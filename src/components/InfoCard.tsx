@@ -2,10 +2,27 @@ import { useAppStore } from '../store'
 import { climateData, getCountryClimate } from '../climate/data'
 import { colorForGroup } from '../climate/types'
 import { getFeaturedClimate } from '../climate/featured'
-import { SUBTYPE, SUBTYPE_BY_KO } from '../climate/subtypes'
+import { SUBTYPE, SUBTYPE_BY_KO, type SubtypeInfo } from '../climate/subtypes'
 import { HIGHLAND_BY_ID } from '../climate/highlands'
 import { ClimateChart } from './ClimateChart'
 import { Icon } from './Icon'
+
+// 기후별 식생·인간생활 (통합사회 '자연환경과 인간')
+function ClimateTraits({ info }: { info: SubtypeInfo | undefined }) {
+  if (!info) return null
+  return (
+    <div className="traits">
+      <div className="traits__item">
+        <span className="traits__label"><Icon name="leaf" size={13} /> 식생</span>
+        <p className="traits__text">{info.vegetation}</p>
+      </div>
+      <div className="traits__item">
+        <span className="traits__label"><Icon name="people" size={13} /> 인간생활</span>
+        <p className="traits__text">{info.life}</p>
+      </div>
+    </div>
+  )
+}
 
 export function InfoCard() {
   const selectedIso = useAppStore((s) => s.selectedIso)
@@ -27,6 +44,7 @@ export function InfoCard() {
           <span className="card__climate">고산 기후 (H) · {h.cities}</span>
         </div>
         <p className="card__note">{h.note}</p>
+        <ClimateTraits info={SUBTYPE.H} />
         <div className="confusion">
           <b><Icon name="warning" size={13} /> 개념 포인트</b>
           <p>고산 기후는 나라 전체가 아니라 <b>해발 고도가 높은 지역</b>에만 나타나요. 저위도(적도 부근)라도 고도가 높으면 연중 서늘합니다.</p>
@@ -74,6 +92,8 @@ export function InfoCard() {
               <p className="climate-list__note">※ 지도는 위도·지형에 따른 실제 기후 분포를 보여줘요. 아래 스와치가 대표 기후예요.</p>
             </div>
           )}
+
+          <ClimateTraits info={SUBTYPE_BY_KO[climate.subtype]} />
 
           {featured && <ClimateChart city={featured} />}
 
