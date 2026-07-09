@@ -101,7 +101,7 @@ export function GlobeView() {
     const el = containerRef.current
     if (!el) return
     hatchRef.current = makeHatchMaterial(VERMILLION, 3)
-    highlandHatchRef.current = makeHatchMaterial('#6a4c7a', 3.2)
+    highlandHatchRef.current = makeHatchMaterial('#3d3d3d', 2.8) // 교과서식 검은 사선(고산)
     const globe = new Globe(el)
       .backgroundColor(PAPER)
       .showAtmosphere(false)

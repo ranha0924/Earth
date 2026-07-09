@@ -16,21 +16,22 @@ export interface SubtypeInfo {
   hatch?: boolean // 고산: 색 대신 사선 해칭
 }
 
+// 색상 = 필립스 세계 지도(2021) 범례에서 추출 — 통합사회 교과서 기준
 export const SUBTYPE: Record<ClimateId, SubtypeInfo> = {
-  Af: { ko: '열대우림', group: '열대', color: '#d64b3f' }, // 빨강
-  Am: { ko: '열대몬순', group: '열대', color: '#e6892f' }, // 주황
-  Aw: { ko: '사바나', group: '열대', color: '#ecc94b' }, // 노랑
-  BS: { ko: '스텝', group: '건조', color: '#e3d6a8' }, // 모래
-  BW: { ko: '사막', group: '건조', color: '#caa24a' }, // 황토
-  Cfa: { ko: '온난습윤', group: '온대', color: '#2f7d46' }, // 찐초록
-  Cfb: { ko: '서안해양성', group: '온대', color: '#62ac5e' }, // 초록
-  Cs: { ko: '지중해성', group: '온대', color: '#a6dcc6' }, // 연민트
-  Cw: { ko: '온대겨울건조', group: '온대', color: '#b9d16b' }, // 연두
-  Df: { ko: '냉대습윤', group: '냉대', color: '#aad4ea' }, // 연하늘
-  Dw: { ko: '냉대겨울건조', group: '냉대', color: '#64abda' }, // 하늘
-  ET: { ko: '툰드라', group: '한대', color: '#c3b3e0' }, // 라벤더
-  EF: { ko: '빙설', group: '한대', color: '#8a6fc2' }, // 찐라벤더
-  H: { ko: '고산', group: '고산', color: '#93748a', hatch: true }, // 빗금
+  Af: { ko: '열대우림', group: '열대', color: '#e23b2c' }, // 빨강
+  Am: { ko: '열대몬순', group: '열대', color: '#ef8b34' }, // 주황
+  Aw: { ko: '사바나', group: '열대', color: '#f4d13c' }, // 노랑
+  BS: { ko: '스텝', group: '건조', color: '#ece3c4' }, // 옅은 모래
+  BW: { ko: '사막', group: '건조', color: '#d6af5a' }, // 황토
+  Cfa: { ko: '온난습윤', group: '온대', color: '#367a31' }, // 진초록
+  Cfb: { ko: '서안해양성', group: '온대', color: '#77b04c' }, // 초록
+  Cs: { ko: '지중해성', group: '온대', color: '#b6cd61' }, // 연녹색
+  Cw: { ko: '온대겨울건조', group: '온대', color: '#9dc44d' }, // 연두
+  Df: { ko: '냉대습윤', group: '냉대', color: '#a8dedb' }, // 옅은 청록
+  Dw: { ko: '냉대겨울건조', group: '냉대', color: '#67c4c6' }, // 청록
+  ET: { ko: '툰드라', group: '한대', color: '#cbbde0' }, // 옅은 보라
+  EF: { ko: '빙설', group: '한대', color: '#9d80c5' }, // 보라
+  H: { ko: '고산', group: '고산', color: '#444444', hatch: true }, // 검은 빗금
 }
 
 // 한국어 소분류명 → 정보 (climate.json의 subtype 문자열로 조회)
