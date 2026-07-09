@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest'
 import { QUIZ_BANK } from './data'
-import { isMapQuestion } from './types'
+import { isMapQuestion, isGraphQuestion } from './types'
 import { hasCountryName } from '../data/countryNames'
+import { getFeaturedClimate } from '../climate/featured'
 
 describe('퀴즈 문제 은행', () => {
   it('문제가 충분히(30개 이상) 있다', () => {
@@ -20,6 +21,12 @@ describe('퀴즈 문제 은행', () => {
       expect(q.explanation).not.toBe('')
     }
   })
+  it('그래프 문제는 하이서그래프 데이터가 있는 나라를 참조한다', () => {
+    for (const q of QUIZ_BANK) {
+      if (!isGraphQuestion(q)) continue
+      expect(getFeaturedClimate(q.graphIso)).not.toBeNull()
+    }
+  })
   it('지도 문제의 정답 나라 ISO가 실제 국가명 데이터에 존재한다', () => {
     for (const q of QUIZ_BANK) {
       if (!isMapQuestion(q)) continue
@@ -27,8 +34,8 @@ describe('퀴즈 문제 은행', () => {
       for (const iso of q.answerIsos) expect(hasCountryName(iso)).toBe(true)
     }
   })
-  it('5개 카테고리가 모두 출제된다', () => {
+  it('6개 카테고리가 모두 출제된다', () => {
     const cats = new Set(QUIZ_BANK.map((q) => q.category))
-    expect(cats).toEqual(new Set(['climate', 'environment', 'treaty', 'culture', 'map']))
+    expect(cats).toEqual(new Set(['climate', 'environment', 'treaty', 'culture', 'map', 'graph']))
   })
 })

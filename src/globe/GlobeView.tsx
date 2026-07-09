@@ -9,6 +9,7 @@ import { getReligion } from '../culture/data'
 import { colorForReligion } from '../culture/types'
 import { ISSUE_BY_ID, TREATY_BY_ID } from '../environment/data'
 import { FESTIVALS, FESTIVAL_BY_ID } from '../culture/festivals'
+import { HIGHLANDS, HIGHLAND_BY_ID } from '../climate/highlands'
 import type { TreatyId } from '../environment/types'
 
 const GEOJSON_URL = `${import.meta.env.BASE_URL}data/countries.geojson`
@@ -232,25 +233,36 @@ export function GlobeView() {
       .ringRepeatPeriod(1300)
   }, [mode, activeIssue])
 
-  // 문화 모드 축제 핀
+  // 오버레이 핀 — 기후 모드: 고산 지역 / 문화 모드: 축제
   useEffect(() => {
     const globe = globeRef.current
     if (!globe) return
-    const show = mode === 'culture' && cultureLayer === 'festival'
+    type Pin = { id: string; nameKo: string; lat: number; lng: number; kind: 'festival' | 'highland' }
+    let pins: Pin[] = []
+    if (mode === 'culture' && cultureLayer === 'festival') {
+      pins = FESTIVALS.map((f) => ({ id: f.id, nameKo: f.nameKo, lat: f.lat, lng: f.lng, kind: 'festival' }))
+    } else if (mode === 'climate') {
+      pins = HIGHLANDS.map((h) => ({ id: h.id, nameKo: h.nameKo, lat: h.lat, lng: h.lng, kind: 'highland' }))
+    }
+    const FEST_ICON =
+      '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21V4"/><path d="M6 5c3-2 6 2 9 0v7c-3 2-6-2-9 0"/></svg>'
+    const PEAK_ICON =
+      '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18L14 6l-3.5 6.5L8 9z"/></svg>'
     globe
-      .htmlElementsData(show ? FESTIVALS : [])
-      .htmlLat((d: object) => (d as (typeof FESTIVALS)[number]).lat)
-      .htmlLng((d: object) => (d as (typeof FESTIVALS)[number]).lng)
+      .htmlElementsData(pins)
+      .htmlLat((d: object) => (d as Pin).lat)
+      .htmlLng((d: object) => (d as Pin).lng)
       .htmlAltitude(0.02)
       .htmlElement((d: object) => {
-        const f = d as (typeof FESTIVALS)[number]
+        const pin = d as Pin
         const el = document.createElement('button')
-        el.className = 'festival-pin'
+        el.className = `festival-pin${pin.kind === 'highland' ? ' highland-pin' : ''}`
         el.type = 'button'
-        el.innerHTML = `<span class="festival-pin__icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21V4"/><path d="M6 5c3-2 6 2 9 0v7c-3 2-6-2-9 0"/></svg></span><span class="festival-pin__label">${f.nameKo}</span>`
+        el.innerHTML = `<span class="festival-pin__icon">${pin.kind === 'highland' ? PEAK_ICON : FEST_ICON}</span><span class="festival-pin__label">${pin.nameKo}</span>`
         el.onclick = (ev) => {
           ev.stopPropagation()
-          useAppStore.getState().selectFestival(f.id)
+          if (pin.kind === 'festival') useAppStore.getState().selectFestival(pin.id)
+          else useAppStore.getState().selectCountry(`highland:${pin.id}`)
         }
         return el
       })
@@ -275,11 +287,14 @@ export function GlobeView() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeIssue])
 
-  // 협약(연표) → 채택지, 축제 → 개최지
+  // 협약(연표) → 채택지, 고산 지역 → 해당 고원
   useEffect(() => {
     if (selectedIso?.startsWith('treaty:')) {
       const t = TREATY_FOCUS[selectedIso.slice('treaty:'.length) as TreatyId]
       if (t) flyTo(t.lat, t.lng, 1.9)
+    } else if (selectedIso?.startsWith('highland:')) {
+      const h = HIGHLAND_BY_ID[selectedIso.slice('highland:'.length)]
+      if (h) flyTo(h.lat, h.lng, 1.6)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedIso])
