@@ -28,8 +28,8 @@ export default function App() {
     <div className="app">
       <header className="masthead">
         <div className="masthead__brand">
-          <h1 className="masthead__title">지구본 사회공부</h1>
-          <p className="masthead__sub">Atlas of World Geography · 통합사회</p>
+          <h1 className="masthead__title">세계 도감</h1>
+          <p className="masthead__sub">Illustrated Atlas of the World · 통합사회</p>
         </div>
         <ModeSwitcher />
       </header>
