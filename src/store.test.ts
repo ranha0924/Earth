@@ -19,10 +19,10 @@ describe('useAppStore', () => {
     useAppStore.getState().selectCountry(null)
     expect(useAppStore.getState().selectedIso).toBeNull()
   })
-  it('toggleClimateFilter는 같은 그룹을 두 번 누르면 해제된다', () => {
-    useAppStore.getState().toggleClimateFilter('온대')
-    expect(useAppStore.getState().climateFilter).toBe('온대')
-    useAppStore.getState().toggleClimateFilter('온대')
+  it('toggleClimateFilter는 같은 소분류를 두 번 누르면 해제된다', () => {
+    useAppStore.getState().toggleClimateFilter('지중해성')
+    expect(useAppStore.getState().climateFilter).toBe('지중해성')
+    useAppStore.getState().toggleClimateFilter('지중해성')
     expect(useAppStore.getState().climateFilter).toBeNull()
   })
 })

@@ -18,7 +18,8 @@ describe('InfoCard', () => {
     const { container } = render(<InfoCard />)
     expect(screen.getByText('대한민국')).toBeInTheDocument()
     expect(screen.getByText(/냉대 · 냉대습윤/)).toBeInTheDocument()
-    expect(screen.getByText(/남부 지방/)).toBeInTheDocument()
+    // 대표국은 하이서그래프(서울)와 기후 설명이 함께 표시된다
+    expect(screen.getByText(/서울의 기온·강수량/)).toBeInTheDocument()
     const swatch = container.querySelector('.card__swatch')
     expect(swatch?.getAttribute('aria-hidden')).toBe('true')
   })

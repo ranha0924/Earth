@@ -9,21 +9,26 @@ beforeEach(() => {
 })
 
 describe('Legend', () => {
-  it('6개 기후 대분류 라벨을 모두 텍스트로 보여준다', () => {
+  it('14개 기후 소분류를 버튼으로 보여준다', () => {
     render(<Legend />)
-    for (const label of ['열대', '건조', '온대', '냉대', '한대', '고산']) {
+    for (const label of ['열대우림', '열대몬순', '사바나', '스텝', '사막', '지중해성', '냉대습윤', '툰드라', '고산']) {
       expect(screen.getByRole('button', { name: new RegExp(label) })).toBeInTheDocument()
     }
   })
-  it('항목 클릭 시 스토어 필터가 설정된다', async () => {
-    render(<Legend />)
-    await userEvent.click(screen.getByRole('button', { name: /온대/ }))
-    expect(useAppStore.getState().climateFilter).toBe('온대')
+  it('6개 대분류 헤더를 표시한다', () => {
+    const { container } = render(<Legend />)
+    const heads = Array.from(container.querySelectorAll('.legend__group-name')).map((e) => e.textContent)
+    expect(heads).toEqual(['열대', '건조', '온대', '냉대', '한대', '고산'])
   })
-  it('활성 항목은 aria-pressed=true, 비활성 항목은 aria-pressed=false', () => {
-    useAppStore.setState({ climateFilter: '건조' })
+  it('소분류 클릭 시 스토어 필터가 그 소분류로 설정된다', async () => {
     render(<Legend />)
-    expect(screen.getByRole('button', { name: /건조/ })).toHaveAttribute('aria-pressed', 'true')
-    expect(screen.getByRole('button', { name: /온대/ })).toHaveAttribute('aria-pressed', 'false')
+    await userEvent.click(screen.getByRole('button', { name: /지중해성/ }))
+    expect(useAppStore.getState().climateFilter).toBe('지중해성')
+  })
+  it('활성 항목만 aria-pressed=true', () => {
+    useAppStore.setState({ climateFilter: '사바나' })
+    render(<Legend />)
+    expect(screen.getByRole('button', { name: /사바나/ })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: /툰드라/ })).toHaveAttribute('aria-pressed', 'false')
   })
 })

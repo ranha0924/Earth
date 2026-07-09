@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useAppStore } from '../../store'
 import { QUIZ_BANK } from '../../quiz/data'
-import { CATEGORY_LABEL, isMapQuestion, type QuizQuestion } from '../../quiz/types'
+import { CATEGORY_LABEL, isMapQuestion, isGraphQuestion, type QuizQuestion } from '../../quiz/types'
 import { loadRecord, saveResult, type QuizRecord } from '../../quiz/storage'
 import { countryNameKo } from '../../data/countryNames'
+import { getFeaturedClimate } from '../../climate/featured'
+import { ClimateChart } from '../ClimateChart'
 import { Icon } from '../Icon'
 
 const SET_SIZE = 10
@@ -42,6 +44,7 @@ export function QuizMode() {
   const prevIso = useRef<string | null>(selectedIso)
 
   const current = questions[index]
+  const graphCity = isGraphQuestion(current) ? getFeaturedClimate(current.graphIso) : null
 
   // 지도 문제: 지구본 클릭(selectedIso 변화)을 정답 판정에 사용
   useEffect(() => {
@@ -144,6 +147,12 @@ export function QuizMode() {
       </div>
 
       <p className="quiz-question">{current.question}</p>
+
+      {isGraphQuestion(current) && graphCity && (
+        <div className="quiz-graph">
+          <ClimateChart city={graphCity} />
+        </div>
+      )}
 
       {isMapQuestion(current) ? (
         <div className="quiz-map-hint">

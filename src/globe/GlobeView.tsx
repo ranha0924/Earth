@@ -4,11 +4,13 @@ import Globe, { type GlobeInstance } from 'globe.gl'
 import { useAppStore } from '../store'
 import { featureToIso } from './featureIso'
 import { climateData, getCountryClimate } from '../climate/data'
-import { colorForGroup, type ClimateGroup } from '../climate/types'
+import type { ClimateGroup } from '../climate/types'
+import { SUBTYPE_BY_KO, colorForSubtypeKo } from '../climate/subtypes'
 import { getReligion } from '../culture/data'
 import { colorForReligion } from '../culture/types'
 import { ISSUE_BY_ID, TREATY_BY_ID } from '../environment/data'
 import { FESTIVALS, FESTIVAL_BY_ID } from '../culture/festivals'
+import { HIGHLANDS, HIGHLAND_BY_ID } from '../climate/highlands'
 import type { TreatyId } from '../environment/types'
 
 const GEOJSON_URL = `${import.meta.env.BASE_URL}data/countries.geojson`
@@ -41,16 +43,16 @@ function buildGraticules(): [number, number][][] {
 }
 const GRATICULES = buildGraticules()
 
-// 선택 지역용 사선 해칭 텍스처 (크림 바탕 + 버밀리언 대각선)
-function makeHatchMaterial(): THREE.Material {
+// 사선 해칭 텍스처 재료 (크림 바탕 + 지정색 대각선)
+function makeHatchMaterial(lineColor: string, lineWidth = 3): THREE.Material {
   const s = 24
   const cvs = document.createElement('canvas')
   cvs.width = cvs.height = s
   const ctx = cvs.getContext('2d')!
   ctx.fillStyle = PAPER
   ctx.fillRect(0, 0, s, s)
-  ctx.strokeStyle = VERMILLION
-  ctx.lineWidth = 3
+  ctx.strokeStyle = lineColor
+  ctx.lineWidth = lineWidth
   ctx.lineCap = 'round'
   for (let o = -s; o < s * 2; o += 8) {
     ctx.beginPath()
@@ -90,14 +92,16 @@ const TREATY_FOCUS: Record<TreatyId, { lat: number; lng: number }> = {
 export function GlobeView() {
   const containerRef = useRef<HTMLDivElement>(null)
   const globeRef = useRef<GlobeInstance | null>(null)
-  const hatchRef = useRef<THREE.Material | null>(null)
+  const hatchRef = useRef<THREE.Material | null>(null) // 선택 지역 (버밀리언)
+  const highlandHatchRef = useRef<THREE.Material | null>(null) // 고산 기후 (플럼)
   const [loadError, setLoadError] = useState(false)
 
   // 마운트: 지구본 생성 + 국경 로딩. 한 번만.
   useEffect(() => {
     const el = containerRef.current
     if (!el) return
-    hatchRef.current = makeHatchMaterial()
+    hatchRef.current = makeHatchMaterial(VERMILLION, 3)
+    highlandHatchRef.current = makeHatchMaterial('#6a4c7a', 3.2)
     const globe = new Globe(el)
       .backgroundColor(PAPER)
       .showAtmosphere(false)
@@ -144,10 +148,12 @@ export function GlobeView() {
       globe._destructor?.()
       el.innerHTML = ''
       // 해칭 material/텍스처 해제 (StrictMode 이중 마운트 시 GPU 리소스 누수 방지)
-      const m = hatchRef.current as THREE.MeshBasicMaterial | null
-      m?.map?.dispose()
-      m?.dispose()
-      hatchRef.current = null
+      for (const ref of [hatchRef, highlandHatchRef]) {
+        const m = ref.current as THREE.MeshBasicMaterial | null
+        m?.map?.dispose()
+        m?.dispose()
+        ref.current = null
+      }
     }
   }, [])
 
@@ -172,11 +178,12 @@ export function GlobeView() {
     const capColor = (feat: object): string => {
       const iso = featureToIso(feat)
       if (mode === 'climate') {
-        // 텍스처 대신 나라별 대표 기후로 항상 색칠
+        // 나라별 대표 기후 소분류로 색칠 (통합사회 팔레트)
         const c = getCountryClimate(climateData, iso)
         if (!c) return LAND
-        if (climateFilter && c.group !== climateFilter) return LAND_DIM
-        return colorForGroup(c.group)
+        if (climateFilter && c.subtype !== climateFilter) return LAND_DIM
+        if (SUBTYPE_BY_KO[c.subtype]?.hatch) return PAPER // 고산: 해칭 재료 바탕
+        return colorForSubtypeKo(c.subtype) ?? LAND
       }
       if (mode === 'environment') {
         // 협약 선택 시 채택지 국가 강조
@@ -198,10 +205,18 @@ export function GlobeView() {
       return LAND
     }
 
-    // 선택 지역만 사선 해칭 material, 나머지는 undefined → capColor 폴백
+    // 사선 해칭 material: 선택 지역(버밀리언) 우선, 기후 모드의 고산(플럼) 그다음
     const capMaterial = (feat: object): THREE.Material | undefined => {
       const iso = featureToIso(feat)
-      return iso && iso === selectedIso && hatchRef.current ? hatchRef.current : undefined
+      if (iso && iso === selectedIso && hatchRef.current) return hatchRef.current
+      if (mode === 'climate') {
+        const c = getCountryClimate(climateData, iso)
+        if (c && SUBTYPE_BY_KO[c.subtype]?.hatch && highlandHatchRef.current) {
+          if (climateFilter && c.subtype !== climateFilter) return undefined // 흐림 처리 시 해칭 생략
+          return highlandHatchRef.current
+        }
+      }
+      return undefined
     }
 
     const strokeColor = (feat: object): string => {
@@ -232,36 +247,48 @@ export function GlobeView() {
       .ringRepeatPeriod(1300)
   }, [mode, activeIssue])
 
-  // 문화 모드 축제 핀
+  // 오버레이 핀 — 기후 모드: 고산 지역 / 문화 모드: 축제
   useEffect(() => {
     const globe = globeRef.current
     if (!globe) return
-    const show = mode === 'culture' && cultureLayer === 'festival'
+    type Pin = { id: string; nameKo: string; lat: number; lng: number; kind: 'festival' | 'highland' }
+    let pins: Pin[] = []
+    if (mode === 'culture' && cultureLayer === 'festival') {
+      pins = FESTIVALS.map((f) => ({ id: f.id, nameKo: f.nameKo, lat: f.lat, lng: f.lng, kind: 'festival' }))
+    } else if (mode === 'climate') {
+      pins = HIGHLANDS.map((h) => ({ id: h.id, nameKo: h.nameKo, lat: h.lat, lng: h.lng, kind: 'highland' }))
+    }
+    const FEST_ICON =
+      '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21V4"/><path d="M6 5c3-2 6 2 9 0v7c-3 2-6-2-9 0"/></svg>'
+    const PEAK_ICON =
+      '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18L14 6l-3.5 6.5L8 9z"/></svg>'
     globe
-      .htmlElementsData(show ? FESTIVALS : [])
-      .htmlLat((d: object) => (d as (typeof FESTIVALS)[number]).lat)
-      .htmlLng((d: object) => (d as (typeof FESTIVALS)[number]).lng)
+      .htmlElementsData(pins)
+      .htmlLat((d: object) => (d as Pin).lat)
+      .htmlLng((d: object) => (d as Pin).lng)
       .htmlAltitude(0.02)
       .htmlElement((d: object) => {
-        const f = d as (typeof FESTIVALS)[number]
+        const pin = d as Pin
         const el = document.createElement('button')
-        el.className = 'festival-pin'
+        el.className = `festival-pin${pin.kind === 'highland' ? ' highland-pin' : ''}`
         el.type = 'button'
-        el.innerHTML = `<span class="festival-pin__icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21V4"/><path d="M6 5c3-2 6 2 9 0v7c-3 2-6-2-9 0"/></svg></span><span class="festival-pin__label">${f.nameKo}</span>`
+        el.innerHTML = `<span class="festival-pin__icon">${pin.kind === 'highland' ? PEAK_ICON : FEST_ICON}</span><span class="festival-pin__label">${pin.nameKo}</span>`
         el.onclick = (ev) => {
           ev.stopPropagation()
-          useAppStore.getState().selectFestival(f.id)
+          if (pin.kind === 'festival') useAppStore.getState().selectFestival(pin.id)
+          else useAppStore.getState().selectCountry(`highland:${pin.id}`)
         }
         return el
       })
   }, [mode, cultureLayer])
 
   // ── 선택 시 해당 지역으로 지구본 이동 ──
-  // 기후 범례 → 대표 지역
+  // 기후 범례(소분류) → 대분류 대표 지역
   useEffect(() => {
     if (climateFilter) {
-      const f = CLIMATE_FOCUS[climateFilter]
-      flyTo(f.lat, f.lng, f.altitude)
+      const group = SUBTYPE_BY_KO[climateFilter]?.group
+      const f = group ? CLIMATE_FOCUS[group] : null
+      if (f) flyTo(f.lat, f.lng, f.altitude)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [climateFilter])
@@ -275,11 +302,14 @@ export function GlobeView() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeIssue])
 
-  // 협약(연표) → 채택지, 축제 → 개최지
+  // 협약(연표) → 채택지, 고산 지역 → 해당 고원
   useEffect(() => {
     if (selectedIso?.startsWith('treaty:')) {
       const t = TREATY_FOCUS[selectedIso.slice('treaty:'.length) as TreatyId]
       if (t) flyTo(t.lat, t.lng, 1.9)
+    } else if (selectedIso?.startsWith('highland:')) {
+      const h = HIGHLAND_BY_ID[selectedIso.slice('highland:'.length)]
+      if (h) flyTo(h.lat, h.lng, 1.6)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedIso])
