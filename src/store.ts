@@ -1,5 +1,4 @@
 import { create } from 'zustand'
-import type { ClimateGroup } from './climate/types'
 import type { IssueId } from './environment/types'
 import type { ReligionId } from './culture/types'
 
@@ -10,7 +9,7 @@ export type CultureLayer = 'religion' | 'festival'
 interface AppState {
   mode: Mode
   selectedIso: string | null
-  climateFilter: ClimateGroup | null
+  climateFilter: string | null // 소분류 한국어명 (예: '지중해성')
   // 환경 모드
   environmentTab: EnvironmentTab
   activeIssue: IssueId | null
@@ -21,8 +20,8 @@ interface AppState {
 
   setMode: (m: Mode) => void
   selectCountry: (iso: string | null) => void
-  setClimateFilter: (g: ClimateGroup | null) => void
-  toggleClimateFilter: (g: ClimateGroup) => void
+  setClimateFilter: (g: string | null) => void
+  toggleClimateFilter: (g: string) => void
   setEnvironmentTab: (t: EnvironmentTab) => void
   setActiveIssue: (id: IssueId | null) => void
   setCultureLayer: (l: CultureLayer) => void

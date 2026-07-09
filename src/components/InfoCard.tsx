@@ -2,7 +2,7 @@ import { useAppStore } from '../store'
 import { climateData, getCountryClimate } from '../climate/data'
 import { colorForGroup } from '../climate/types'
 import { getFeaturedClimate } from '../climate/featured'
-import { SUBTYPE } from '../climate/subtypes'
+import { SUBTYPE, SUBTYPE_BY_KO } from '../climate/subtypes'
 import { HIGHLAND_BY_ID } from '../climate/highlands'
 import { ClimateChart } from './ClimateChart'
 import { Icon } from './Icon'
@@ -49,7 +49,11 @@ export function InfoCard() {
             {climate.nameKo} <span className="card__title-en">{climate.nameEn}</span>
           </h2>
           <div className="card__row">
-            <span className="card__swatch" style={{ backgroundColor: colorForGroup(climate.group) }} aria-hidden="true" />
+            <span
+              className={`card__swatch${SUBTYPE_BY_KO[climate.subtype]?.hatch ? ' legend__swatch--hatch' : ''}`}
+              style={SUBTYPE_BY_KO[climate.subtype]?.hatch ? undefined : { backgroundColor: SUBTYPE_BY_KO[climate.subtype]?.color ?? colorForGroup(climate.group) }}
+              aria-hidden="true"
+            />
             <span className="card__climate">대표 기후 · {climate.group} · {climate.subtype}</span>
           </div>
 
@@ -59,7 +63,10 @@ export function InfoCard() {
               <div className="climate-list__chips">
                 {featured.climates.map((cid) => (
                   <span key={cid} className="climate-chip">
-                    <span className="climate-chip__dot" style={{ backgroundColor: colorForGroup(SUBTYPE[cid].group) }} />
+                    <span
+                      className={`climate-chip__dot${SUBTYPE[cid].hatch ? ' legend__swatch--hatch' : ''}`}
+                      style={SUBTYPE[cid].hatch ? undefined : { backgroundColor: SUBTYPE[cid].color }}
+                    />
                     {SUBTYPE[cid].ko}
                   </span>
                 ))}
