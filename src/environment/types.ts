@@ -36,4 +36,5 @@ export interface Treaty {
   summary: string
   confusion?: string
   lineage?: 'climate' // 기후변화협약→교토→파리 계보
+  host: { iso: string; placeKo: string } // 채택지 (지구본 하이라이트·암기 포인트)
 }
