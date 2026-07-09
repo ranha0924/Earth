@@ -7,7 +7,7 @@ import { climateData, getCountryClimate } from '../climate/data'
 import { colorForGroup, type ClimateGroup } from '../climate/types'
 import { getReligion } from '../culture/data'
 import { colorForReligion } from '../culture/types'
-import { ISSUE_BY_ID } from '../environment/data'
+import { ISSUE_BY_ID, TREATY_BY_ID } from '../environment/data'
 import { FESTIVALS, FESTIVAL_BY_ID } from '../culture/festivals'
 import type { TreatyId } from '../environment/types'
 
@@ -179,6 +179,11 @@ export function GlobeView() {
         return colorForGroup(c.group)
       }
       if (mode === 'environment') {
+        // 협약 선택 시 채택지 국가 강조
+        if (selectedIso?.startsWith('treaty:')) {
+          const t = TREATY_BY_ID[selectedIso.slice('treaty:'.length) as TreatyId]
+          return t && iso === t.host.iso ? VERMILLION : LAND
+        }
         if (!activeIssue) return LAND
         const affected = ISSUE_BY_ID[activeIssue].countryIsos.includes(iso ?? '')
         return affected ? VERMILLION : LAND_DIM

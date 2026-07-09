@@ -133,6 +133,7 @@ export const TREATIES: Treaty[] = [
     summary:
       '물새 서식지로서 국제적으로 중요한 습지를 보호하기 위한 협약. 이란의 람사르에서 채택되었다. 우리나라의 순천만, 우포늪 등이 람사르 습지로 등록되어 있다.',
     confusion: '습지 하면 람사르! "물새·갯벌·늪"이 나오면 람사르 협약.',
+    host: { iso: 'IR', placeKo: '이란 람사르' },
   },
   {
     id: 'london',
@@ -143,6 +144,7 @@ export const TREATIES: Treaty[] = [
     summary:
       '폐기물을 바다에 버려(투기) 발생하는 해양 오염을 막기 위한 협약. 육상에서 생긴 쓰레기·오니 등을 바다에 버리는 행위를 규제한다.',
     confusion: '런던(바다에 버리는 것) vs 바젤(나라 밖으로 옮기는 것) 구분 주의.',
+    host: { iso: 'GB', placeKo: '영국 런던' },
   },
   {
     id: 'montreal',
@@ -153,6 +155,7 @@ export const TREATIES: Treaty[] = [
     summary:
       '오존층을 파괴하는 염화플루오린화탄소(CFC, 프레온가스) 등의 생산·사용을 규제하기 위한 의정서. 오존층 보호를 위한 비엔나 협약(1985)의 실천 방안으로 채택되었다.',
     confusion: '오존층 = 몬트리올 의정서. 프레온가스(냉매·스프레이)가 키워드.',
+    host: { iso: 'CA', placeKo: '캐나다 몬트리올' },
   },
   {
     id: 'basel',
@@ -163,6 +166,7 @@ export const TREATIES: Treaty[] = [
     summary:
       '유해 폐기물이 국경을 넘어 다른 나라(특히 개발도상국)로 옮겨져 처리되는 것을 규제하는 협약. 선진국이 유해 쓰레기를 가난한 나라에 떠넘기는 것을 막는다.',
     confusion: '바젤(유해 폐기물의 국가 간 이동) vs 런던(폐기물 해양 투기) 구분 필수.',
+    host: { iso: 'CH', placeKo: '스위스 바젤' },
   },
   {
     id: 'unfccc',
@@ -174,6 +178,7 @@ export const TREATIES: Treaty[] = [
       '지구 온난화에 대응하기 위한 기본 틀을 마련한 협약. 1992년 브라질 리우 회의에서 채택되었다. 이후 교토 의정서·파리 협정으로 구체화된다.',
     confusion: '기후변화협약(1992·기본 틀) → 교토(1997·선진국 의무) → 파리(2015·모든 국가)의 출발점.',
     lineage: 'climate',
+    host: { iso: 'BR', placeKo: '브라질 리우데자네이루' },
   },
   {
     id: 'cbd',
@@ -184,6 +189,7 @@ export const TREATIES: Treaty[] = [
     summary:
       '지구의 생물 다양성을 보전하고 생물 자원을 지속 가능하게 이용하기 위한 협약. 기후변화협약과 함께 1992년 리우 회의에서 채택되었다.',
     confusion: '"생물종 감소·유전자원" 하면 생물 다양성 협약. 리우 회의(1992) 산물.',
+    host: { iso: 'BR', placeKo: '브라질 리우데자네이루' },
   },
   {
     id: 'unccd',
@@ -194,6 +200,7 @@ export const TREATIES: Treaty[] = [
     summary:
       '가뭄과 사막화로 어려움을 겪는 지역, 특히 아프리카를 돕기 위한 협약. 무리한 개발·방목으로 인한 토지 황폐화(사막화)를 막는 것을 목표로 한다.',
     confusion: '사막화 = 사막화 방지 협약(UNCCD). 사헬 지대·아프리카가 키워드.',
+    host: { iso: 'FR', placeKo: '프랑스 파리 (채택)' },
   },
   {
     id: 'kyoto',
@@ -205,6 +212,7 @@ export const TREATIES: Treaty[] = [
       '기후변화협약을 구체화해 온실가스 감축 목표를 처음으로 정한 의정서. 주로 선진국에 감축 의무를 부과했으며, 탄소 배출권 거래제 등을 도입했다.',
     confusion: '교토(선진국만 의무) vs 파리(모든 당사국 자율 목표) 차이가 최다 출제 포인트.',
     lineage: 'climate',
+    host: { iso: 'JP', placeKo: '일본 교토' },
   },
   {
     id: 'paris',
@@ -216,6 +224,7 @@ export const TREATIES: Treaty[] = [
       '교토 의정서를 대체하는 신기후체제. 선진국과 개발도상국을 포함한 모든 당사국이 각자 온실가스 감축 목표(NDC)를 정해 참여한다. 산업화 이전 대비 지구 평균 기온 상승을 2°C보다 훨씬 아래, 가능하면 1.5°C로 억제하는 것을 목표로 한다.',
     confusion: '파리 협정 = "모든 나라"가 참여. 교토(선진국 의무)와의 차이를 반드시 기억.',
     lineage: 'climate',
+    host: { iso: 'FR', placeKo: '프랑스 파리' },
   },
 ]
 

@@ -132,6 +132,11 @@ function TreatyDetail({ id, onClose }: { id: TreatyId; onClose: () => void }) {
       <div className="card__row">
         <span className="treaty-target">대상: {t.target}</span>
       </div>
+      <div className="card__row">
+        <span className="treaty-target">
+          <Icon name="location" size={12} /> 채택지: {t.host.placeKo} — 지구본에 붉게 표시돼요
+        </span>
+      </div>
       <Section title="핵심 내용" text={t.summary} />
       {t.confusion && (
         <div className="confusion">
