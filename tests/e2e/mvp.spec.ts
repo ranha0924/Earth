@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 
 test('앱이 로딩되고 핵심 UI가 보인다', async ({ page }) => {
   await page.goto('/')
-  await expect(page.getByRole('heading', { name: /세계 도감/ })).toBeVisible()
+  await expect(page.getByRole('heading', { name: /세계 탐구 도감/ })).toBeVisible()
   for (const label of ['기후', '환경', '문화', '퀴즈']) {
     await expect(page.getByRole('button', { name: label })).toBeVisible()
   }

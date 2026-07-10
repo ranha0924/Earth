@@ -31,7 +31,7 @@ export default function App() {
     <div className="app">
       <header className="masthead">
         <div className="masthead__brand">
-          <h1 className="masthead__title">세계 도감</h1>
+          <h1 className="masthead__title">세계 탐구 도감</h1>
           <p className="masthead__sub">Illustrated Atlas of the World · 통합사회</p>
         </div>
         <ModeSwitcher />
