@@ -22,12 +22,12 @@ function ClimateTraits({ info, cid }: { info: SubtypeInfo | undefined; cid: Clim
     <div className="traits">
       <div className="traits__item">
         <span className="traits__label"><Icon name="leaf" size={13} /> 식생</span>
-        {imgs && <img className="traits__img" src={imgs.veg} alt={`${info.ko} 기후의 식생`} loading="lazy" onError={hideBroken} />}
+        {imgs && <img className="traits__img" src={imgs.veg} alt={`${info.ko} 기후의 식생`} loading="lazy" decoding="async" onError={hideBroken} />}
         <p className="traits__text">{info.vegetation}</p>
       </div>
       <div className="traits__item">
         <span className="traits__label"><Icon name="people" size={13} /> 인간생활</span>
-        {imgs && <img className="traits__img" src={imgs.life} alt={`${info.ko} 기후의 인간생활`} loading="lazy" onError={hideBroken} />}
+        {imgs && <img className="traits__img" src={imgs.life} alt={`${info.ko} 기후의 인간생활`} loading="lazy" decoding="async" onError={hideBroken} />}
         <p className="traits__text">{info.life}</p>
       </div>
     </div>
