@@ -2,40 +2,11 @@ import { useAppStore } from '../store'
 import { climateData, getCountryClimate } from '../climate/data'
 import { colorForGroup } from '../climate/types'
 import { getFeaturedClimate } from '../climate/featured'
-import { SUBTYPE, SUBTYPE_BY_KO, ID_BY_KO, type SubtypeInfo, type ClimateId } from '../climate/subtypes'
-import { CLIMATE_IMAGES } from '../climate/climateImages'
+import { SUBTYPE, SUBTYPE_BY_KO } from '../climate/subtypes'
 import { HIGHLAND_BY_ID } from '../climate/highlands'
 import { ClimateChart } from './ClimateChart'
-import { TraitFigure } from './TraitFigure'
+import { ClimateCause, ClimateTraits } from './ClimateTraits'
 import { Icon } from './Icon'
-
-// "왜 이 기후?" — 기후 요인 한 줄
-function ClimateCause({ info }: { info: SubtypeInfo | undefined }) {
-  if (!info?.cause) return null
-  return (
-    <p className="cause"><b>왜 이 기후?</b> {info.cause}</p>
-  )
-}
-
-// 기후별 식생·인간생활 (통합사회 '자연환경과 인간') + 대표 사진
-function ClimateTraits({ info, cid }: { info: SubtypeInfo | undefined; cid: ClimateId | undefined }) {
-  if (!info) return null
-  const imgs = cid ? CLIMATE_IMAGES[cid] : undefined
-  return (
-    <div className="traits">
-      <div className="traits__item">
-        <span className="traits__label"><Icon name="leaf" size={13} /> 식생</span>
-        {imgs && <TraitFigure src={imgs.veg} cap={imgs.vegCap} alt={`${info.ko} 기후의 식생`} />}
-        <p className="traits__text">{info.vegetation}</p>
-      </div>
-      <div className="traits__item">
-        <span className="traits__label"><Icon name="people" size={13} /> 인간생활</span>
-        {imgs && <TraitFigure src={imgs.life} cap={imgs.lifeCap} alt={`${info.ko} 기후의 인간생활`} />}
-        <p className="traits__text">{info.life}</p>
-      </div>
-    </div>
-  )
-}
 
 export function InfoCard() {
   const selectedIso = useAppStore((s) => s.selectedIso)
@@ -89,8 +60,6 @@ export function InfoCard() {
             <span className="card__climate">대표 기후 · {climate.group} · {climate.subtype}</span>
           </div>
 
-          <ClimateCause info={SUBTYPE_BY_KO[climate.subtype]} />
-
           {featured && featured.climates.length > 1 && (
             <div className="climate-list">
               <span className="climate-list__label">이 나라의 기후</span>
@@ -108,8 +77,6 @@ export function InfoCard() {
               <p className="climate-list__note">※ 지도는 위도·지형에 따른 실제 기후 분포를 보여줘요. 아래 스와치가 대표 기후예요.</p>
             </div>
           )}
-
-          <ClimateTraits info={SUBTYPE_BY_KO[climate.subtype]} cid={ID_BY_KO[climate.subtype]} />
 
           {featured && <ClimateChart city={featured} />}
 

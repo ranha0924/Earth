@@ -3,6 +3,7 @@ import { GlobeView } from './globe/GlobeView'
 import { ModeSwitcher } from './components/ModeSwitcher'
 import { Legend } from './components/Legend'
 import { InfoCard } from './components/InfoCard'
+import { ClimateSubtypeCard } from './components/ClimateSubtypeCard'
 import { EnvironmentControls } from './components/environment/EnvironmentControls'
 import { EnvironmentCard } from './components/environment/EnvironmentCard'
 import { MatchingGame } from './components/environment/MatchingGame'
@@ -62,6 +63,7 @@ export default function App() {
                   <Icon name="globe" /> 기후 비교하기
                 </button>
               </div>
+              <ClimateSubtypeCard />
               <InfoCard />
             </>
           )}
