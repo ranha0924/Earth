@@ -1,4 +1,3 @@
-import type { SyntheticEvent } from 'react'
 import { useAppStore } from '../store'
 import { climateData, getCountryClimate } from '../climate/data'
 import { colorForGroup } from '../climate/types'
@@ -7,25 +6,14 @@ import { SUBTYPE, SUBTYPE_BY_KO, ID_BY_KO, type SubtypeInfo, type ClimateId } fr
 import { CLIMATE_IMAGES } from '../climate/climateImages'
 import { HIGHLAND_BY_ID } from '../climate/highlands'
 import { ClimateChart } from './ClimateChart'
+import { TraitFigure } from './TraitFigure'
 import { Icon } from './Icon'
 
-// CDN 이미지 로드 실패 시 캡션까지 통째로 숨김
-function hideBroken(e: SyntheticEvent<HTMLImageElement>) {
-  const fig = e.currentTarget.closest('figure')
-  if (fig instanceof HTMLElement) fig.style.display = 'none'
-  else e.currentTarget.style.display = 'none'
-}
-
-// 대표 사진 + 대표 지역 캡션 + AI 생성 표시(오개념 방지)
-function TraitFigure({ src, cap, alt }: { src: string; cap: string; alt: string }) {
+// "왜 이 기후?" — 기후 요인 한 줄
+function ClimateCause({ info }: { info: SubtypeInfo | undefined }) {
+  if (!info?.cause) return null
   return (
-    <figure className="traits__fig">
-      <img className="traits__img" src={src} alt={alt} loading="lazy" decoding="async" onError={hideBroken} />
-      <figcaption className="traits__cap">
-        <span>{cap}</span>
-        <span className="traits__ai" title="실제 사진이 아니라 이해를 돕기 위해 AI로 생성한 이미지예요">AI 생성</span>
-      </figcaption>
-    </figure>
+    <p className="cause"><b>왜 이 기후?</b> {info.cause}</p>
   )
 }
 
@@ -68,6 +56,7 @@ export function InfoCard() {
           <span className="card__swatch" style={{ backgroundColor: colorForGroup('고산') }} aria-hidden="true" />
           <span className="card__climate">고산 기후 (H) · {h.cities}</span>
         </div>
+        <ClimateCause info={SUBTYPE.H} />
         <p className="card__note">{h.note}</p>
         <ClimateTraits info={SUBTYPE.H} cid="H" />
         <div className="confusion">
@@ -99,6 +88,8 @@ export function InfoCard() {
             />
             <span className="card__climate">대표 기후 · {climate.group} · {climate.subtype}</span>
           </div>
+
+          <ClimateCause info={SUBTYPE_BY_KO[climate.subtype]} />
 
           {featured && featured.climates.length > 1 && (
             <div className="climate-list">

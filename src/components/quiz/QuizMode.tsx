@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useAppStore } from '../../store'
 import { QUIZ_BANK } from '../../quiz/data'
-import { CATEGORY_LABEL, isMapQuestion, isGraphQuestion, type QuizQuestion } from '../../quiz/types'
-import { loadRecord, saveResult, type QuizRecord } from '../../quiz/storage'
+import { CATEGORY_LABEL, isMapQuestion, isGraphQuestion, type QuizQuestion, type QuizCategory } from '../../quiz/types'
+import { loadRecord, saveResult, type QuizRecord, type CatStats } from '../../quiz/storage'
 import { countryNameKo } from '../../data/countryNames'
 import { getFeaturedClimate } from '../../climate/featured'
 import { ClimateChart } from '../ClimateChart'
@@ -37,6 +37,7 @@ export function QuizMode() {
   const [wrongIds, setWrongIds] = useState<string[]>([])
   const [finished, setFinished] = useState(false)
   const [record, setRecord] = useState<QuizRecord>(() => loadRecord())
+  const sessionCats = useRef<CatStats>({}) // 이번 판의 카테고리별 정답/총 문항
 
   const selectedIso = useAppStore((s) => s.selectedIso)
   const select = useAppStore((s) => s.selectCountry)
@@ -64,6 +65,9 @@ export function QuizMode() {
     setAnswered({ correct, picked })
     if (correct) setScore((s) => s + 1)
     else setWrongIds((w) => [...w, current.id])
+    const cat = current.category
+    const cur = sessionCats.current[cat] ?? { correct: 0, total: 0 }
+    sessionCats.current[cat] = { correct: cur.correct + (correct ? 1 : 0), total: cur.total + 1 }
   }
 
   function onChoice(choiceIdx: number) {
@@ -75,7 +79,7 @@ export function QuizMode() {
   function next() {
     select(null)
     if (index + 1 >= questions.length) {
-      const rec = saveResult(score, wrongIds)
+      const rec = saveResult(score, wrongIds, sessionCats.current)
       setRecord(rec)
       setFinished(true)
     } else {
@@ -91,12 +95,23 @@ export function QuizMode() {
     setAnswered(null)
     setScore(0)
     setWrongIds([])
+    sessionCats.current = {}
     setFinished(false)
   }
 
   const wrongReview = useMemo(
     () => QUIZ_BANK.filter((q) => record.wrongIds.includes(q.id)),
     [record.wrongIds],
+  )
+
+  // 카테고리별 누적 정답률 → 약점 분석 (정답률 낮은 순)
+  const catAnalysis = useMemo(
+    () =>
+      (Object.entries(record.cats) as [QuizCategory, { correct: number; total: number }][])
+        .filter(([, v]) => v.total > 0)
+        .map(([cat, v]) => ({ cat, correct: v.correct, total: v.total, pct: Math.round((v.correct / v.total) * 100) }))
+        .sort((a, b) => a.pct - b.pct),
+    [record.cats],
   )
 
   if (finished) {
@@ -112,6 +127,26 @@ export function QuizMode() {
         <button type="button" className="quiz-primary" onClick={restart}>
           다시 풀기
         </button>
+        {catAnalysis.length > 0 && (
+          <div className="card__section">
+            <h3 className="card__h3"><Icon name="target" size={13} /> 약점 분석 (누적 정답률)</h3>
+            <ul className="weak-list">
+              {catAnalysis.map(({ cat, correct, total, pct }) => {
+                const weak = total >= 3 && pct < 60
+                return (
+                  <li key={cat} className={`weak-item${weak ? ' weak-item--weak' : ''}`}>
+                    <div className="weak-item__top">
+                      <span className="weak-item__cat">{CATEGORY_LABEL[cat]}</span>
+                      {weak && <span className="weak-item__tag">약점</span>}
+                      <span className="weak-item__pct">{pct}% <span className="weak-item__frac">({correct}/{total})</span></span>
+                    </div>
+                    <div className="weak-bar"><span className="weak-bar__fill" style={{ width: `${pct}%` }} /></div>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
+        )}
         {wrongReview.length > 0 && (
           <div className="card__section">
             <h3 className="card__h3"><Icon name="note" size={13} /> 오답 노트 (누적)</h3>
