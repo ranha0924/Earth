@@ -253,10 +253,20 @@ body {
   color: var(--vermillion);
 }
 .traits__label .icon { color: var(--vermillion); }
+.traits__fig { margin: 7px 0 6px; }
 .traits__img {
   display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover;
-  margin: 7px 0 6px; border: 1px solid var(--ink-40); border-radius: var(--radius);
+  border: 1px solid var(--ink-40); border-radius: var(--radius);
   background: var(--paper-panel);
+}
+.traits__cap {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  margin-top: 3px; font-size: 11px; line-height: 1.4; color: var(--ink-55); font-style: italic;
+}
+.traits__ai {
+  flex-shrink: 0; font-style: normal; font-size: 9.5px; letter-spacing: 0.03em;
+  padding: 1px 5px; border: 1px solid var(--ink-40); border-radius: 2px;
+  color: var(--ink-55); white-space: nowrap;
 }
 .traits__text { margin: 4px 0 0; font-size: 13px; line-height: 1.65; color: var(--ink); }
 
