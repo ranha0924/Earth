@@ -6,6 +6,7 @@ import { InfoCard } from './components/InfoCard'
 import { EnvironmentControls } from './components/environment/EnvironmentControls'
 import { EnvironmentCard } from './components/environment/EnvironmentCard'
 import { MatchingGame } from './components/environment/MatchingGame'
+import { ClimateCompare } from './components/ClimateCompare'
 import { CultureControls } from './components/culture/CultureControls'
 import { CultureCard } from './components/culture/CultureCard'
 import { QuizMode } from './components/quiz/QuizMode'
@@ -23,6 +24,7 @@ export default function App() {
   const mode = useAppStore((s) => s.mode)
   const environmentTab = useAppStore((s) => s.environmentTab)
   const [showMatching, setShowMatching] = useState(false)
+  const [showCompare, setShowCompare] = useState(false)
 
   return (
     <div className="app">
@@ -56,6 +58,9 @@ export default function App() {
               <div className="panel-section">
                 <h2 className="panel-head">기후 범례</h2>
                 <Legend />
+                <button type="button" className="matching-launch" onClick={() => setShowCompare(true)}>
+                  <Icon name="globe" /> 기후 비교하기
+                </button>
               </div>
               <InfoCard />
             </>
@@ -91,6 +96,7 @@ export default function App() {
       </div>
 
       {showMatching && <MatchingGame onClose={() => setShowMatching(false)} />}
+      {showCompare && <ClimateCompare onClose={() => setShowCompare(false)} />}
     </div>
   )
 }
