@@ -253,6 +253,11 @@ body {
   color: var(--vermillion);
 }
 .traits__label .icon { color: var(--vermillion); }
+.traits__img {
+  display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover;
+  margin: 7px 0 6px; border: 1px solid var(--ink-40); border-radius: var(--radius);
+  background: var(--paper-panel);
+}
 .traits__text { margin: 4px 0 0; font-size: 13px; line-height: 1.65; color: var(--ink); }
 
 /* ── 기후 그래프(기온·강수량) ───────────────────────── */
