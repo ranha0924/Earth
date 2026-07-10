@@ -1,23 +1,33 @@
+import type { SyntheticEvent } from 'react'
 import { useAppStore } from '../store'
 import { climateData, getCountryClimate } from '../climate/data'
 import { colorForGroup } from '../climate/types'
 import { getFeaturedClimate } from '../climate/featured'
-import { SUBTYPE, SUBTYPE_BY_KO, type SubtypeInfo } from '../climate/subtypes'
+import { SUBTYPE, SUBTYPE_BY_KO, ID_BY_KO, type SubtypeInfo, type ClimateId } from '../climate/subtypes'
+import { CLIMATE_IMAGES } from '../climate/climateImages'
 import { HIGHLAND_BY_ID } from '../climate/highlands'
 import { ClimateChart } from './ClimateChart'
 import { Icon } from './Icon'
 
-// 기후별 식생·인간생활 (통합사회 '자연환경과 인간')
-function ClimateTraits({ info }: { info: SubtypeInfo | undefined }) {
+// CDN 이미지 로드 실패 시 자리를 차지하지 않도록 숨김
+function hideBroken(e: SyntheticEvent<HTMLImageElement>) {
+  e.currentTarget.style.display = 'none'
+}
+
+// 기후별 식생·인간생활 (통합사회 '자연환경과 인간') + 대표 사진
+function ClimateTraits({ info, cid }: { info: SubtypeInfo | undefined; cid: ClimateId | undefined }) {
   if (!info) return null
+  const imgs = cid ? CLIMATE_IMAGES[cid] : undefined
   return (
     <div className="traits">
       <div className="traits__item">
         <span className="traits__label"><Icon name="leaf" size={13} /> 식생</span>
+        {imgs && <img className="traits__img" src={imgs.veg} alt={`${info.ko} 기후의 식생`} loading="lazy" onError={hideBroken} />}
         <p className="traits__text">{info.vegetation}</p>
       </div>
       <div className="traits__item">
         <span className="traits__label"><Icon name="people" size={13} /> 인간생활</span>
+        {imgs && <img className="traits__img" src={imgs.life} alt={`${info.ko} 기후의 인간생활`} loading="lazy" onError={hideBroken} />}
         <p className="traits__text">{info.life}</p>
       </div>
     </div>
@@ -44,7 +54,7 @@ export function InfoCard() {
           <span className="card__climate">고산 기후 (H) · {h.cities}</span>
         </div>
         <p className="card__note">{h.note}</p>
-        <ClimateTraits info={SUBTYPE.H} />
+        <ClimateTraits info={SUBTYPE.H} cid="H" />
         <div className="confusion">
           <b><Icon name="warning" size={13} /> 개념 포인트</b>
           <p>고산 기후는 나라 전체가 아니라 <b>해발 고도가 높은 지역</b>에만 나타나요. 저위도(적도 부근)라도 고도가 높으면 연중 서늘합니다.</p>
@@ -93,7 +103,7 @@ export function InfoCard() {
             </div>
           )}
 
-          <ClimateTraits info={SUBTYPE_BY_KO[climate.subtype]} />
+          <ClimateTraits info={SUBTYPE_BY_KO[climate.subtype]} cid={ID_BY_KO[climate.subtype]} />
 
           {featured && <ClimateChart city={featured} />}
 

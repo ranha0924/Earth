@@ -98,6 +98,11 @@ export const SUBTYPE_BY_KO: Record<string, SubtypeInfo> = Object.fromEntries(
   Object.values(SUBTYPE).map((s) => [s.ko, s]),
 )
 
+// 한국어 소분류명 → 쾨펜 기호(ClimateId)
+export const ID_BY_KO: Record<string, ClimateId> = Object.fromEntries(
+  (Object.entries(SUBTYPE) as [ClimateId, SubtypeInfo][]).map(([id, s]) => [s.ko, id]),
+) as Record<string, ClimateId>
+
 // 범례용: 대분류별로 묶은 소분류 목록
 export const SUBTYPE_GROUPS: { group: ClimateGroup; items: SubtypeInfo[] }[] = (() => {
   const order: ClimateGroup[] = ['열대', '건조', '온대', '냉대', '한대', '고산']
