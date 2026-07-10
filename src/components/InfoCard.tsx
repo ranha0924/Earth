@@ -9,9 +9,24 @@ import { HIGHLAND_BY_ID } from '../climate/highlands'
 import { ClimateChart } from './ClimateChart'
 import { Icon } from './Icon'
 
-// CDN 이미지 로드 실패 시 자리를 차지하지 않도록 숨김
+// CDN 이미지 로드 실패 시 캡션까지 통째로 숨김
 function hideBroken(e: SyntheticEvent<HTMLImageElement>) {
-  e.currentTarget.style.display = 'none'
+  const fig = e.currentTarget.closest('figure')
+  if (fig instanceof HTMLElement) fig.style.display = 'none'
+  else e.currentTarget.style.display = 'none'
+}
+
+// 대표 사진 + 대표 지역 캡션 + AI 생성 표시(오개념 방지)
+function TraitFigure({ src, cap, alt }: { src: string; cap: string; alt: string }) {
+  return (
+    <figure className="traits__fig">
+      <img className="traits__img" src={src} alt={alt} loading="lazy" decoding="async" onError={hideBroken} />
+      <figcaption className="traits__cap">
+        <span>{cap}</span>
+        <span className="traits__ai" title="실제 사진이 아니라 이해를 돕기 위해 AI로 생성한 이미지예요">AI 생성</span>
+      </figcaption>
+    </figure>
+  )
 }
 
 // 기후별 식생·인간생활 (통합사회 '자연환경과 인간') + 대표 사진
@@ -22,12 +37,12 @@ function ClimateTraits({ info, cid }: { info: SubtypeInfo | undefined; cid: Clim
     <div className="traits">
       <div className="traits__item">
         <span className="traits__label"><Icon name="leaf" size={13} /> 식생</span>
-        {imgs && <img className="traits__img" src={imgs.veg} alt={`${info.ko} 기후의 식생`} loading="lazy" decoding="async" onError={hideBroken} />}
+        {imgs && <TraitFigure src={imgs.veg} cap={imgs.vegCap} alt={`${info.ko} 기후의 식생`} />}
         <p className="traits__text">{info.vegetation}</p>
       </div>
       <div className="traits__item">
         <span className="traits__label"><Icon name="people" size={13} /> 인간생활</span>
-        {imgs && <img className="traits__img" src={imgs.life} alt={`${info.ko} 기후의 인간생활`} loading="lazy" decoding="async" onError={hideBroken} />}
+        {imgs && <TraitFigure src={imgs.life} cap={imgs.lifeCap} alt={`${info.ko} 기후의 인간생활`} />}
         <p className="traits__text">{info.life}</p>
       </div>
     </div>
