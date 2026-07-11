@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { religionData, cultureData, getReligion, getCulture } from './data'
 import { FESTIVALS } from './festivals'
+import { FESTIVAL_IMAGES } from './festivalImages'
 import { RELIGIONS } from './types'
 
 describe('종교 데이터', () => {
@@ -51,5 +52,13 @@ describe('축제 데이터', () => {
   it('축제 나라가 종교 데이터와 이어진다', () => {
     const isos = FESTIVALS.map((f) => f.countryIso)
     expect(isos).toEqual(expect.arrayContaining(['SE', 'IN', 'BR', 'ES', 'TH', 'PE']))
+  })
+  it('모든 축제가 대표 사진(웹 최적화 webp)과 캡션을 갖는다', () => {
+    for (const f of FESTIVALS) {
+      const image = FESTIVAL_IMAGES[f.id]
+      expect(image, `${f.id} 사진 누락`).toBeDefined()
+      expect(image.src).toMatch(/_min\.webp$/)
+      expect(image.cap).not.toBe('')
+    }
   })
 })

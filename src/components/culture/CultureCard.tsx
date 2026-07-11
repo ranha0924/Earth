@@ -2,8 +2,10 @@ import { useAppStore } from '../../store'
 import { getCulture, getReligion } from '../../culture/data'
 import { RELIGION_LABEL, colorForReligion } from '../../culture/types'
 import { FESTIVAL_BY_ID } from '../../culture/festivals'
+import { FESTIVAL_IMAGES } from '../../culture/festivalImages'
 import { countryNameKo, countryNameEn, hasCountryName } from '../../data/countryNames'
 import { Icon } from '../Icon'
+import { TraitFigure } from '../TraitFigure'
 
 export function CultureCard() {
   const layer = useAppStore((s) => s.cultureLayer)
@@ -16,6 +18,7 @@ export function CultureCard() {
   if (layer === 'festival' && selectedFestival) {
     const f = FESTIVAL_BY_ID[selectedFestival]
     if (f) {
+      const fi = FESTIVAL_IMAGES[f.id]
       return (
         <aside className="card" aria-label={`${f.nameKo} 정보`}>
           <button type="button" className="card__close" onClick={() => selectFestival(null)}>
@@ -25,6 +28,7 @@ export function CultureCard() {
           <p className="card__title-en">
             {f.countryNameKo} · {f.season}
           </p>
+          {fi && <TraitFigure src={fi.src} cap={fi.cap} alt={`${f.nameKo} 대표 사진`} />}
           <div className="card__section">
             <h3 className="card__h3">축제 소개</h3>
             <p className="card__note">{f.description}</p>
