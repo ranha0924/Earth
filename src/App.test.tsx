@@ -18,11 +18,12 @@ beforeEach(() => {
 })
 
 describe('App', () => {
-  it('제목·모드 전환·범례·지구본을 렌더한다', () => {
+  it('제목·모드 전환·범례·지구본을 렌더한다', async () => {
     render(<App />)
     expect(screen.getByRole('button', { name: '기후' })).toBeInTheDocument()
     expect(screen.getByRole('group', { name: '기후 범례' })).toBeInTheDocument()
-    expect(screen.getByTestId('globe')).toBeInTheDocument()
+    // 지구본은 지연 로드(lazy)라 Suspense 해제 후 비동기로 나타난다
+    expect(await screen.findByTestId('globe')).toBeInTheDocument()
   })
   it('나라가 선택되면 카드가 나타난다', () => {
     useAppStore.setState({ selectedIso: 'KR' })

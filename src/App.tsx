@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import { GlobeView } from './globe/GlobeView'
+import { useState, lazy, Suspense } from 'react'
 import { ModeSwitcher } from './components/ModeSwitcher'
 import { Legend } from './components/Legend'
 import { InfoCard } from './components/InfoCard'
@@ -13,6 +12,9 @@ import { CultureCard } from './components/culture/CultureCard'
 import { QuizMode } from './components/quiz/QuizMode'
 import { Icon } from './components/Icon'
 import { useAppStore } from './store'
+
+// 3D 엔진(globe.gl/three ~1.9MB)은 지연 로드 — 셸·범례가 먼저 뜨고 지구본은 뒤이어 스트리밍.
+const GlobeView = lazy(() => import('./globe/GlobeView').then((m) => ({ default: m.GlobeView })))
 
 const MODE_CAPTION: Record<string, string> = {
   climate: 'Fig. I — 세계 기후 구분도 (Köppen)',
@@ -39,7 +41,9 @@ export default function App() {
 
       <div className="atlas">
         <div className="atlas__map">
-          <GlobeView />
+          <Suspense fallback={<div className="globe-loading" role="status">지구본을 불러오는 중…</div>}>
+            <GlobeView />
+          </Suspense>
           <span className="ticks ticks--top" />
           <span className="ticks ticks--left" />
           <span className="crop crop--tl" />
