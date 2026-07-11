@@ -6,6 +6,8 @@ export interface CountryClimate {
   group: ClimateGroup
   subtype: string
   note?: string
+  /** 교과서·기준에 따라 대분류가 갈리는 나라의 분류 주의 안내(예: 한국 온대/냉대). 있으면 카드에 '분류 포인트'로 표시. */
+  classNote?: string
 }
 
 export type ClimateData = Record<string, CountryClimate>
