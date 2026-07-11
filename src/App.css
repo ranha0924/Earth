@@ -141,6 +141,14 @@ body {
   font-family: var(--serif);
 }
 
+/* 지구본(3D 엔진) 지연 로드 중 플레이스홀더 — 종이 톤 위 서체 안내 */
+.globe-loading {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  text-align: center; padding: 24px; background: var(--paper);
+  font-family: var(--serif); font-style: italic; color: var(--ink-55);
+  letter-spacing: 0.02em;
+}
+
 /* ── 우측 범례 패널 ─────────────────────────────────── */
 .atlas__panel {
   width: clamp(320px, 33%, 430px);

@@ -7,16 +7,11 @@ export default defineConfig({
   base: process.env.DEPLOY_BASE ?? '/',
   plugins: [react()],
   build: {
-    // globe 벤더 청크(three.js)는 의도적으로 크므로 경고 한도를 올림.
+    // GlobeView를 React.lazy로 지연 로드 → Rollup이 three/globe.gl을 GlobeView
+    // async 청크로 자동 분할한다. manualChunks로 강제하면 엔트리와 정적으로 묶여
+    // index.html에 modulepreload가 걸리므로(지연 로드 무력화) 쓰지 않는다.
+    // 그 async 청크(three ~1.9MB)는 의도적으로 크므로 경고 한도만 올린다.
     chunkSizeWarningLimit: 2000,
-    rollupOptions: {
-      output: {
-        // 3D 엔진(three/globe.gl)을 앱 코드와 분리해 별도 캐시 청크로.
-        manualChunks: {
-          globe: ['globe.gl', 'three'],
-        },
-      },
-    },
   },
   test: {
     globals: true,
