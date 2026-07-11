@@ -3,6 +3,7 @@ import { getCulture, getReligion } from '../../culture/data'
 import { RELIGION_LABEL, colorForReligion } from '../../culture/types'
 import { FESTIVAL_BY_ID } from '../../culture/festivals'
 import { FESTIVAL_IMAGES } from '../../culture/festivalImages'
+import { getRegion, REGION_BY_ID } from '../../culture/regions'
 import { countryNameKo, countryNameEn, hasCountryName } from '../../data/countryNames'
 import { Icon } from '../Icon'
 import { TraitFigure } from '../TraitFigure'
@@ -13,6 +14,8 @@ export function CultureCard() {
   const selectedIso = useAppStore((s) => s.selectedIso)
   const select = useAppStore((s) => s.selectCountry)
   const selectFestival = useAppStore((s) => s.selectFestival)
+  const regionFilter = useAppStore((s) => s.regionFilter)
+  const toggleRegion = useAppStore((s) => s.toggleRegionFilter)
 
   // 축제 상세 우선
   if (layer === 'festival' && selectedFestival) {
@@ -40,6 +43,59 @@ export function CultureCard() {
         </aside>
       )
     }
+  }
+
+  // 문화권 상세 (선택 나라의 문화권 우선, 없으면 범례로 고른 문화권)
+  if (layer === 'region') {
+    const rid = getRegion(selectedIso) ?? regionFilter
+    if (rid) {
+      const rg = REGION_BY_ID[rid]
+      const countryKo = selectedIso && hasCountryName(selectedIso) ? countryNameKo(selectedIso) : null
+      return (
+        <aside className="card" aria-label={`${rg.nameKo} 정보`}>
+          <button
+            type="button"
+            className="card__close"
+            onClick={() => {
+              select(null)
+              if (regionFilter) toggleRegion(regionFilter)
+            }}
+          >
+            닫기 <Icon name="close" size={12} />
+          </button>
+          <h2 className="card__title"><Icon name="globe" size={19} /> {rg.nameKo}</h2>
+          <p className="card__title-en">{countryKo ? `${countryKo} · ${rg.area}` : rg.area}</p>
+          <div className="card__row">
+            <span className="card__swatch" style={{ backgroundColor: rg.color }} aria-hidden="true" />
+            <span className="card__climate">세계 9개 문화권 중 하나</span>
+          </div>
+          <div className="card__section">
+            <h3 className="card__h3"><Icon name="religion" size={13} /> 주요 종교·사상</h3>
+            <p className="card__note">{rg.religion}</p>
+          </div>
+          <div className="card__section">
+            <h3 className="card__h3"><Icon name="note" size={13} /> 주요 언어</h3>
+            <p className="card__note">{rg.language}</p>
+          </div>
+          <div className="card__section">
+            <h3 className="card__h3"><Icon name="people" size={13} /> 문화 특징</h3>
+            <p className="card__note">{rg.traits}</p>
+          </div>
+          <div className="confusion">
+            <b><Icon name="key" size={13} /> 시험 포인트</b>
+            <p>{rg.linkPoint}</p>
+          </div>
+        </aside>
+      )
+    }
+    return (
+      <aside className="card" aria-label="문화권 정보">
+        <p className="card__empty">
+          지구본 색은 세계 <b>9개 문화권</b>이에요. 나라를 누르거나 아래 범례를 누르면 그 문화권의
+          종교·언어·생활 특징과 기후 연계를 볼 수 있어요.
+        </p>
+      </aside>
+    )
   }
 
   // 나라 문화 상세

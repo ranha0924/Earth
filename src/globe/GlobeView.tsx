@@ -7,6 +7,7 @@ import type { ClimateGroup } from '../climate/types'
 import { SUBTYPE_BY_KO } from '../climate/subtypes'
 import { getReligion } from '../culture/data'
 import { colorForReligion, type ReligionId } from '../culture/types'
+import { getRegion, colorForRegion, type RegionId } from '../culture/regions'
 import { ISSUE_BY_ID, TREATY_BY_ID } from '../environment/data'
 import { FESTIVALS, FESTIVAL_BY_ID } from '../culture/festivals'
 import { HIGHLANDS, HIGHLAND_BY_ID } from '../climate/highlands'
@@ -89,6 +90,19 @@ const TREATY_FOCUS: Record<TreatyId, { lat: number; lng: number }> = {
   unccd: { lat: 48.85, lng: 2.35 }, // 파리(채택)
   kyoto: { lat: 35.0, lng: 135.77 }, // 교토
   paris: { lat: 48.85, lng: 2.35 }, // 파리
+}
+
+// 문화권별 중심 지역 (범례 클릭 시 이동)
+const REGION_FOCUS: Record<RegionId, { lat: number; lng: number; altitude: number }> = {
+  eastasia: { lat: 35, lng: 115, altitude: 1.9 },
+  southeastasia: { lat: 5, lng: 112, altitude: 1.9 },
+  southasia: { lat: 22, lng: 79, altitude: 1.7 },
+  dryislam: { lat: 27, lng: 42, altitude: 2.1 },
+  europe: { lat: 50, lng: 15, altitude: 2.0 },
+  africa: { lat: -2, lng: 22, altitude: 2.1 },
+  angloamerica: { lat: 45, lng: -100, altitude: 2.2 },
+  latinamerica: { lat: -15, lng: -60, altitude: 2.1 },
+  oceania: { lat: -25, lng: 140, altitude: 2.1 },
 }
 
 // 종교별 대표 분포 지역 (범례 클릭 시 이동)
@@ -186,6 +200,7 @@ export function GlobeView() {
   const activeIssue = useAppStore((s) => s.activeIssue)
   const cultureLayer = useAppStore((s) => s.cultureLayer)
   const religionFilter = useAppStore((s) => s.religionFilter)
+  const regionFilter = useAppStore((s) => s.regionFilter)
   const selectedIso = useAppStore((s) => s.selectedIso)
   const selectedFestival = useAppStore((s) => s.selectedFestival)
 
@@ -221,6 +236,12 @@ export function GlobeView() {
         if (religionFilter && r !== religionFilter) return LAND_DIM
         return colorForReligion(r)
       }
+      if (mode === 'culture' && cultureLayer === 'region') {
+        const rg = getRegion(iso)
+        if (!rg) return LAND
+        if (regionFilter && rg !== regionFilter) return LAND_DIM
+        return colorForRegion(rg)
+      }
       // culture-festival, quiz: 중립 육지
       return LAND
     }
@@ -241,7 +262,7 @@ export function GlobeView() {
       .polygonCapMaterial(capMaterial as (d: object) => THREE.Material)
       .polygonStrokeColor(strokeColor)
       .polygonAltitude((feat) => (featureToIso(feat as object) === selectedIso ? 0.018 : 0.008))
-  }, [mode, climateFilter, activeIssue, cultureLayer, religionFilter, selectedIso])
+  }, [mode, climateFilter, activeIssue, cultureLayer, religionFilter, regionFilter, selectedIso])
 
   // 지구본 표면: 기후 모드 = 실제 쾨펜 기후 텍스처, 나머지 = 크림 단색.
   // 내 재질의 map을 직접 토글 (globeImageUrl은 재질을 교체해 버려 사용하지 않음)
@@ -357,6 +378,15 @@ export function GlobeView() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [religionFilter])
+
+  // 문화권(범례) → 해당 문화권 중심 지역
+  useEffect(() => {
+    if (regionFilter) {
+      const f = REGION_FOCUS[regionFilter]
+      if (f) flyTo(f.lat, f.lng, f.altitude)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [regionFilter])
 
   return (
     <div className="globe" style={{ position: 'relative' }}>

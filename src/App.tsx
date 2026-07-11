@@ -90,7 +90,7 @@ export default function App() {
           {mode === 'culture' && (
             <>
               <div className="panel-section">
-                <h2 className="panel-head">문화 · 종교 · 축제</h2>
+                <h2 className="panel-head">문화 · 종교 · 문화권 · 축제</h2>
                 <CultureControls />
               </div>
               <CultureCard />

@@ -1,10 +1,11 @@
 import { create } from 'zustand'
 import type { IssueId } from './environment/types'
 import type { ReligionId } from './culture/types'
+import type { RegionId } from './culture/regions'
 
 export type Mode = 'climate' | 'environment' | 'culture' | 'quiz'
 export type EnvironmentTab = 'issues' | 'treaties'
-export type CultureLayer = 'religion' | 'festival'
+export type CultureLayer = 'religion' | 'festival' | 'region'
 
 interface AppState {
   mode: Mode
@@ -16,6 +17,7 @@ interface AppState {
   // 문화 모드
   cultureLayer: CultureLayer
   religionFilter: ReligionId | null
+  regionFilter: RegionId | null
   selectedFestival: string | null
 
   setMode: (m: Mode) => void
@@ -26,6 +28,7 @@ interface AppState {
   setActiveIssue: (id: IssueId | null) => void
   setCultureLayer: (l: CultureLayer) => void
   toggleReligionFilter: (r: ReligionId) => void
+  toggleRegionFilter: (r: RegionId) => void
   selectFestival: (id: string | null) => void
 }
 
@@ -37,6 +40,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   activeIssue: null,
   cultureLayer: 'religion',
   religionFilter: null,
+  regionFilter: null,
   selectedFestival: null,
 
   setMode: (mode) => set({ mode, selectedIso: null }),
@@ -45,7 +49,10 @@ export const useAppStore = create<AppState>((set, get) => ({
   toggleClimateFilter: (g) => set({ climateFilter: get().climateFilter === g ? null : g }),
   setEnvironmentTab: (environmentTab) => set({ environmentTab, selectedIso: null, activeIssue: null }),
   setActiveIssue: (activeIssue) => set({ activeIssue }),
-  setCultureLayer: (cultureLayer) => set({ cultureLayer, selectedFestival: null, selectedIso: null }),
+  // 레이어를 바꾸면 이전 레이어의 선택·필터를 정리한다.
+  setCultureLayer: (cultureLayer) =>
+    set({ cultureLayer, selectedFestival: null, selectedIso: null, religionFilter: null, regionFilter: null }),
   toggleReligionFilter: (r) => set({ religionFilter: get().religionFilter === r ? null : r }),
+  toggleRegionFilter: (r) => set({ regionFilter: get().regionFilter === r ? null : r }),
   selectFestival: (selectedFestival) => set({ selectedFestival }),
 }))
