@@ -569,6 +569,24 @@ body {
 .highland-pin .festival-pin__icon { color: #93748a; }
 .highland-pin:hover { background: #93748a; border-color: #93748a; }
 
+/* ── 하단 자료 출처 (콜로폰) ─────────────────────────── */
+.colophon {
+  flex: none;
+  display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; row-gap: 2px;
+  padding: 7px 22px;
+  border-top: 1.5px solid var(--ink);
+  background: var(--paper-panel);
+  font-size: 10.5px; line-height: 1.5; color: var(--ink-55);
+}
+.colophon__label {
+  font-family: var(--serif); font-weight: 700; font-size: 10px;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-70);
+}
+.colophon a { color: var(--prussian); text-decoration: none; border-bottom: 1px solid var(--ink-22); }
+.colophon a:hover { border-bottom-color: var(--prussian); }
+.colophon__note { color: var(--ink-40); }
+.colophon__dot { color: var(--ink-22); }
+
 /* ── 모바일 ─────────────────────────────────────────── */
 @media (max-width: 820px) {
   .masthead { flex-direction: column; align-items: stretch; gap: 6px; }
@@ -576,4 +594,5 @@ body {
   .atlas { flex-direction: column; }
   .atlas__map { flex: none; height: 46vh; }
   .atlas__panel { width: 100%; border-left: none; border-top: 1.5px solid var(--ink); }
+  .colophon { padding: 6px 14px; font-size: 10px; }
 }

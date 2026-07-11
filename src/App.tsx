@@ -101,6 +101,36 @@ export default function App() {
         </aside>
       </div>
 
+      <footer className="colophon" aria-label="자료 출처">
+        <span className="colophon__label">자료 출처</span>
+        <span className="colophon__item">
+          기후 지도{' '}
+          <a
+            href="https://commons.wikimedia.org/wiki/File:K%C3%B6ppen-Geiger_Climate_Classification_Map_(1980%E2%80%932016)_no_borders.png"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Köppen-Geiger(Beck et al. 2018)
+          </a>{' '}
+          <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">
+            CC BY-SA 4.0
+          </a>
+          <span className="colophon__note"> · 앱 색상으로 재채색(수정)함</span>
+        </span>
+        <span className="colophon__dot" aria-hidden="true">·</span>
+        <span className="colophon__item">
+          국경{' '}
+          <a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener noreferrer">
+            Natural Earth
+          </a>
+          <span className="colophon__note"> · 퍼블릭 도메인</span>
+        </span>
+        <span className="colophon__dot" aria-hidden="true">·</span>
+        <span className="colophon__item">
+          대표 사진 <span className="colophon__note">AI 생성 · Higgsfield</span>
+        </span>
+      </footer>
+
       {showMatching && <MatchingGame onClose={() => setShowMatching(false)} />}
       {showCompare && <ClimateCompare onClose={() => setShowCompare(false)} />}
     </div>

@@ -51,4 +51,13 @@ describe('App', () => {
     render(<App />)
     expect(screen.getByLabelText('퀴즈')).toBeInTheDocument()
   })
+  it('하단에 자료 출처(라이선스·저작자)가 표기된다', () => {
+    render(<App />)
+    const footer = screen.getByRole('contentinfo', { name: '자료 출처' })
+    expect(footer).toBeInTheDocument()
+    // CC BY-SA는 저작자 표시가 의무 — 링크와 출처가 사라지지 않게 가드
+    expect(screen.getByRole('link', { name: /CC BY-SA 4.0/ })).toBeInTheDocument()
+    expect(screen.getByText(/Beck et al\. 2018/)).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Natural Earth/ })).toBeInTheDocument()
+  })
 })
