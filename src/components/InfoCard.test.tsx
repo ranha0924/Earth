@@ -17,11 +17,18 @@ describe('InfoCard', () => {
     useAppStore.setState({ selectedIso: 'KR' })
     const { container } = render(<InfoCard />)
     expect(screen.getByText('대한민국')).toBeInTheDocument()
-    expect(screen.getByText(/냉대 · 냉대습윤/)).toBeInTheDocument()
+    expect(screen.getByText(/냉대 · 냉대겨울건조/)).toBeInTheDocument()
     // 대표국은 기후 그래프(서울)와 기후 설명이 함께 표시된다
     expect(screen.getByText(/서울의 기온·강수량/)).toBeInTheDocument()
     const swatch = container.querySelector('.card__swatch')
     expect(swatch?.getAttribute('aria-hidden')).toBe('true')
+  })
+  it('한국은 온대/냉대 분류가 갈린다는 분류 포인트를 함께 보여준다', () => {
+    useAppStore.setState({ selectedIso: 'KR' })
+    const { container } = render(<InfoCard />)
+    expect(container.querySelector('.confusion')).toBeInTheDocument()
+    expect(screen.getByText(/분류 포인트/)).toBeInTheDocument()
+    expect(screen.getByText(/온대로 보는 교과서/)).toBeInTheDocument()
   })
   it('데이터가 없는 나라는 준비 중 안내를 보여준다', () => {
     useAppStore.setState({ selectedIso: 'ZZ' })

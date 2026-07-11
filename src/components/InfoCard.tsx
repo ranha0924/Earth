@@ -78,6 +78,13 @@ export function InfoCard() {
             </div>
           )}
 
+          {climate.classNote && (
+            <div className="confusion">
+              <b><Icon name="warning" size={13} /> 분류 포인트</b>
+              <p>{climate.classNote}</p>
+            </div>
+          )}
+
           {featured && <ClimateChart city={featured} />}
 
           {(featured?.note || climate.note) && (
