@@ -4,6 +4,7 @@ import { RELIGION_LABEL, colorForReligion } from '../../culture/types'
 import { FESTIVAL_BY_ID } from '../../culture/festivals'
 import { FESTIVAL_IMAGES } from '../../culture/festivalImages'
 import { getRegion, REGION_BY_ID } from '../../culture/regions'
+import { REGION_IMAGES } from '../../culture/regionImages'
 import { countryNameKo, countryNameEn, hasCountryName } from '../../data/countryNames'
 import { Icon } from '../Icon'
 import { TraitFigure } from '../TraitFigure'
@@ -50,6 +51,7 @@ export function CultureCard() {
     const rid = getRegion(selectedIso) ?? regionFilter
     if (rid) {
       const rg = REGION_BY_ID[rid]
+      const ri = REGION_IMAGES[rid]
       const countryKo = selectedIso && hasCountryName(selectedIso) ? countryNameKo(selectedIso) : null
       return (
         <aside className="card" aria-label={`${rg.nameKo} 정보`}>
@@ -65,6 +67,7 @@ export function CultureCard() {
           </button>
           <h2 className="card__title"><Icon name="globe" size={19} /> {rg.nameKo}</h2>
           <p className="card__title-en">{countryKo ? `${countryKo} · ${rg.area}` : rg.area}</p>
+          {ri && <TraitFigure src={ri.src} cap={ri.cap} alt={`${rg.nameKo} 대표 사진`} />}
           <div className="card__row">
             <span className="card__swatch" style={{ backgroundColor: rg.color }} aria-hidden="true" />
             <span className="card__climate">세계 9개 문화권 중 하나</span>

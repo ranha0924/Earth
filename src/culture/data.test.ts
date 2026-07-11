@@ -4,6 +4,7 @@ import { FESTIVALS } from './festivals'
 import { FESTIVAL_IMAGES } from './festivalImages'
 import { RELIGIONS } from './types'
 import { REGIONS, getRegion, REGION_BY_ISO, REGION_BY_ID } from './regions'
+import { REGION_IMAGES } from './regionImages'
 
 describe('종교 데이터', () => {
   it('주요국 종교가 교과서 문화권과 맞다', () => {
@@ -104,5 +105,13 @@ describe('세계 문화권', () => {
   it('종교 데이터 국가의 대부분(≥170)에 문화권이 지정돼 있다', () => {
     const covered = Object.keys(religionData).filter((iso) => getRegion(iso) !== null)
     expect(covered.length).toBeGreaterThanOrEqual(170)
+  })
+  it('모든 문화권이 대표 사진(웹 최적화 webp)과 캡션을 갖는다', () => {
+    for (const r of REGIONS) {
+      const image = REGION_IMAGES[r.id]
+      expect(image, `${r.id} 사진 누락`).toBeDefined()
+      expect(image.src).toMatch(/_min\.webp$/)
+      expect(image.cap).not.toBe('')
+    }
   })
 })
