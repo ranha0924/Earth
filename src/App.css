@@ -18,7 +18,7 @@
   --prussian: #2b4c7e;
   --radius: 3px;
   --serif: 'Noto Serif KR', 'Nanum Myeongjo', serif;
-  --sans: 'Pretendard', system-ui, 'Apple SD Gothic Neo', sans-serif;
+  --sans: 'Pretendard Variable', 'Pretendard', system-ui, 'Apple SD Gothic Neo', sans-serif;
   --ease: cubic-bezier(0.33, 0.68, 0.36, 1);
 }
 
