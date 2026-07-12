@@ -1,7 +1,9 @@
+import type { Ref } from 'react'
 import { useAppStore } from '../../store'
 import { ISSUE_BY_ID, TREATY_BY_ID, ISSUES } from '../../environment/data'
 import { countryNameKo } from '../../data/countryNames'
 import { Icon } from '../Icon'
+import { useScrollIntoView } from '../../hooks/useScrollIntoView'
 import type { IssueId, TreatyId } from '../../environment/types'
 
 export function EnvironmentCard() {
@@ -10,11 +12,13 @@ export function EnvironmentCard() {
   const selectedIso = useAppStore((s) => s.selectedIso)
   const select = useAppStore((s) => s.selectCountry)
   const setActiveIssue = useAppStore((s) => s.setActiveIssue)
+  // 나라·환경문제·협약 중 무엇을 눌러도 그 상세 카드가 패널 안에서 보이도록 스크롤
+  const cardRef = useScrollIntoView<HTMLElement>(selectedIso ?? activeIssue)
 
   // 협약 노드 선택
   if (selectedIso?.startsWith('treaty:')) {
     const tid = selectedIso.slice('treaty:'.length) as TreatyId
-    return <TreatyDetail id={tid} onClose={() => select(null)} />
+    return <TreatyDetail id={tid} onClose={() => select(null)} cardRef={cardRef} />
   }
 
   // 나라 선택 (환경문제 탭에서) → 관련 환경문제
@@ -27,6 +31,7 @@ export function EnvironmentCard() {
           setActiveIssue(id)
           select(null)
         }}
+        cardRef={cardRef}
       />
     )
   }
@@ -40,6 +45,7 @@ export function EnvironmentCard() {
           useAppStore.getState().setEnvironmentTab('treaties')
           select(`treaty:${tid}`)
         }}
+        cardRef={cardRef}
       />
     )
   }
@@ -66,14 +72,16 @@ function IssueDetail({
   id,
   onClose,
   onTreatyJump,
+  cardRef,
 }: {
   id: IssueId
   onClose: () => void
   onTreatyJump: (id: TreatyId) => void
+  cardRef: Ref<HTMLElement>
 }) {
   const issue = ISSUE_BY_ID[id]
   return (
-    <aside className="card" aria-label={`${issue.nameKo} 정보`}>
+    <aside ref={cardRef} className="card" aria-label={`${issue.nameKo} 정보`}>
       <button type="button" className="card__close" onClick={onClose}>
         닫기 <Icon name="close" size={12} />
       </button>
@@ -118,10 +126,10 @@ function IssueDetail({
   )
 }
 
-function TreatyDetail({ id, onClose }: { id: TreatyId; onClose: () => void }) {
+function TreatyDetail({ id, onClose, cardRef }: { id: TreatyId; onClose: () => void; cardRef: Ref<HTMLElement> }) {
   const t = TREATY_BY_ID[id]
   return (
-    <aside className="card" aria-label={`${t.nameKo} 정보`}>
+    <aside ref={cardRef} className="card" aria-label={`${t.nameKo} 정보`}>
       <button type="button" className="card__close" onClick={onClose}>
         닫기 <Icon name="close" size={12} />
       </button>
@@ -157,14 +165,16 @@ function CountryEnvironment({
   iso,
   onClose,
   onIssue,
+  cardRef,
 }: {
   iso: string
   onClose: () => void
   onIssue: (id: IssueId) => void
+  cardRef: Ref<HTMLElement>
 }) {
   const related = ISSUES.filter((i) => i.countryIsos.includes(iso))
   return (
-    <aside className="card" aria-label="나라별 환경문제">
+    <aside ref={cardRef} className="card" aria-label="나라별 환경문제">
       <button type="button" className="card__close" onClick={onClose}>
         닫기 <Icon name="close" size={12} />
       </button>
