@@ -177,6 +177,35 @@ body {
 }
 .panel-head::after { content: ''; flex: 1; border-bottom: 1px solid var(--ink-22); }
 
+/* ── 나라 검색 (키보드로 나라 선택) ─────────────────── */
+.panel-section--search { padding-bottom: 14px; }
+.country-picker__label {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--serif); font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--ink-70); margin-bottom: 7px;
+}
+.country-picker__row { display: flex; gap: 6px; }
+.country-picker__input {
+  flex: 1; min-width: 0; padding: 7px 9px;
+  border: 1px solid var(--ink-40); border-radius: var(--radius);
+  background: var(--paper); color: var(--ink);
+  font-family: var(--sans); font-size: 13px;
+}
+.country-picker__input::placeholder { color: var(--ink-40); }
+.country-picker__input:focus-visible {
+  outline: none; border-color: var(--ink); box-shadow: 0 0 0 2px var(--ink-22);
+}
+.country-picker__go {
+  flex: none; padding: 7px 12px; border-radius: var(--radius);
+  border: 1px solid var(--ink); background: var(--ink); color: var(--paper);
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  transition: background 0.16s var(--ease), color 0.16s var(--ease);
+}
+.country-picker__go:hover { background: var(--vermillion); border-color: var(--vermillion); }
+/* 퀴즈 지도 문제 안 콤팩트 배치 */
+.country-picker--compact { margin-top: 10px; }
+.country-picker--compact .country-picker__label { font-size: 10.5px; }
+
 /* ── 아이콘 (라인) ──────────────────────────────────── */
 .icon { display: inline-block; vertical-align: -0.15em; flex: none; color: currentColor; }
 

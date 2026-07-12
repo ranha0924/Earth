@@ -1,0 +1,16 @@
+/* Noto Serif KR — 앱이 실제 쓰는 글리프만 담은 서브셋(scripts/subset-serif.mjs 생성).
+   가중치당 ~1MB(korean 전체) → ~125KB. 데이터 추가로 새 한글이 생기면 스크립트 재실행. */
+@font-face {
+  font-family: 'Noto Serif KR';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('./noto-serif-kr-500.subset.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Noto Serif KR';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./noto-serif-kr-700.subset.woff2') format('woff2');
+}

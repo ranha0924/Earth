@@ -1,6 +1,6 @@
 import type { Ref } from 'react'
 import { useAppStore } from '../../store'
-import { ISSUE_BY_ID, TREATY_BY_ID, ISSUES } from '../../environment/data'
+import { ISSUE_BY_ID, TREATY_BY_ID, ISSUES, TREATIES } from '../../environment/data'
 import { countryNameKo } from '../../data/countryNames'
 import { Icon } from '../Icon'
 import { useScrollIntoView } from '../../hooks/useScrollIntoView'
@@ -50,6 +50,18 @@ export function EnvironmentCard() {
     )
   }
 
+  // 나라 선택 (협약 탭에서) → 그 나라에서 채택된 협약
+  if (tab === 'treaties' && selectedIso && !selectedIso.startsWith('treaty:')) {
+    return (
+      <CountryTreaties
+        iso={selectedIso}
+        onClose={() => select(null)}
+        onTreaty={(tid) => select(`treaty:${tid}`)}
+        cardRef={cardRef}
+      />
+    )
+  }
+
   // 안내
   return (
     <aside className="card" aria-label="환경 정보">
@@ -61,7 +73,7 @@ export function EnvironmentCard() {
       ) : (
         <p className="card__empty">
           아래 <b>연표</b>에서 협약을 골라 보세요. 연도·대상·핵심 내용과 헷갈리기 쉬운 포인트를
-          정리했습니다.
+          정리했습니다. <b>나라</b>를 누르면 그 나라에서 채택된 협약을 볼 수 있어요.
         </p>
       )}
     </aside>
@@ -196,6 +208,58 @@ function CountryEnvironment({
         <p className="card__empty">
           이 나라와 교과서에서 특별히 연결하는 환경문제는 정리되어 있지 않아요. 아래 문제 칩을 눌러
           각 환경문제의 발생 지역을 지구본에서 확인해 보세요.
+        </p>
+      )}
+    </aside>
+  )
+}
+
+function CountryTreaties({
+  iso,
+  onClose,
+  onTreaty,
+  cardRef,
+}: {
+  iso: string
+  onClose: () => void
+  onTreaty: (id: TreatyId) => void
+  cardRef: Ref<HTMLElement>
+}) {
+  const adopted = TREATIES.filter((t) => t.host.iso === iso)
+  return (
+    <aside ref={cardRef} className="card" aria-label="나라별 채택 협약">
+      <button type="button" className="card__close" onClick={onClose}>
+        닫기 <Icon name="close" size={12} />
+      </button>
+      <h2 className="card__title">
+        {countryNameKo(iso)}
+        <span className="card__title-en">채택한 국제 협약</span>
+      </h2>
+      {adopted.length > 0 ? (
+        <>
+          <p className="cross-border">
+            <Icon name="location" size={15} /> 이 나라에서 채택된 협약이에요. 협약을 누르면 자세히 볼 수 있어요.
+          </p>
+          <div className="issue-link-list">
+            {adopted.map((t) => (
+              <button key={t.id} type="button" className="issue-link" onClick={() => onTreaty(t.id)}>
+                <span className="issue-link__icon">
+                  <Icon name="treaty" size={20} />
+                </span>
+                <span>
+                  <b>{t.nameKo}</b> · Fig. {t.year}
+                  <br />
+                  <small>{t.host.placeKo} · {t.target}</small>
+                </span>
+              </button>
+            ))}
+          </div>
+        </>
+      ) : (
+        <p className="card__empty">
+          이 나라에서 채택된 협약은 없어요. 몬트리올 의정서·기후 변화 협약·파리 협정 등 주요 협약은
+          대부분의 나라가 가입해 있지만, 시험에는 <b>어디에서 채택됐는지(채택지)</b>가 자주 나와요.
+          아래 연표에서 협약을 눌러 채택지를 확인해 보세요.
         </p>
       )}
     </aside>

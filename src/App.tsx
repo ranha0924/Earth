@@ -10,6 +10,7 @@ import { ClimateCompare } from './components/ClimateCompare'
 import { CultureControls } from './components/culture/CultureControls'
 import { CultureCard } from './components/culture/CultureCard'
 import { QuizMode } from './components/quiz/QuizMode'
+import { CountryPicker } from './components/CountryPicker'
 import { Icon } from './components/Icon'
 import { useAppStore } from './store'
 
@@ -58,6 +59,12 @@ export default function App() {
         </div>
 
         <aside className="atlas__panel">
+          {mode !== 'quiz' && (
+            <div className="panel-section panel-section--search">
+              <CountryPicker />
+            </div>
+          )}
+
           {mode === 'climate' && (
             <>
               <div className="panel-section">
