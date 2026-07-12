@@ -7,10 +7,12 @@ import { HIGHLAND_BY_ID } from '../climate/highlands'
 import { ClimateChart } from './ClimateChart'
 import { ClimateCause, ClimateTraits } from './ClimateTraits'
 import { Icon } from './Icon'
+import { useScrollIntoView } from '../hooks/useScrollIntoView'
 
 export function InfoCard() {
   const selectedIso = useAppStore((s) => s.selectedIso)
   const select = useAppStore((s) => s.selectCountry)
+  const cardRef = useScrollIntoView<HTMLElement>(selectedIso)
   if (!selectedIso) return null
 
   // 고산 지역 오버레이 선택
@@ -18,7 +20,7 @@ export function InfoCard() {
     const h = HIGHLAND_BY_ID[selectedIso.slice('highland:'.length)]
     if (!h) return null
     return (
-      <aside className="card" aria-label="고산 지역 정보">
+      <aside ref={cardRef} className="card" aria-label="고산 지역 정보">
         <button type="button" className="card__close" onClick={() => select(null)}>
           닫기 <Icon name="close" size={12} />
         </button>
@@ -42,7 +44,7 @@ export function InfoCard() {
   const featured = getFeaturedClimate(selectedIso)
 
   return (
-    <aside className="card" aria-label="나라 정보">
+    <aside ref={cardRef} className="card" aria-label="나라 정보">
       <button type="button" className="card__close" onClick={() => select(null)}>
         닫기 <Icon name="close" size={12} />
       </button>

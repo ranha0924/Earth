@@ -8,6 +8,7 @@ import { REGION_IMAGES } from '../../culture/regionImages'
 import { countryNameKo, countryNameEn, hasCountryName } from '../../data/countryNames'
 import { Icon } from '../Icon'
 import { TraitFigure } from '../TraitFigure'
+import { useScrollIntoView } from '../../hooks/useScrollIntoView'
 
 export function CultureCard() {
   const layer = useAppStore((s) => s.cultureLayer)
@@ -17,6 +18,8 @@ export function CultureCard() {
   const selectFestival = useAppStore((s) => s.selectFestival)
   const regionFilter = useAppStore((s) => s.regionFilter)
   const toggleRegion = useAppStore((s) => s.toggleRegionFilter)
+  // 나라·축제·문화권 중 무엇을 눌러도 그 상세 카드가 패널 안에서 보이도록 스크롤
+  const cardRef = useScrollIntoView<HTMLElement>(selectedFestival ?? selectedIso ?? regionFilter)
 
   // 축제 상세 우선
   if (layer === 'festival' && selectedFestival) {
@@ -24,7 +27,7 @@ export function CultureCard() {
     if (f) {
       const fi = FESTIVAL_IMAGES[f.id]
       return (
-        <aside className="card" aria-label={`${f.nameKo} 정보`}>
+        <aside ref={cardRef} className="card" aria-label={`${f.nameKo} 정보`}>
           <button type="button" className="card__close" onClick={() => selectFestival(null)}>
             닫기 <Icon name="close" size={12} />
           </button>
@@ -54,7 +57,7 @@ export function CultureCard() {
       const ri = REGION_IMAGES[rid]
       const countryKo = selectedIso && hasCountryName(selectedIso) ? countryNameKo(selectedIso) : null
       return (
-        <aside className="card" aria-label={`${rg.nameKo} 정보`}>
+        <aside ref={cardRef} className="card" aria-label={`${rg.nameKo} 정보`}>
           <button
             type="button"
             className="card__close"
@@ -106,7 +109,7 @@ export function CultureCard() {
     const culture = getCulture(selectedIso)
     const religion = getReligion(selectedIso)
     return (
-      <aside className="card" aria-label="나라 문화 정보">
+      <aside ref={cardRef} className="card" aria-label="나라 문화 정보">
         <button type="button" className="card__close" onClick={() => select(null)}>
           닫기 <Icon name="close" size={12} />
         </button>
