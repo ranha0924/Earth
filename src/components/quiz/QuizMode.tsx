@@ -6,6 +6,7 @@ import { loadRecord, saveResult, type QuizRecord, type CatStats } from '../../qu
 import { countryNameKo } from '../../data/countryNames'
 import { getFeaturedClimate } from '../../climate/featured'
 import { ClimateChart } from '../ClimateChart'
+import { CountryPicker } from '../CountryPicker'
 import { Icon } from '../Icon'
 
 const SET_SIZE = 10
@@ -191,7 +192,8 @@ export function QuizMode() {
 
       {isMapQuestion(current) ? (
         <div className="quiz-map-hint">
-          <span><Icon name="globe" size={15} /> 지구본을 돌려 알맞은 나라를 <b>직접 클릭</b>하세요.</span>
+          <span><Icon name="globe" size={15} /> 지구본에서 나라를 <b>직접 클릭</b>하거나, 아래에서 검색해 고르세요.</span>
+          {!answered && <CountryPicker compact />}
           {answered && (
             <p className={`quiz-map-result ${answered.correct ? 'ok' : 'no'}`}>
               <Icon name={answered.correct ? 'check' : 'cross'} size={13} />{' '}

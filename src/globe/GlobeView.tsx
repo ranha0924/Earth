@@ -390,7 +390,13 @@ export function GlobeView() {
 
   return (
     <div className="globe" style={{ position: 'relative' }}>
-      <div ref={containerRef} data-testid="globe" style={{ width: '100%', height: '100%' }} />
+      <div
+        ref={containerRef}
+        data-testid="globe"
+        role="img"
+        aria-label="인터랙티브 3D 지구본. 나라를 클릭해 선택합니다. 키보드나 스크린리더를 쓰면 오른쪽 패널의 검색 상자로 나라를 고를 수 있어요."
+        style={{ width: '100%', height: '100%' }}
+      />
       {loadError && (
         <div className="globe__error">지구본을 불러오지 못했어요. 페이지를 새로고침 해주세요.</div>
       )}
