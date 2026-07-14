@@ -52,7 +52,9 @@ export const useAppStore = create<AppState>((set, get) => ({
   // 레이어를 바꾸면 이전 레이어의 선택·필터를 정리한다.
   setCultureLayer: (cultureLayer) =>
     set({ cultureLayer, selectedFestival: null, selectedIso: null, religionFilter: null, regionFilter: null }),
-  toggleReligionFilter: (r) => set({ religionFilter: get().religionFilter === r ? null : r }),
+  // 종교 범례를 켜면 선택 나라를 비워, 나라 문화 카드 대신 종교 상세 카드가 뜨게 한다.
+  toggleReligionFilter: (r) =>
+    set(get().religionFilter === r ? { religionFilter: null } : { religionFilter: r, selectedIso: null }),
   toggleRegionFilter: (r) => set({ regionFilter: get().regionFilter === r ? null : r }),
   selectFestival: (selectedFestival) => set({ selectedFestival }),
 }))

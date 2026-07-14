@@ -101,6 +101,14 @@ const PATHS: Record<string, ReactNode> = {
       <path d="M12 3c-1 1.5-1 2.5 0 4M9 4.5c-.6 1-.6 1.8 0 2.8M15 4.5c-.6 1-.6 1.8 0 2.8" />
     </>
   ),
+  // 상징적 건축물 — 기둥·박공을 갖춘 신전/기념물
+  landmark: (
+    <>
+      <path d="M12 3l9 5H3l9-5z" />
+      <path d="M5 8v9M9.5 8v9M14.5 8v9M19 8v9" />
+      <path d="M4 17.5h16M3 21h18" />
+    </>
+  ),
 
   // ── 환경문제 (issue.id) ──
   'acid-rain': (
