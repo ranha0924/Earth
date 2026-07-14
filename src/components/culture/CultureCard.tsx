@@ -1,10 +1,11 @@
 import { useAppStore } from '../../store'
 import { getCulture, getReligion } from '../../culture/data'
-import { RELIGION_LABEL, colorForReligion } from '../../culture/types'
+import { RELIGION_LABEL, colorForReligion, RELIGION_BY_ID } from '../../culture/types'
 import { FESTIVAL_BY_ID } from '../../culture/festivals'
 import { FESTIVAL_IMAGES } from '../../culture/festivalImages'
 import { getRegion, REGION_BY_ID } from '../../culture/regions'
 import { REGION_IMAGES } from '../../culture/regionImages'
+import { RELIGION_IMAGES } from '../../culture/religionImages'
 import { countryNameKo, countryNameEn, hasCountryName } from '../../data/countryNames'
 import { Icon } from '../Icon'
 import { TraitFigure } from '../TraitFigure'
@@ -18,8 +19,12 @@ export function CultureCard() {
   const selectFestival = useAppStore((s) => s.selectFestival)
   const regionFilter = useAppStore((s) => s.regionFilter)
   const toggleRegion = useAppStore((s) => s.toggleRegionFilter)
-  // 나라·축제·문화권 중 무엇을 눌러도 그 상세 카드가 패널 안에서 보이도록 스크롤
-  const cardRef = useScrollIntoView<HTMLElement>(selectedFestival ?? selectedIso ?? regionFilter)
+  const religionFilter = useAppStore((s) => s.religionFilter)
+  const toggleReligion = useAppStore((s) => s.toggleReligionFilter)
+  // 나라·축제·문화권·종교 중 무엇을 눌러도 그 상세 카드가 패널 안에서 보이도록 스크롤
+  const cardRef = useScrollIntoView<HTMLElement>(
+    selectedFestival ?? selectedIso ?? regionFilter ?? religionFilter,
+  )
 
   // 축제 상세 우선
   if (layer === 'festival' && selectedFestival) {
@@ -151,13 +156,49 @@ export function CultureCard() {
     )
   }
 
+  // 종교 상세 (범례로 고른 종교) — 상징 건축물·생활양식·대표 사진
+  if (layer === 'religion' && religionFilter) {
+    const r = RELIGION_BY_ID[religionFilter]
+    const ri = RELIGION_IMAGES[religionFilter]
+    return (
+      <aside ref={cardRef} className="card" aria-label={`${r.nameKo} 정보`}>
+        <button type="button" className="card__close" onClick={() => toggleReligion(religionFilter)}>
+          닫기 <Icon name="close" size={12} />
+        </button>
+        <h2 className="card__title"><Icon name="religion" size={19} /> {r.nameKo}</h2>
+        {ri && <TraitFigure src={ri.src} cap={ri.cap} alt={`${r.nameKo} 상징 건축물 대표 사진`} />}
+        <div className="card__row">
+          <span className="card__swatch" style={{ backgroundColor: r.color }} aria-hidden="true" />
+          <span className="card__climate">세계 주요 종교 분류</span>
+        </div>
+        <p className="card__note">{r.overview}</p>
+        <div className="card__section">
+          <h3 className="card__h3"><Icon name="landmark" size={13} /> 상징적 건축물</h3>
+          <p className="card__note">{r.architecture}</p>
+        </div>
+        <div className="card__section">
+          <h3 className="card__h3"><Icon name="people" size={13} /> 생활양식</h3>
+          <p className="card__note">{r.lifestyle}</p>
+        </div>
+        <div className="card__section">
+          <h3 className="card__h3"><Icon name="globe" size={13} /> 주요 분포</h3>
+          <p className="card__note">{r.distribution}</p>
+        </div>
+        <div className="confusion">
+          <b><Icon name="key" size={13} /> 시험 포인트</b>
+          <p>{r.linkPoint}</p>
+        </div>
+      </aside>
+    )
+  }
+
   // 안내
   return (
     <aside className="card" aria-label="문화 정보">
       {layer === 'religion' ? (
         <p className="card__empty">
-          지구본 색은 나라의 <b>주요 종교</b>예요. 나라를 누르면 종교·전통 가옥·의복·음식을 볼 수
-          있고, 아래 범례를 누르면 같은 종교 문화권이 지구본에 강조됩니다.
+          지구본 색은 나라의 <b>주요 종교</b>예요. 나라를 누르면 그 나라의 전통 가옥·의복·음식을,
+          아래 <b>종교 범례</b>를 누르면 그 종교의 상징 건축물·생활양식·대표 사진을 볼 수 있어요.
         </p>
       ) : (
         <p className="card__empty">

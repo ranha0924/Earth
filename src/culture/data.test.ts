@@ -2,7 +2,8 @@ import { describe, it, expect } from 'vitest'
 import { religionData, cultureData, getReligion, getCulture } from './data'
 import { FESTIVALS } from './festivals'
 import { FESTIVAL_IMAGES } from './festivalImages'
-import { RELIGIONS } from './types'
+import { RELIGIONS, RELIGION_BY_ID } from './types'
+import { RELIGION_IMAGES } from './religionImages'
 import { REGIONS, getRegion, REGION_BY_ISO, REGION_BY_ID } from './regions'
 import { REGION_IMAGES } from './regionImages'
 
@@ -22,6 +23,35 @@ describe('종교 데이터', () => {
   })
   it('100개국 이상 매핑돼 있다', () => {
     expect(Object.keys(religionData).length).toBeGreaterThan(100)
+  })
+  it('교과 8개 종교 분류가 있다', () => {
+    expect(RELIGIONS).toHaveLength(8)
+  })
+  it('각 종교가 색·개요·상징 건축물·생활양식·분포·연계 포인트를 갖는다', () => {
+    for (const r of RELIGIONS) {
+      expect(r.color, `${r.id} 색`).toMatch(/^#[0-9a-f]{6}$/i)
+      expect(r.nameKo).not.toBe('')
+      expect(r.overview).not.toBe('')
+      expect(r.architecture).not.toBe('')
+      expect(r.lifestyle).not.toBe('')
+      expect(r.distribution).not.toBe('')
+      expect(r.linkPoint).not.toBe('')
+    }
+  })
+  it('종교 색이 서로 겹치지 않는다', () => {
+    const colors = new Set(RELIGIONS.map((r) => r.color.toLowerCase()))
+    expect(colors.size).toBe(RELIGIONS.length)
+  })
+  it('RELIGION_BY_ID로 모든 종교를 찾을 수 있다', () => {
+    for (const r of RELIGIONS) expect(RELIGION_BY_ID[r.id]).toBe(r)
+  })
+  it('모든 종교가 상징 건축물 대표 사진(웹 최적화 webp)과 캡션을 갖는다', () => {
+    for (const r of RELIGIONS) {
+      const image = RELIGION_IMAGES[r.id]
+      expect(image, `${r.id} 사진 누락`).toBeDefined()
+      expect(image.src).toMatch(/_min\.webp$/)
+      expect(image.cap).not.toBe('')
+    }
   })
 })
 
