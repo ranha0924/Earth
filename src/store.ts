@@ -55,6 +55,8 @@ export const useAppStore = create<AppState>((set, get) => ({
   // 종교 범례를 켜면 선택 나라를 비워, 나라 문화 카드 대신 종교 상세 카드가 뜨게 한다.
   toggleReligionFilter: (r) =>
     set(get().religionFilter === r ? { religionFilter: null } : { religionFilter: r, selectedIso: null }),
-  toggleRegionFilter: (r) => set({ regionFilter: get().regionFilter === r ? null : r }),
+  // 문화권 범례도 같은 원리 — 켜면 선택 나라를 비워, 누른 문화권이 카드·지구본에 함께 반영되게 한다.
+  toggleRegionFilter: (r) =>
+    set(get().regionFilter === r ? { regionFilter: null } : { regionFilter: r, selectedIso: null }),
   selectFestival: (selectedFestival) => set({ selectedFestival }),
 }))
