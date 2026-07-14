@@ -8,12 +8,17 @@ vi.mock('./globe/GlobeView', () => ({ GlobeView: () => <div data-testid="globe" 
 import App from './App'
 
 beforeEach(() => {
+  // 문화 레이어·필터까지 초기화해 테스트 간 상태가 새지 않게 한다.
   useAppStore.setState({
     mode: 'climate',
     selectedIso: null,
     climateFilter: null,
     environmentTab: 'issues',
     activeIssue: null,
+    cultureLayer: 'religion',
+    religionFilter: null,
+    regionFilter: null,
+    selectedFestival: null,
   })
 })
 
@@ -46,15 +51,30 @@ describe('App', () => {
     render(<App />)
     expect(screen.getByRole('group', { name: '종교 범례' })).toBeInTheDocument()
   })
-  it('종교 범례를 누르면 상징 건축물·생활양식·대표 사진이 담긴 종교 카드가 나타난다', async () => {
+  it('종교 범례를 누르면 상징 건축물·생활양식·분포·사진이 담긴 종교 카드가 나타나고 닫힌다', async () => {
     useAppStore.setState({ mode: 'culture', cultureLayer: 'religion', religionFilter: null })
     render(<App />)
     await userEvent.click(screen.getByRole('button', { name: '이슬람교' }))
     expect(screen.getByRole('heading', { name: /이슬람교/ })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /상징적 건축물/ })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /생활양식/ })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /주요 분포/ })).toBeInTheDocument()
     expect(screen.getByText(/메카를 향해 예배/)).toBeInTheDocument()
+    expect(screen.getByText(/시험 포인트/)).toBeInTheDocument()
     expect(screen.getByRole('img', { name: /이슬람교 상징 건축물 대표 사진/ })).toBeInTheDocument()
+    // 닫기를 누르면 카드가 사라지고 안내로 돌아간다
+    await userEvent.click(screen.getByRole('button', { name: /닫기/ }))
+    expect(screen.queryByRole('heading', { name: /이슬람교/ })).not.toBeInTheDocument()
+  })
+  it('문화권 레이어에서 나라를 고른 뒤 다른 문화권 범례를 누르면 그 문화권 카드로 바뀐다', async () => {
+    useAppStore.setState({ mode: 'culture', cultureLayer: 'region', regionFilter: null, selectedIso: 'KR' })
+    render(<App />)
+    // 처음엔 선택 나라(KR)의 문화권 = 동아시아
+    expect(screen.getByRole('heading', { name: /동아시아 문화권/ })).toBeInTheDocument()
+    // 유럽 문화권 범례 클릭 → 선택 나라가 비워지고 유럽 카드로 바뀐다
+    await userEvent.click(screen.getByRole('button', { name: '유럽' }))
+    expect(screen.getByRole('heading', { name: /유럽 문화권/ })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: /동아시아 문화권/ })).not.toBeInTheDocument()
   })
   it('퀴즈 모드에서는 퀴즈 카드(진행도)가 나타난다', () => {
     useAppStore.setState({ mode: 'quiz' })
