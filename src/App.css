@@ -220,7 +220,7 @@ body {
 }
 .legend__swatch--hatch {
   background-color: #fff;
-  background-image: repeating-linear-gradient(45deg, #3d3d3d 0 1.4px, transparent 1.4px 4px);
+  background-image: repeating-linear-gradient(45deg, #2a2a2a 0 1.4px, transparent 1.4px 4px);
 }
 .legend__item {
   display: flex; align-items: center; gap: 9px;
@@ -327,8 +327,8 @@ body {
 .cg-axis { fill: var(--ink-55); font-size: 8.5px; font-family: var(--sans); }
 .cg-axis--p { fill: var(--prussian); }
 .cg-label { font-size: 8px; font-weight: 700; font-family: var(--sans); }
-.climograph__help { margin-top: 6px; }
-.climograph__help summary { cursor: pointer; font-size: 11.5px; font-weight: 600; color: var(--prussian); }
+.climograph__help { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--ink-12); }
+.climograph__help-title { margin: 0; font-size: 11.5px; font-weight: 700; color: var(--prussian); }
 .climograph__help ul { margin: 7px 0 0; padding-left: 16px; font-size: 11.5px; line-height: 1.7; color: var(--ink-70); }
 
 .cross-border {
@@ -595,8 +595,17 @@ body {
 .festival-pin:hover { background: var(--vermillion); color: var(--paper); border-color: var(--vermillion); }
 .festival-pin__icon { color: var(--vermillion); display: inline-flex; }
 .festival-pin:hover .festival-pin__icon { color: var(--paper); }
-.highland-pin .festival-pin__icon { color: #93748a; }
-.highland-pin:hover { background: #93748a; border-color: #93748a; }
+/* 고산 지역명 라벨 — 빗금은 지구본 표면(커스텀 레이어)에 그리고, 여기선 이름만 표시 */
+.highland-mark {
+  background: transparent; border: none; padding: 0; cursor: pointer;
+  transform: translate(-50%, 22px); /* 표면 빗금 원반 아래에 이름표를 둠 */
+}
+.highland-mark__label {
+  font-family: var(--serif); font-size: 10px; font-weight: 700; color: var(--ink);
+  background: rgba(245, 240, 228, 0.88); border: 1px solid var(--ink-40);
+  padding: 1px 5px; border-radius: 2px; white-space: nowrap; letter-spacing: 0.01em;
+}
+.highland-mark:hover .highland-mark__label { background: var(--paper); border-color: var(--ink); }
 
 /* ── 하단 자료 출처 (콜로폰) ─────────────────────────── */
 .colophon {

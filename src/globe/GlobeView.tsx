@@ -10,7 +10,7 @@ import { colorForReligion, type ReligionId } from '../culture/types'
 import { getRegion, colorForRegion, type RegionId } from '../culture/regions'
 import { ISSUE_BY_ID, TREATY_BY_ID } from '../environment/data'
 import { FESTIVALS, FESTIVAL_BY_ID } from '../culture/festivals'
-import { HIGHLANDS, HIGHLAND_BY_ID } from '../climate/highlands'
+import { HIGHLANDS, HIGHLAND_BY_ID, type Highland } from '../climate/highlands'
 import type { TreatyId } from '../environment/types'
 
 const GEOJSON_URL = `${import.meta.env.BASE_URL}data/countries.geojson`
@@ -29,6 +29,33 @@ const VERMILLION = '#c8452c'
 
 const FLY_MS = 900
 
+// 고산 표면 빗금 텍스처 (투명 바탕 + 검은 대각선) — 지구본 표면 원반에 입혀 구면을 따라 붙게 함
+function makeSurfaceHatchTexture(): THREE.Texture {
+  const s = 64
+  const cvs = document.createElement('canvas')
+  cvs.width = cvs.height = s
+  const ctx = cvs.getContext('2d')!
+  ctx.clearRect(0, 0, s, s)
+  ctx.strokeStyle = '#1e1e1e'
+  ctx.lineWidth = 6
+  ctx.lineCap = 'butt'
+  for (let o = -s; o < s * 2; o += 16) {
+    ctx.beginPath()
+    ctx.moveTo(o, 0)
+    ctx.lineTo(o + s, s)
+    ctx.stroke()
+  }
+  const tex = new THREE.CanvasTexture(cvs)
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping
+  tex.repeat.set(3.5, 3.5)
+  // 밉맵 축소로 선이 회색으로 뭉개지지 않도록 밉맵 끄고 선명 유지
+  tex.generateMipmaps = false
+  tex.minFilter = THREE.LinearFilter
+  tex.magFilter = THREE.LinearFilter
+  tex.anisotropy = 8
+  return tex
+}
+
 // 30°(위) / 20°(경) 간격 경위선 — pathsData로 직접 그려 색·굵기 제어
 function buildGraticules(): [number, number][][] {
   const paths: [number, number][][] = []
@@ -45,29 +72,6 @@ function buildGraticules(): [number, number][][] {
   return paths
 }
 const GRATICULES = buildGraticules()
-
-// 사선 해칭 텍스처 재료 (크림 바탕 + 지정색 대각선)
-function makeHatchMaterial(lineColor: string, lineWidth = 3): THREE.Material {
-  const s = 24
-  const cvs = document.createElement('canvas')
-  cvs.width = cvs.height = s
-  const ctx = cvs.getContext('2d')!
-  ctx.fillStyle = PAPER
-  ctx.fillRect(0, 0, s, s)
-  ctx.strokeStyle = lineColor
-  ctx.lineWidth = lineWidth
-  ctx.lineCap = 'round'
-  for (let o = -s; o < s * 2; o += 8) {
-    ctx.beginPath()
-    ctx.moveTo(o, 0)
-    ctx.lineTo(o + s, s)
-    ctx.stroke()
-  }
-  const tex = new THREE.CanvasTexture(cvs)
-  tex.wrapS = tex.wrapT = THREE.RepeatWrapping
-  tex.repeat.set(16, 16)
-  return new THREE.MeshBasicMaterial({ map: tex })
-}
 
 // 기후 대분류별 대표 지역 (범례 클릭 시 이동)
 const CLIMATE_FOCUS: Record<ClimateGroup, { lat: number; lng: number; altitude: number }> = {
@@ -120,9 +124,9 @@ const RELIGION_FOCUS: Record<ReligionId, { lat: number; lng: number; altitude: n
 export function GlobeView() {
   const containerRef = useRef<HTMLDivElement>(null)
   const globeRef = useRef<GlobeInstance | null>(null)
-  const hatchRef = useRef<THREE.Material | null>(null) // 선택 지역 (버밀리언)
   const surfaceMatRef = useRef<THREE.MeshBasicMaterial | null>(null) // 지구본 표면 (크림 or 기후 텍스처)
   const climateTexRef = useRef<THREE.Texture | null>(null)
+  const hatchTexRef = useRef<THREE.Texture | null>(null) // 고산 표면 빗금 (지구본에 직접)
   const [texLoaded, setTexLoaded] = useState(false)
   const [loadError, setLoadError] = useState(false)
 
@@ -130,7 +134,6 @@ export function GlobeView() {
   useEffect(() => {
     const el = containerRef.current
     if (!el) return
-    hatchRef.current = makeHatchMaterial(VERMILLION, 3)
     surfaceMatRef.current = new THREE.MeshBasicMaterial({ color: OCEAN })
     // 기후 텍스처를 비동기 로드 (실제 쾨펜 기후 지도)
     new THREE.TextureLoader().load(CLIMATE_TEXTURE_URL, (tex) => {
@@ -183,15 +186,13 @@ export function GlobeView() {
       ro.disconnect()
       globe._destructor?.()
       el.innerHTML = ''
-      // 해칭 material/텍스처 해제 (StrictMode 이중 마운트 시 GPU 리소스 누수 방지)
-      const m = hatchRef.current as THREE.MeshBasicMaterial | null
-      m?.map?.dispose()
-      m?.dispose()
-      hatchRef.current = null
+      // 표면 재질·텍스처 해제 (StrictMode 이중 마운트 시 GPU 리소스 누수 방지)
       surfaceMatRef.current?.dispose()
       surfaceMatRef.current = null
       climateTexRef.current?.dispose()
       climateTexRef.current = null
+      hatchTexRef.current?.dispose()
+      hatchTexRef.current = null
     }
   }, [])
 
@@ -246,22 +247,21 @@ export function GlobeView() {
       return LAND
     }
 
-    // 선택 지역만 사선 해칭(버밀리언). 나머지는 undefined → capColor 폴백
-    const capMaterial = (feat: object): THREE.Material | undefined => {
-      const iso = featureToIso(feat)
-      return iso && iso === selectedIso && hatchRef.current ? hatchRef.current : undefined
-    }
-
+    // 선택 나라: 빗금 채움 없이 국경선만 진하게 — 짙은 잉크 테두리
     const strokeColor = (feat: object): string => {
       const iso = featureToIso(feat)
       return iso && iso === selectedIso ? '#1a2e2a' : INK_STROKE
     }
 
+    // 선택 나라는 옆면(벽)도 짙게 + 살짝 들어올려 테두리가 도드라지게
+    const sideColor = (feat: object): string =>
+      featureToIso(feat) === selectedIso ? 'rgba(26,46,42,0.5)' : 'rgba(26,46,42,0.12)'
+
     globe
       .polygonCapColor(capColor)
-      .polygonCapMaterial(capMaterial as (d: object) => THREE.Material)
       .polygonStrokeColor(strokeColor)
-      .polygonAltitude((feat) => (featureToIso(feat as object) === selectedIso ? 0.018 : 0.008))
+      .polygonSideColor(sideColor)
+      .polygonAltitude((feat) => (featureToIso(feat as object) === selectedIso ? 0.02 : 0.008))
   }, [mode, climateFilter, activeIssue, cultureLayer, religionFilter, regionFilter, selectedIso])
 
   // 지구본 표면: 기후 모드 = 실제 쾨펜 기후 텍스처, 나머지 = 크림 단색.
@@ -308,8 +308,6 @@ export function GlobeView() {
     }
     const FEST_ICON =
       '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21V4"/><path d="M6 5c3-2 6 2 9 0v7c-3 2-6-2-9 0"/></svg>'
-    const PEAK_ICON =
-      '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18L14 6l-3.5 6.5L8 9z"/></svg>'
     globe
       .htmlElementsData(pins)
       .htmlLat((d: object) => (d as Pin).lat)
@@ -318,17 +316,51 @@ export function GlobeView() {
       .htmlElement((d: object) => {
         const pin = d as Pin
         const el = document.createElement('button')
-        el.className = `festival-pin${pin.kind === 'highland' ? ' highland-pin' : ''}`
         el.type = 'button'
-        el.innerHTML = `<span class="festival-pin__icon">${pin.kind === 'highland' ? PEAK_ICON : FEST_ICON}</span><span class="festival-pin__label">${pin.nameKo}</span>`
-        el.onclick = (ev) => {
-          ev.stopPropagation()
-          if (pin.kind === 'festival') useAppStore.getState().selectFestival(pin.id)
-          else useAppStore.getState().selectCountry(`highland:${pin.id}`)
+        if (pin.kind === 'highland') {
+          // 고산: 빗금은 지구본 표면(커스텀 레이어)에 그리고, 여기선 지역명 라벨만 표시
+          el.className = 'highland-mark'
+          el.innerHTML = `<span class="highland-mark__label">${pin.nameKo}</span>`
+          el.onclick = (ev) => {
+            ev.stopPropagation()
+            useAppStore.getState().selectCountry(`highland:${pin.id}`)
+          }
+        } else {
+          el.className = 'festival-pin'
+          el.innerHTML = `<span class="festival-pin__icon">${FEST_ICON}</span><span class="festival-pin__label">${pin.nameKo}</span>`
+          el.onclick = (ev) => {
+            ev.stopPropagation()
+            useAppStore.getState().selectFestival(pin.id)
+          }
         }
         return el
       })
   }, [mode, cultureLayer])
+
+  // 고산 빗금을 지구본 '표면'에 직접 올림 (커스텀 레이어) — 구면에 접해 붙고 지구본과 함께 회전
+  useEffect(() => {
+    const globe = globeRef.current
+    if (!globe) return
+    if (!hatchTexRef.current) hatchTexRef.current = makeSurfaceHatchTexture()
+    const tex = hatchTexRef.current
+    globe
+      .customLayerData(mode === 'climate' ? (HIGHLANDS as object[]) : [])
+      .customThreeObject(
+        () =>
+          new THREE.Mesh(
+            new THREE.CircleGeometry(11, 48),
+            new THREE.MeshBasicMaterial({ map: tex, transparent: true, side: THREE.DoubleSide, depthWrite: false }),
+          ),
+      )
+      .customThreeObjectUpdate((obj: object, d: object) => {
+        const h = d as Highland
+        const mesh = obj as THREE.Mesh
+        // 표면 살짝 위(선택국 융기보다 높게)에 두고, 원반 면이 구 중심을 향하도록 회전 → 구면에 접함
+        const c = globe.getCoords(h.lat, h.lng, 0.025)
+        mesh.position.set(c.x, c.y, c.z)
+        mesh.lookAt(0, 0, 0)
+      })
+  }, [mode])
 
   // ── 선택 시 해당 지역으로 지구본 이동 ──
   // 기후 범례(소분류) → 대분류 대표 지역
