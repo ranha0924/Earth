@@ -327,8 +327,8 @@ body {
 .cg-axis { fill: var(--ink-55); font-size: 8.5px; font-family: var(--sans); }
 .cg-axis--p { fill: var(--prussian); }
 .cg-label { font-size: 8px; font-weight: 700; font-family: var(--sans); }
-.climograph__help { margin-top: 6px; }
-.climograph__help summary { cursor: pointer; font-size: 11.5px; font-weight: 600; color: var(--prussian); }
+.climograph__help { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--ink-12); }
+.climograph__help-title { margin: 0; font-size: 11.5px; font-weight: 700; color: var(--prussian); }
 .climograph__help ul { margin: 7px 0 0; padding-left: 16px; font-size: 11.5px; line-height: 1.7; color: var(--ink-70); }
 
 .cross-border {
@@ -595,8 +595,11 @@ body {
 .festival-pin:hover { background: var(--vermillion); color: var(--paper); border-color: var(--vermillion); }
 .festival-pin__icon { color: var(--vermillion); display: inline-flex; }
 .festival-pin:hover .festival-pin__icon { color: var(--paper); }
-.highland-pin .festival-pin__icon { color: #93748a; }
-.highland-pin:hover { background: #93748a; border-color: #93748a; }
+/* 고산 기후 마커 — 대표색(플럼)으로 채워 지도에서 '고산 기후 지역'임이 바로 보이게 */
+.highland-pin { background: #93748a; color: var(--paper); border-color: #6f5468; }
+.highland-pin .festival-pin__icon { color: var(--paper); }
+.highland-pin:hover { background: #7c5f74; border-color: #5c4457; color: var(--paper); }
+.highland-pin:hover .festival-pin__icon { color: var(--paper); }
 
 /* ── 하단 자료 출처 (콜로폰) ─────────────────────────── */
 .colophon {

@@ -46,29 +46,6 @@ function buildGraticules(): [number, number][][] {
 }
 const GRATICULES = buildGraticules()
 
-// 사선 해칭 텍스처 재료 (크림 바탕 + 지정색 대각선)
-function makeHatchMaterial(lineColor: string, lineWidth = 3): THREE.Material {
-  const s = 24
-  const cvs = document.createElement('canvas')
-  cvs.width = cvs.height = s
-  const ctx = cvs.getContext('2d')!
-  ctx.fillStyle = PAPER
-  ctx.fillRect(0, 0, s, s)
-  ctx.strokeStyle = lineColor
-  ctx.lineWidth = lineWidth
-  ctx.lineCap = 'round'
-  for (let o = -s; o < s * 2; o += 8) {
-    ctx.beginPath()
-    ctx.moveTo(o, 0)
-    ctx.lineTo(o + s, s)
-    ctx.stroke()
-  }
-  const tex = new THREE.CanvasTexture(cvs)
-  tex.wrapS = tex.wrapT = THREE.RepeatWrapping
-  tex.repeat.set(16, 16)
-  return new THREE.MeshBasicMaterial({ map: tex })
-}
-
 // 기후 대분류별 대표 지역 (범례 클릭 시 이동)
 const CLIMATE_FOCUS: Record<ClimateGroup, { lat: number; lng: number; altitude: number }> = {
   열대: { lat: 0, lng: 18, altitude: 2.1 },
@@ -120,7 +97,6 @@ const RELIGION_FOCUS: Record<ReligionId, { lat: number; lng: number; altitude: n
 export function GlobeView() {
   const containerRef = useRef<HTMLDivElement>(null)
   const globeRef = useRef<GlobeInstance | null>(null)
-  const hatchRef = useRef<THREE.Material | null>(null) // 선택 지역 (버밀리언)
   const surfaceMatRef = useRef<THREE.MeshBasicMaterial | null>(null) // 지구본 표면 (크림 or 기후 텍스처)
   const climateTexRef = useRef<THREE.Texture | null>(null)
   const [texLoaded, setTexLoaded] = useState(false)
@@ -130,7 +106,6 @@ export function GlobeView() {
   useEffect(() => {
     const el = containerRef.current
     if (!el) return
-    hatchRef.current = makeHatchMaterial(VERMILLION, 3)
     surfaceMatRef.current = new THREE.MeshBasicMaterial({ color: OCEAN })
     // 기후 텍스처를 비동기 로드 (실제 쾨펜 기후 지도)
     new THREE.TextureLoader().load(CLIMATE_TEXTURE_URL, (tex) => {
@@ -183,11 +158,7 @@ export function GlobeView() {
       ro.disconnect()
       globe._destructor?.()
       el.innerHTML = ''
-      // 해칭 material/텍스처 해제 (StrictMode 이중 마운트 시 GPU 리소스 누수 방지)
-      const m = hatchRef.current as THREE.MeshBasicMaterial | null
-      m?.map?.dispose()
-      m?.dispose()
-      hatchRef.current = null
+      // 표면 재질·텍스처 해제 (StrictMode 이중 마운트 시 GPU 리소스 누수 방지)
       surfaceMatRef.current?.dispose()
       surfaceMatRef.current = null
       climateTexRef.current?.dispose()
@@ -246,22 +217,21 @@ export function GlobeView() {
       return LAND
     }
 
-    // 선택 지역만 사선 해칭(버밀리언). 나머지는 undefined → capColor 폴백
-    const capMaterial = (feat: object): THREE.Material | undefined => {
-      const iso = featureToIso(feat)
-      return iso && iso === selectedIso && hatchRef.current ? hatchRef.current : undefined
-    }
-
+    // 선택 나라: 빗금 채움 없이 국경선만 진하게 — 짙은 잉크 테두리
     const strokeColor = (feat: object): string => {
       const iso = featureToIso(feat)
       return iso && iso === selectedIso ? '#1a2e2a' : INK_STROKE
     }
 
+    // 선택 나라는 옆면(벽)도 짙게 + 살짝 들어올려 테두리가 도드라지게
+    const sideColor = (feat: object): string =>
+      featureToIso(feat) === selectedIso ? 'rgba(26,46,42,0.5)' : 'rgba(26,46,42,0.12)'
+
     globe
       .polygonCapColor(capColor)
-      .polygonCapMaterial(capMaterial as (d: object) => THREE.Material)
       .polygonStrokeColor(strokeColor)
-      .polygonAltitude((feat) => (featureToIso(feat as object) === selectedIso ? 0.018 : 0.008))
+      .polygonSideColor(sideColor)
+      .polygonAltitude((feat) => (featureToIso(feat as object) === selectedIso ? 0.02 : 0.008))
   }, [mode, climateFilter, activeIssue, cultureLayer, religionFilter, regionFilter, selectedIso])
 
   // 지구본 표면: 기후 모드 = 실제 쾨펜 기후 텍스처, 나머지 = 크림 단색.

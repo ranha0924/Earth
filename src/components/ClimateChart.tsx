@@ -69,15 +69,15 @@ export function ClimateChart({ city }: ClimateChartProps) {
         <text x={M.left - 5} y={M.top - 9} textAnchor="end" className="cg-label" fill={TEMP}>기온℃</text>
         <text x={W - M.right + 5} y={M.top - 9} className="cg-label" fill={PRECIP}>강수mm</text>
       </svg>
-      <details className="climograph__help">
-        <summary>이 그래프 읽는 법</summary>
+      <div className="climograph__help">
+        <p className="climograph__help-title">이 그래프 읽는 법</p>
         <ul>
           <li><b style={{ color: TEMP }}>붉은 선</b> = 월평균 기온, <b style={{ color: PRECIP }}>파란 막대</b> = 월강수량</li>
           <li>기온선이 <b>거의 일직선</b>이면 열대(높음)·고산(낮고 온화)</li>
           <li>여름 건조·겨울 강수면 <b>지중해성</b>, 여름에 비가 몰리면 <b>계절풍</b> 지역</li>
           <li>기온선이 <b>1월에 최고(아래로 볼록)</b>면 남반구!</li>
         </ul>
-      </details>
+      </div>
     </div>
   )
 }
