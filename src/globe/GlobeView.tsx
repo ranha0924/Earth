@@ -278,8 +278,6 @@ export function GlobeView() {
     }
     const FEST_ICON =
       '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21V4"/><path d="M6 5c3-2 6 2 9 0v7c-3 2-6-2-9 0"/></svg>'
-    const PEAK_ICON =
-      '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18L14 6l-3.5 6.5L8 9z"/></svg>'
     globe
       .htmlElementsData(pins)
       .htmlLat((d: object) => (d as Pin).lat)
@@ -288,13 +286,22 @@ export function GlobeView() {
       .htmlElement((d: object) => {
         const pin = d as Pin
         const el = document.createElement('button')
-        el.className = `festival-pin${pin.kind === 'highland' ? ' highland-pin' : ''}`
         el.type = 'button'
-        el.innerHTML = `<span class="festival-pin__icon">${pin.kind === 'highland' ? PEAK_ICON : FEST_ICON}</span><span class="festival-pin__label">${pin.nameKo}</span>`
-        el.onclick = (ev) => {
-          ev.stopPropagation()
-          if (pin.kind === 'festival') useAppStore.getState().selectFestival(pin.id)
-          else useAppStore.getState().selectCountry(`highland:${pin.id}`)
+        if (pin.kind === 'highland') {
+          // 고산: 핀이 아니라 검은 빗금 패치로 표시 (범례·카드 스와치와 같은 관례 표기)
+          el.className = 'highland-mark'
+          el.innerHTML = `<span class="highland-mark__hatch" aria-hidden="true"></span><span class="highland-mark__label">${pin.nameKo}</span>`
+          el.onclick = (ev) => {
+            ev.stopPropagation()
+            useAppStore.getState().selectCountry(`highland:${pin.id}`)
+          }
+        } else {
+          el.className = 'festival-pin'
+          el.innerHTML = `<span class="festival-pin__icon">${FEST_ICON}</span><span class="festival-pin__label">${pin.nameKo}</span>`
+          el.onclick = (ev) => {
+            ev.stopPropagation()
+            useAppStore.getState().selectFestival(pin.id)
+          }
         }
         return el
       })

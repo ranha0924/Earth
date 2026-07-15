@@ -26,7 +26,7 @@ export function InfoCard() {
         </button>
         <h2 className="card__title">{h.nameKo}<span className="card__title-en">고산 기후 지역</span></h2>
         <div className="card__row">
-          <span className="card__swatch" style={{ backgroundColor: colorForGroup('고산') }} aria-hidden="true" />
+          <span className="card__swatch legend__swatch--hatch" aria-hidden="true" />
           <span className="card__climate">고산 기후 (H) · {h.cities}</span>
         </div>
         <ClimateCause info={SUBTYPE.H} />
