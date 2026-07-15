@@ -595,24 +595,17 @@ body {
 .festival-pin:hover { background: var(--vermillion); color: var(--paper); border-color: var(--vermillion); }
 .festival-pin__icon { color: var(--vermillion); display: inline-flex; }
 .festival-pin:hover .festival-pin__icon { color: var(--paper); }
-/* 고산 기후 마커 — 핀 대신 검은 빗금 패치로 표시 (범례 스와치와 같은 관례 표기) */
+/* 고산 지역명 라벨 — 빗금은 지구본 표면(커스텀 레이어)에 그리고, 여기선 이름만 표시 */
 .highland-mark {
-  display: flex; flex-direction: column; align-items: center; gap: 3px;
   background: transparent; border: none; padding: 0; cursor: pointer;
-  transform: translate(-50%, -50%);
-}
-.highland-mark__hatch {
-  width: 40px; height: 26px; border-radius: 4px; border: 1px solid #2a2a2a;
-  background-color: rgba(245, 240, 228, 0.5);
-  background-image: repeating-linear-gradient(45deg, #2a2a2a 0 1.6px, transparent 1.6px 5px);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+  transform: translate(-50%, 22px); /* 표면 빗금 원반 아래에 이름표를 둠 */
 }
 .highland-mark__label {
-  font-family: var(--serif); font-size: 10.5px; font-weight: 700; color: var(--ink);
-  background: rgba(245, 240, 228, 0.85); border: 1px solid var(--ink-22);
-  padding: 0 4px; border-radius: 2px; white-space: nowrap; letter-spacing: 0.01em;
+  font-family: var(--serif); font-size: 10px; font-weight: 700; color: var(--ink);
+  background: rgba(245, 240, 228, 0.88); border: 1px solid var(--ink-40);
+  padding: 1px 5px; border-radius: 2px; white-space: nowrap; letter-spacing: 0.01em;
 }
-.highland-mark:hover .highland-mark__hatch { background-color: rgba(245, 240, 228, 0.78); border-color: #000; }
+.highland-mark:hover .highland-mark__label { background: var(--paper); border-color: var(--ink); }
 
 /* ── 하단 자료 출처 (콜로폰) ─────────────────────────── */
 .colophon {

@@ -10,7 +10,7 @@ import { colorForReligion, type ReligionId } from '../culture/types'
 import { getRegion, colorForRegion, type RegionId } from '../culture/regions'
 import { ISSUE_BY_ID, TREATY_BY_ID } from '../environment/data'
 import { FESTIVALS, FESTIVAL_BY_ID } from '../culture/festivals'
-import { HIGHLANDS, HIGHLAND_BY_ID } from '../climate/highlands'
+import { HIGHLANDS, HIGHLAND_BY_ID, type Highland } from '../climate/highlands'
 import type { TreatyId } from '../environment/types'
 
 const GEOJSON_URL = `${import.meta.env.BASE_URL}data/countries.geojson`
@@ -28,6 +28,33 @@ const INK_STROKE_FAINT = 'rgba(26,46,42,0.28)'
 const VERMILLION = '#c8452c'
 
 const FLY_MS = 900
+
+// 고산 표면 빗금 텍스처 (투명 바탕 + 검은 대각선) — 지구본 표면 원반에 입혀 구면을 따라 붙게 함
+function makeSurfaceHatchTexture(): THREE.Texture {
+  const s = 64
+  const cvs = document.createElement('canvas')
+  cvs.width = cvs.height = s
+  const ctx = cvs.getContext('2d')!
+  ctx.clearRect(0, 0, s, s)
+  ctx.strokeStyle = '#1e1e1e'
+  ctx.lineWidth = 6
+  ctx.lineCap = 'butt'
+  for (let o = -s; o < s * 2; o += 16) {
+    ctx.beginPath()
+    ctx.moveTo(o, 0)
+    ctx.lineTo(o + s, s)
+    ctx.stroke()
+  }
+  const tex = new THREE.CanvasTexture(cvs)
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping
+  tex.repeat.set(3.5, 3.5)
+  // 밉맵 축소로 선이 회색으로 뭉개지지 않도록 밉맵 끄고 선명 유지
+  tex.generateMipmaps = false
+  tex.minFilter = THREE.LinearFilter
+  tex.magFilter = THREE.LinearFilter
+  tex.anisotropy = 8
+  return tex
+}
 
 // 30°(위) / 20°(경) 간격 경위선 — pathsData로 직접 그려 색·굵기 제어
 function buildGraticules(): [number, number][][] {
@@ -99,6 +126,7 @@ export function GlobeView() {
   const globeRef = useRef<GlobeInstance | null>(null)
   const surfaceMatRef = useRef<THREE.MeshBasicMaterial | null>(null) // 지구본 표면 (크림 or 기후 텍스처)
   const climateTexRef = useRef<THREE.Texture | null>(null)
+  const hatchTexRef = useRef<THREE.Texture | null>(null) // 고산 표면 빗금 (지구본에 직접)
   const [texLoaded, setTexLoaded] = useState(false)
   const [loadError, setLoadError] = useState(false)
 
@@ -163,6 +191,8 @@ export function GlobeView() {
       surfaceMatRef.current = null
       climateTexRef.current?.dispose()
       climateTexRef.current = null
+      hatchTexRef.current?.dispose()
+      hatchTexRef.current = null
     }
   }, [])
 
@@ -288,9 +318,9 @@ export function GlobeView() {
         const el = document.createElement('button')
         el.type = 'button'
         if (pin.kind === 'highland') {
-          // 고산: 핀이 아니라 검은 빗금 패치로 표시 (범례·카드 스와치와 같은 관례 표기)
+          // 고산: 빗금은 지구본 표면(커스텀 레이어)에 그리고, 여기선 지역명 라벨만 표시
           el.className = 'highland-mark'
-          el.innerHTML = `<span class="highland-mark__hatch" aria-hidden="true"></span><span class="highland-mark__label">${pin.nameKo}</span>`
+          el.innerHTML = `<span class="highland-mark__label">${pin.nameKo}</span>`
           el.onclick = (ev) => {
             ev.stopPropagation()
             useAppStore.getState().selectCountry(`highland:${pin.id}`)
@@ -306,6 +336,31 @@ export function GlobeView() {
         return el
       })
   }, [mode, cultureLayer])
+
+  // 고산 빗금을 지구본 '표면'에 직접 올림 (커스텀 레이어) — 구면에 접해 붙고 지구본과 함께 회전
+  useEffect(() => {
+    const globe = globeRef.current
+    if (!globe) return
+    if (!hatchTexRef.current) hatchTexRef.current = makeSurfaceHatchTexture()
+    const tex = hatchTexRef.current
+    globe
+      .customLayerData(mode === 'climate' ? (HIGHLANDS as object[]) : [])
+      .customThreeObject(
+        () =>
+          new THREE.Mesh(
+            new THREE.CircleGeometry(11, 48),
+            new THREE.MeshBasicMaterial({ map: tex, transparent: true, side: THREE.DoubleSide, depthWrite: false }),
+          ),
+      )
+      .customThreeObjectUpdate((obj: object, d: object) => {
+        const h = d as Highland
+        const mesh = obj as THREE.Mesh
+        // 표면 살짝 위(선택국 융기보다 높게)에 두고, 원반 면이 구 중심을 향하도록 회전 → 구면에 접함
+        const c = globe.getCoords(h.lat, h.lng, 0.025)
+        mesh.position.set(c.x, c.y, c.z)
+        mesh.lookAt(0, 0, 0)
+      })
+  }, [mode])
 
   // ── 선택 시 해당 지역으로 지구본 이동 ──
   // 기후 범례(소분류) → 대분류 대표 지역
